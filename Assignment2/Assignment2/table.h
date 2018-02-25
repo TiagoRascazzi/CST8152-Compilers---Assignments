@@ -34,17 +34,33 @@
  */
  
 
-REPLACE *ESN* WITH YOUR ERROR STATE NUMBER 
+REPLACE *ESN* WITH YOUR ERROR STATE NUMBER
 #define ES  *ESN* /* Error state */
 #define IS -1    /* Inavalid state */
 
 /* State transition table definition */
 
-REPLACE *CN* WITH YOUR COLUMN NUMBER  
+REPLACE *CN* WITH YOUR COLUMN NUMBER
 
 #define TABLE_COLUMNS *CN*
 /*transition table - type of states defined in separate table */
-int  st_table[ ][TABLE_COLUMNS] = {
+int  st_table[][TABLE_COLUMNS] = {
+
+	/*        [a-zA-Z]   ---   0   ---   [1-9]   ---   .   ---   $   ---   other */
+	/* 1 */  { 1,			   6,		  4,		   ES,		 ES,	   ES	},
+	/* 2 */  { 1,			   1,		  1,		   ES / AS2, 3,		   2	},
+	/* 3 */  { IS,			   IS,		  IS,		   IS,		 IS,	   IS	},
+	/* 4 */  { IS,			   IS,		  IS,		   IS,		 IS,	   IS	},
+	/* 5 */  { ES / AS5,	   4,		  4,		   7,		 5,		   5	},
+	/* 6 */  { IS,			   IS,		  IS,		   IS,		 IS,	   IS	},
+	/* 7 */  { ,			   ,		  ,			   7,		 ES / AS5,   5	},
+	/* 8 */  { ES / AS8,	   7,		  7,		   ES / AS8, 8,		   8	},
+	/* 9 */  { IS,			   IS,		  IS,		   IS,		 IS,	   IS	},
+	/* 10 */ { ,			   ,		  ,			   ,		 ,		   ,	},
+	/* 11 */ { ,			   ,		  ,			   ,		 ,		   ,	},
+	/* 12 */ { IS,			   IS,		  IS,		   IS,		 IS,	   IS	},
+	/* 13 */ { IS,			   IS,		  IS,		   IS,		 IS,	   IS	};
+
 /* State 0 */  {YOUR INITIALIZATION},
 /* State 1 */  {YOUR INITIALIZATION},
 .

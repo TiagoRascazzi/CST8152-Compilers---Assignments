@@ -1,3 +1,4 @@
+/* TT */
 /* Filename: table.h
  * Transition Table and function declarations necessary for the scanner implementation  
  * as required for CST8152 - Assignment #2.

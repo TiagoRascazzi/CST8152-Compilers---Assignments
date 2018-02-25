@@ -42,4 +42,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="a2empty.pls">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="a2error.pls">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="ass2r.pls">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="ass2w.pls">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>

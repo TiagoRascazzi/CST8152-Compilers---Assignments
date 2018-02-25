@@ -176,6 +176,12 @@
     </ClInclude>
     <ClInclude Include="token.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="a2empty.pls" />
+    <None Include="a2error.pls" />
+    <None Include="ass2r.pls" />
+    <None Include="ass2w.pls" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

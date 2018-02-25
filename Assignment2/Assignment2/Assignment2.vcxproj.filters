@@ -18,18 +18,12 @@
     <ClCompile Include="Scanner.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="buffer.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="table.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="token.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="buffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

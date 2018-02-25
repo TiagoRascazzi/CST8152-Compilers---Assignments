@@ -150,11 +150,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="buffer.c" />
     <ClCompile Include="Scanner.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="buffer.h" />
     <ClInclude Include="table.h" />
     <ClInclude Include="token.h" />
   </ItemGroup>

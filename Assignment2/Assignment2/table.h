@@ -51,7 +51,7 @@
 /*transition table - type of states defined in separate table */
 int  st_table[][TABLE_COLUMNS] = {
 
-	/* TODO Add working table from reference*/
+	 0 /* TODO Add working table from reference*/
 
 };
 
@@ -61,7 +61,7 @@ int  st_table[][TABLE_COLUMNS] = {
 #define ASNR  0  /*N2*  /* accepting state with no retract */
 #define NOAS  0  /*N3*  /* not accepting state */
 
-int as_table[] = { /*YOUR INITIALIZATION HERE - USE ASWR, ASNR, NOAS*/ };
+int as_table[] = { 0 /*YOUR INITIALIZATION HERE - USE ASWR, ASNR, NOAS*/ };
 
 /* Accepting action function declarations */
 
@@ -86,7 +86,7 @@ typedef Token(*PTR_AAF)(char *lexeme);
 * Token (*aa_table[])(char lexeme[]) = {
 */
 
-PTR_AAF aa_table[] = {
+PTR_AAF aa_table[] = { 0
 
 
 	/*HERE YOU MUST PROVIDE AN INITIALIZATION FOR AN ARRAY OF POINTERS
@@ -117,3 +117,4 @@ char * kw_table[] =
 };
 
 #endif
+

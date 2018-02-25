@@ -145,6 +145,11 @@ int main(int argc, char ** argv){
   return (0);
 }
 
+Token malar_next_token(Buffer * sc_buf)
+{
+	return (Token){ 0 };
+}
+
 /* Error printing function with variable number of arguments
  */
 void err_printf( char *fmt, ... ){

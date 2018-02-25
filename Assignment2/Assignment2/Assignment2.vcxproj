@@ -152,6 +152,9 @@
   <ItemGroup>
     <ClCompile Include="buffer.c" />
     <ClCompile Include="Scanner.c" />
+    <ClCompile Include="Scanner.ref.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="buffer.h" />

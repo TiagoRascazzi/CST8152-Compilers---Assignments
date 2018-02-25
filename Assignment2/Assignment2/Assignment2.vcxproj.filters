@@ -15,10 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="buffer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Scanner.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="buffer.c">
+    <ClCompile Include="Scanner.ref.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

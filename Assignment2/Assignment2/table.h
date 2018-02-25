@@ -62,7 +62,7 @@ int  st_table[][TABLE_COLUMNS] = {
 	/* 13 */ { IS,             IS,        IS,          IS,       IS,       IS   } };
  
 /* Accepting state table definition */
-REPLACE *N1*, *N2*, and *N3* WITH YOUR NUMBERS
+/*REPLACE *N1*, *N2*, and *N3* WITH YOUR NUMBERS */
 #define ASWR     *N1*  /* accepting state with retract */
 #define ASNR     *N2*  /* accepting state with no retract */
 #define NOAS     *N3*  /* not accepting state */

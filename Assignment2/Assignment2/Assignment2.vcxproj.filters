@@ -14,6 +14,7 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
+<<<<<<< HEAD
   <ItemGroup>
     <ClCompile Include="Scanner.c">
       <Filter>Source Files</Filter>
@@ -33,4 +34,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+=======
+>>>>>>> deb5b25aacc92b0c29086b0c0114410cc8f17b8f
 </Project>

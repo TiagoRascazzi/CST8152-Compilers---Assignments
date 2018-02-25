@@ -149,7 +149,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-<<<<<<< HEAD
   <ItemGroup>
     <ClCompile Include="buffer.c" />
     <ClCompile Include="Scanner.c" />
@@ -159,8 +158,6 @@
     <ClInclude Include="table.h" />
     <ClInclude Include="token.h" />
   </ItemGroup>
-=======
->>>>>>> deb5b25aacc92b0c29086b0c0114410cc8f17b8f
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

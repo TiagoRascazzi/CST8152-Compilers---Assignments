@@ -44,7 +44,7 @@ REPLACE *CN* WITH YOUR COLUMN NUMBER
 
 #define TABLE_COLUMNS *CN*
 /*transition table - type of states defined in separate table */
-int  st_table[ ][TABLE_COLUMNS] = 
+int  st_table[][TABLE_COLUMNS] = {
 	/*        [a-zA-Z]   ---   0   ---   [1-9]   ---   .   ---   $   ---   other */
 	/* 1 */  { 1,              6,         4,           ES,       ES,       ES   },
 	/* 2 */  { 1,              1,         1,           ES / AS2, 3,        2    },
@@ -58,7 +58,7 @@ int  st_table[ ][TABLE_COLUMNS] =
 	/* 10 */ { ,               ,          ,            ,         ,              },
 	/* 11 */ { ,               ,          ,            ,         ,              },
 	/* 12 */ { IS,             IS,        IS,          IS,       IS,       IS   },
-	/* 13 */ { IS,             IS,        IS,          IS,       IS,       IS   };
+	/* 13 */ { IS,             IS,        IS,          IS,       IS,       IS   } };
  
 /* Accepting state table definition */
 /*REPLACE *N1*, *N2*, and *N3* WITH YOUR NUMBERS */

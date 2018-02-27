@@ -19,7 +19,8 @@
 /* TODO list of function to fix 
  * b_compact
  * b_isfull
- * 
+ * b_addc
+ * b_allocate
  */
 
 

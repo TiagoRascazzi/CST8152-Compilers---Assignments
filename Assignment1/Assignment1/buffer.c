@@ -616,5 +616,5 @@ char * b_location(Buffer * const pBD, short loc_offset)
 	if (loc_offset < 0 || loc_offset > pBD->addc_offset) {
 		return NULL;
 	}
-	return &(pBD->cb_head[loc_offset]);  //pBD->cb_head + loc_offset
+	return pBD->cb_head + loc_offset;
 }

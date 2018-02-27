@@ -16,6 +16,12 @@
  *
  */
 
+/* TODO list of function to fix 
+ * b_compact
+ * 
+ * 
+ */
+
 
 /*
  * Purpose: To create the buffer and initialize its atributes

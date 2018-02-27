@@ -18,7 +18,7 @@
 
 /* TODO list of function to fix 
  * b_compact
- * 
+ * b_isfull
  * 
  */
 
@@ -183,6 +183,7 @@ int b_clear(Buffer * const pBD)
 	pBD->getc_offset = 0;
 	pBD->markc_offset = 0;
 	pBD->r_flag = 0;
+	pBD->eob = 0;
 	return 0;
 }
 

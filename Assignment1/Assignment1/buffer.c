@@ -447,7 +447,7 @@ int b_print(Buffer * const pBD)
 	/* Check if the buffer is empty */
 	if (b_isempty(pBD)) {
 		printf("Empty buffer.\n");
-		return RT_FAIL1;
+		return 0;
 	}
 
 	count = 0;

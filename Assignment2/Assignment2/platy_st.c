@@ -22,29 +22,30 @@
 #include "token.h"
 
 /* constant definitions */
-#define INIT_CAPACITY 200 /* initial buffer capacity */
-#define INC_FACTOR 15       /* increment factor */ 
+#define INIT_CAPACITY 200		/* initial buffer capacity */
+#define INC_FACTOR 15			/* increment factor */ 
 
-#define STR_INIT_CAPACITY 100 /* initial string literal table capacity */
-#define STR_CAPACITY_INC  50   /* initial string literal table capacity inc */
+#define STR_INIT_CAPACITY 100	/* initial string literal table capacity */
+#define STR_CAPACITY_INC  50	/* initial string literal table capacity inc */
 
 /*check for ANSI C compliancy */
 #define ANSI_C 0
 #if defined(__STDC__)
-#undef ANSI_C
-#define ANSI_C 1
+	#undef ANSI_C
+	#define ANSI_C 1
 #endif
 
 /* Global objects - variables */
 
 Buffer * str_LTBL; /* this buffer implements String Literal Table */
-                  /* it is used as a repository for string literals */
-int scerrnum;     /* run-time error number = 0 by default (ANSI) */
+                   /* it is used as a repository for string literals */
+int scerrnum;      /* run-time error number = 0 by default (ANSI) */
 
 /*external objects */
 extern int line; /* source code line numbers - defined in scanner.c */
 extern int scanner_init(Buffer * sc_buf);
 extern Token malar_next_token(Buffer * sc_buf);
+
 /*function declarations */
 void err_printf(char *fmt, ...);
 void display (Buffer *ptrBuffer); 
@@ -57,92 +58,98 @@ void print_token(Token t);
  */     
 int main(int argc, char ** argv){
 
-	Buffer *sc_buf; /* pointer to input (source) buffer */
-	FILE *fi;       /* input file handle */
-	Token t;        /* token produced by the scanner */
-	int loadsize = 0; /*the size of the file loaded in the buffer */
-    int ansi_c = !ANSI_C; /* ANSI C compliancy flag */
+	Buffer *sc_buf;			/* pointer to input (source) buffer */
+	FILE *fi;				/* input file handle */
+	Token t;				/* token produced by the scanner */
+	int loadsize = 0;		/*the size of the file loaded in the buffer */
+    int ansi_c = !ANSI_C;	/* ANSI C compliancy flag */
 
-/* Check if the compiler option is set to compile ANSI C */
-/* __DATE__, __TIME__, __LINE__, __FILE__, __STDC__ are predefined preprocessor macros*/
-  if(ansi_c){
-    err_printf("Date: %s  Time: %s",__DATE__, __TIME__);
-    err_printf("ERROR: Compiler is not ANSI C compliant!\n");
-    exit(1);
-  }
+	/* Check if the compiler option is set to compile ANSI C */
+	/* __DATE__, __TIME__, __LINE__, __FILE__, __STDC__ are predefined preprocessor macros*/
+	if(ansi_c){
+		err_printf("Date: %s  Time: %s",__DATE__, __TIME__);
+		err_printf("ERROR: Compiler is not ANSI C compliant!\n");
+		exit(1);
+	}
 
-/*check for correct arrguments - source file name */
-      if (argc <= 1){
-/* __DATE__, __TIME__, __LINE__, __FILE__ are predefined preprocessor macros*/
-       err_printf("Date: %s  Time: %s",__DATE__, __TIME__);
-       err_printf("Runtime error at line %d in file %s", __LINE__, __FILE__);
-       err_printf("%s%s%s",argv[0],": ","Missing source file name.");
-       err_printf("%s%s%s","Usage: ", "scanner", "  source_file_name");
-       exit(1);
+	/*check for correct arrguments - source file name */
+	if (argc <= 1){
+		/* __DATE__, __TIME__, __LINE__, __FILE__ are predefined preprocessor macros*/
+		err_printf("Date: %s  Time: %s",__DATE__, __TIME__);
+		err_printf("Runtime error at line %d in file %s", __LINE__, __FILE__);
+		err_printf("%s%s%s",argv[0],": ","Missing source file name.");
+		err_printf("%s%s%s","Usage: ", "scanner", "  source_file_name");
+		exit(1);
 	}	
  
 
- /* create a source code input buffer - multiplicative mode */	
+	/* create a source code input buffer - multiplicative mode */	
 	sc_buf = b_allocate(INIT_CAPACITY,INC_FACTOR,'m');
 	if (sc_buf == NULL){
-	  err_printf("%s%s%s",argv[0],": ","Could not create source buffer");
-	  exit(1);
+		err_printf("%s%s%s",argv[0],": ","Could not create source buffer");
+		exit(1);
 	}
 
-/*open source file */
+	/*open source file */
 	if ((fi = fopen(argv[1],"r")) == NULL){
 		err_printf("%s%s%s%s",argv[0],": ", "Cannot open file: ",argv[1]);
 		exit (1);
 	}
-/* load source file into input buffer  */
-     printf("Reading file %s ....Please wait\n",argv[1]);
-     loadsize = b_load (fi,sc_buf);
-	 if (loadsize == RT_FAIL1)
-       err_printf("%s%s%s",argv[0],": ","Error in loading buffer.");
 
-/* close source file */	
- 	fclose(fi);
-/*find the size of the file  */
-    if (loadsize == LOAD_FAIL){
-     printf("The input file %s %s\n", argv[1],"is not completely loaded.");
-     printf("Input file size: %ld\n", get_filesize(argv[1]));
-    }
-/* compact and display the source buffer */
-/* add SEOF to input program buffer*/
-      if(b_compact(sc_buf,'\0')){
-         display(sc_buf);
-      }
+	/* load source file into input buffer  */
+	printf("Reading file %s ....Please wait\n",argv[1]);
+	loadsize = b_load (fi,sc_buf);
+	if (loadsize == RT_FAIL1)
+		err_printf("%s%s%s",argv[0],": ","Error in loading buffer.");
 
-/* create string Literal Table */
- 	
-  str_LTBL = b_allocate(INIT_CAPACITY,INC_FACTOR,'a');
+	/* close source file */	
+	fclose(fi);
+
+	/*find the size of the file  */
+	if (loadsize == LOAD_FAIL){
+		printf("The input file %s %s\n", argv[1],"is not completely loaded.");
+		printf("Input file size: %ld\n", get_filesize(argv[1]));
+	}
+
+	/* compact and display the source buffer */
+	/* add SEOF to input program buffer*/
+	if(b_compact(sc_buf,'\0')){
+		display(sc_buf);
+	}
+
+	/* create string Literal Table */
+	str_LTBL = b_allocate(INIT_CAPACITY,INC_FACTOR,'a');
 	if (str_LTBL == NULL){
-	 err_printf("%s%s%s",argv[0],": ","Could not create string literals buffer");
-	 exit(1);
+		err_printf("%s%s%s",argv[0],": ","Could not create string literals buffer");
+		exit(1);
 	}
 	
-/*Testbed for the scanner */
+	/*Testbed for the scanner */
 
 	/* Initialize scanner input buffer */ 
 	if(scanner_init(sc_buf)){;
-	  err_printf("%s%s%s",argv[0],": ","Empty program buffer - scanning canceled");
-	  exit(1); 
+		err_printf("%s%s%s",argv[0],": ","Empty program buffer - scanning canceled");
+		exit(1); 
 	}	
 
 	printf("\nScanning source file...\n\n");
 	printf("Token\t\tAttribute\n");
 	printf("----------------------------------\n");
+
+	
 	do{	
-	  t= malar_next_token(sc_buf);  
-	  print_token(t);
+		t= malar_next_token(sc_buf);  
+		print_token(t);
 	}while(t.code != SEOF_T);
-/*print String Literal Table if not empty*/
-        if(b_limit(str_LTBL)) b_print(str_LTBL);
+
+    /*print String Literal Table if not empty*/
+    if(b_limit(str_LTBL)) b_print(str_LTBL);
+
 	b_free(sc_buf);
 	b_free(str_LTBL);
 	sc_buf = str_LTBL = NULL;
- 
-  return (0);
+	
+	return (0);
 }
 
 Token malar_next_token(Buffer * sc_buf)
@@ -150,29 +157,27 @@ Token malar_next_token(Buffer * sc_buf)
 	return (Token){ 0 };
 }
 
-/* Error printing function with variable number of arguments
- */
+/* Error printing function with variable number of arguments */
 void err_printf( char *fmt, ... ){
 
-  va_list ap;
-  va_start(ap, fmt);
-
-  (void)vfprintf(stderr, fmt, ap);
+	va_list ap;
+	va_start(ap, fmt);
+	(void)vfprintf(stderr, fmt, ap);
 	va_end(ap);
-  /* Move to new line */
-  if( strchr(fmt,'\n') == NULL )
-	  fprintf(stderr,"\n");
+
+	/* Move to new line */
+	if( strchr(fmt,'\n') == NULL )
+		fprintf(stderr,"\n");
 }
 
-/* The function displays buffer contents 
- */
+/* The function displays buffer contents */
 void display (Buffer *ptrBuffer){
-  printf("\nPrinting buffer parameters:\n\n");
-  printf("The capacity of the buffer is:  %d\n",b_capacity(ptrBuffer));
-  printf("The current size of the buffer is:  %d\n",b_limit(ptrBuffer));
-  printf("\nPrinting buffer contents:\n\n");
-  b_rewind(ptrBuffer);
-  b_print(ptrBuffer);
+	printf("\nPrinting buffer parameters:\n\n");
+	printf("The capacity of the buffer is:  %d\n",b_capacity(ptrBuffer));
+	printf("The current size of the buffer is:  %d\n",b_limit(ptrBuffer));
+	printf("\nPrinting buffer contents:\n\n");
+	b_rewind(ptrBuffer);
+	b_print(ptrBuffer);
 }
 
 long get_filesize(char  *fname){
@@ -189,9 +194,7 @@ long get_filesize(char  *fname){
    return flength;
 }
 
-/* The function prints the token returned by the scanner
- */
-
+/* The function prints the token returned by the scanner */
 void print_token(Token t){
     extern char * kw_table []; /* link to keyword table in */
 	switch(t.code){
@@ -219,11 +222,11 @@ void print_token(Token t){
 		printf("FPL_T\t\t%f\n",t.attribute.flt_value);
 	break;
 	case  INL_T:
-	        printf("INL_T\t\t%d\n",t.attribute.get_int);
+		printf("INL_T\t\t%d\n",t.attribute.get_int);
 	break;
 	case  STR_T:
-	        printf("STR_T\t\t%d\t ",(short)t.attribute.get_int);
-	        printf("%s\n", b_location(str_LTBL, (short)t.attribute.get_int));
+		printf("STR_T\t\t%d\t ",(short)t.attribute.get_int);
+		printf("%s\n", b_location(str_LTBL, (short)t.attribute.get_int));
 	break;
 	case  SCC_OP_T:
 		printf("SCC_OP_T\n" );
@@ -244,26 +247,26 @@ void print_token(Token t){
 		printf("LPR_T\n" );
 	break;
 	case  RPR_T:
-	        printf("RPR_T\n" );
+		printf("RPR_T\n" );
 	break;
 	case LBR_T:
-	        printf("LBR_T\n" );
+		printf("LBR_T\n" );
 	break;
 	case RBR_T:
-	        printf("RBR_T\n" );
+		printf("RBR_T\n" );
 	break;
 	case KW_T:
-	        printf("KW_T\t\t%s\n",kw_table [t.attribute.get_int]);
+		printf("KW_T\t\t%s\n",kw_table [t.attribute.get_int]);
 	break;
 	case COM_T:
-	        printf("COM_T\n");
+		printf("COM_T\n");
 	break;
 	case EOS_T:
-	        printf("EOS_T\n" );
+		printf("EOS_T\n" );
 	break;    
 		
 	default:
-	        printf("Scanner error: invalid token code: %d\n", t.code);
- }
+		printf("Scanner error: invalid token code: %d\n", t.code);
+	}
 }
 

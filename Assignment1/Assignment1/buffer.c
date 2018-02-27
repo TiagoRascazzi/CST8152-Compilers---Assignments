@@ -421,8 +421,7 @@ char b_getc(Buffer * const pBD)
 
 	/* increment the offet and return the symbol */
 	pBD->eob = 0;
-	++pBD->getc_offset;
-	return pBD->cb_head[pBD->getc_offset-1];
+	return pBD->cb_head[pBD->getc_offset++];
 }
 
 /*

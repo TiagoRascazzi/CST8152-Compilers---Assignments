@@ -34,6 +34,8 @@
 #define LOAD_FAIL -2       /* load fail error */
 #define SET_R_FLAG 1       /* realloc flag set value */
 
+#define NULL_BUFFER 0x100
+
 #define FIXED_SIZE 0				/* fixed sized buffer */
 #define ADDITIVE_INCREMENT 1        /* additive self increment buffer */
 #define MULTIPLICATIVE_INCREMENT -1 /* multiplicative self increment buffer */

@@ -317,7 +317,7 @@ size_t b_incfactor(Buffer * const pBD)
 {
 	/* Check if the buffer pointer is NULL */
 	if (pBD == NULL) {
-		return 0x100;
+		return NULL_BUFFER;
 	}
 	return (unsigned char)pBD->inc_factor;
 }

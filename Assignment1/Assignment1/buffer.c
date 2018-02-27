@@ -298,7 +298,7 @@ int b_mode(Buffer * const pBD)
 {
 	/* Check if the buffer pointer is NULL */
 	if (pBD == NULL) {
-		return RT_FAIL1;
+		return RT_FAIL2;
 	}
 	return pBD->mode;
 }

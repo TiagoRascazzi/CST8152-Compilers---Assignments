@@ -31,13 +31,13 @@
 /* constant definitions */
 #define RT_FAIL1 -1			/* fail return value */
 #define RT_FAIL2 -2         /* fail return value */
-#define LOAD_FAIL -2       /* load fail error */
-#define SET_R_FLAG 1       /* realloc flag set value */
+#define LOAD_FAIL -2		/* load fail error */
+#define SET_R_FLAG 1		/* realloc flag set value */
 
-#define NULL_BUFFER 0x100
+#define NULL_BUFFER 0x100	/* return value when the buffer is null */
 
-#define ADD_MAX_INC_FACTOR 255
-#define MUL_MAX_INC_FACTOR 100
+#define ADD_MAX_INC_FACTOR 255	/* maximum size for the increment factor in additive mode */
+#define MUL_MAX_INC_FACTOR 100	/* maximum size for the increment factor in multiplicative mode */
 
 #define FIXED_SIZE 0				/* fixed sized buffer */
 #define ADDITIVE_INCREMENT 1        /* additive self increment buffer */

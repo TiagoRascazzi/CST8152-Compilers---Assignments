@@ -18,7 +18,6 @@
 
 /* TODO list of function to fix 
  * b_compact
- * b_isfull
  * b_addc
  */
 
@@ -224,7 +223,7 @@ int b_isfull(Buffer * const pBD)
 	if (pBD == NULL) {
 		return RT_FAIL1;
 	}
-	return pBD->addc_offset == pBD->capacity;
+	return (short)(pBD->addc_offset * sizeof(char)) == pBD->capacity;
 }
 
 /*

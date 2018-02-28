@@ -20,7 +20,6 @@
  * b_compact
  * b_isfull
  * b_addc
- * b_allocate
  */
 
 
@@ -31,15 +30,22 @@
  * Called functions: calloc(), malloc(), free()
  * Parameters: 
  *		init_capacity: The initial capacity of the buffer
+ *			the range is ( 0 to BUFFER_MAX ) inclusive
  *		inc_factor:    The factor by which the buffer will increment
+ *			if 0 the buffer is set to fixed
+ *			if mode is additive the range is ( 1 to 255) inclusive
+ *			if mode is multiplicative the range is ( 1 to 100) inclusive
  *		o_mode:		   Which type of buffer should be used
+ *			FIXED_SIZE
+ *			ADDITIVE_INCREMENT
+ *			MULTIPLICATIVE_INCREMENT
  * Return: The newly created buffer
  *
  */
 Buffer * b_allocate(short init_capacity, char inc_factor, char o_mode)
 {
-	Buffer* pBD;
-	unsigned char uinc_factor;
+	Buffer* pBD;				/* Pointer to create a new buffer */
+	unsigned char uinc_factor;	/* Convert the inc_factor to be unsigned */
 	uinc_factor = (unsigned char)inc_factor;
 	
 	/* Verify if the initial capacity is valid*/
@@ -58,29 +64,25 @@ Buffer * b_allocate(short init_capacity, char inc_factor, char o_mode)
 		return NULL;
 	}
 
-	/* Allocated the memory for the array of char */
-	pBD->cb_head = malloc(init_capacity * sizeof(char*));
-	if (pBD->cb_head == NULL) {
-		free(pBD);
-		return NULL;
-	}
-
 	/* Set the correct mode and inc_factor depending the parameters */
 	if (o_mode == 'f' || uinc_factor == 0) {
 		pBD->mode = FIXED_SIZE;
 		pBD->inc_factor = 0;
-	}else if (o_mode == 'f' && uinc_factor != 0) {
-		pBD->mode = FIXED_SIZE;
-		pBD->inc_factor = 0;
-	}else if (o_mode == 'a' && uinc_factor >= 1 && uinc_factor <= 255) {
+	}else if (o_mode == 'a' && uinc_factor >= 1 && uinc_factor <= ADD_MAX_INC_FACTOR) {
 		pBD->mode = ADDITIVE_INCREMENT;
 		pBD->inc_factor = uinc_factor;
-	}else if (o_mode == 'm' && uinc_factor >= 1 && uinc_factor <= 100) {
+	}else if (o_mode == 'm' && uinc_factor >= 1 && uinc_factor <= MUL_MAX_INC_FACTOR) {
 		pBD->mode = MULTIPLICATIVE_INCREMENT;
 		pBD->inc_factor = uinc_factor;
 	}else {
 		/* Clean memory if invalid mode or increment factor */
-		free(pBD->cb_head);
+		free(pBD);
+		return NULL;
+	}
+
+	/* Allocated the memory for the array of char */
+	pBD->cb_head = malloc(init_capacity * sizeof(char*));
+	if (pBD->cb_head == NULL) {
 		free(pBD);
 		return NULL;
 	}

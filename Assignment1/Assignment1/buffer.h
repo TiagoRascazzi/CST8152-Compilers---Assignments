@@ -36,6 +36,9 @@
 
 #define NULL_BUFFER 0x100
 
+#define ADD_MAX_INC_FACTOR 255
+#define MUL_MAX_INC_FACTOR 100
+
 #define FIXED_SIZE 0				/* fixed sized buffer */
 #define ADDITIVE_INCREMENT 1        /* additive self increment buffer */
 #define MULTIPLICATIVE_INCREMENT -1 /* multiplicative self increment buffer */

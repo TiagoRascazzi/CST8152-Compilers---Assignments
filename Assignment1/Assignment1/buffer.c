@@ -17,7 +17,6 @@
  */
 
 /* TODO list of function to fix 
- * b_compact
  * b_addc
  */
 
@@ -478,16 +477,21 @@ int b_print(Buffer * const pBD)
 */
 Buffer * b_compact(Buffer * const pBD, char symbol)
 {
-	short newCapacity;
-	char* newpArray;
+	short newCapacity;	/* a temporary variable to hold the new capacity */
+	char* newpArray;	/* a temporary variable to hold the new array for cb_head */
 
 	/* Check if the buffer pointer is NULL */
 	if (pBD == NULL) {
 		return NULL;
 	}
 
-	/* Calculate the new capacity and realloc */
+	/* Calculate the new capacity */
 	newCapacity = (b_limit(pBD)+1) * sizeof(char);
+	if (newCapacity < 0) {
+		return NULL;
+	}
+
+	/* realloc the array to the new capacity */
 	newpArray = realloc(pBD->cb_head, newCapacity);
 	/* If the realloc failed */
 	if (newpArray == NULL) {
@@ -495,6 +499,7 @@ Buffer * b_compact(Buffer * const pBD, char symbol)
 	}
 
 	/* Set the realloc flag if pointer is different */
+	pBD->r_flag = 0;
 	if (newpArray != pBD->cb_head) {
 		pBD->cb_head = newpArray;
 		pBD->r_flag = SET_R_FLAG;

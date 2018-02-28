@@ -16,10 +16,6 @@
  *
  */
 
-/* TODO list of function to fix 
- * b_addc
- */
-
 
 /*
  * Purpose: To create the buffer and initialize its atributes
@@ -102,21 +98,37 @@ Buffer * b_allocate(short init_capacity, char inc_factor, char o_mode)
 */
 pBuffer b_addc(pBuffer const pBD, char symbol)
 {
+	/* Check if the buffer pointer is NULL */
+	if (pBD == NULL) {
+		return NULL;
+	}
+
 	/* Reset the realloc flag*/
 	pBD->r_flag = 0;
 
 	/* Check if the array is full and need to be resize */
-	if (b_isfull(pBD)) {
+	if ((short)(pBD->addc_offset * sizeof(char)) == pBD->capacity) { /* if the buffer is full */
 
-		int mode = b_mode(pBD);
+		int mode = pBD->mode;
 		char* newpArray;
 		short newCapacity = 0;
 
 		if (mode == ADDITIVE_INCREMENT) {
+
+			/* Check if the buffer can be incremented */
+			if (b_capacity(pBD) == BUFFER_MAX) {
+				return NULL;
+			}
+
 			/* Calculate the new capacity */
 			newCapacity = b_capacity(pBD) + (short)b_incfactor(pBD) * sizeof(char);
 			if (newCapacity < 0) {
 				return NULL;
+			}
+
+			/* Verify if the buffer is not bigger then its max size */
+			if (newCapacity > BUFFER_MAX) {
+				newCapacity = BUFFER_MAX;
 			}
 
 		}else if (mode == MULTIPLICATIVE_INCREMENT) {
@@ -135,11 +147,6 @@ pBuffer b_addc(pBuffer const pBD, char symbol)
 
 		}else if (mode == FIXED_SIZE){
 			return NULL;
-		}
-
-		/* Verify if the buffer is not bigger then its max size */
-		if (newCapacity > BUFFER_MAX) {
-			newCapacity = BUFFER_MAX;
 		}
 
 		/* Resize the buffer to the new capacity */

@@ -192,6 +192,7 @@ Token malar_next_token(Buffer * sc_buf)
 			....
 		*/
 
+		Token t = aa_func02("thisisaveryveryverylongvid");
 
 		b_free(lex_buf);
 		return t;
@@ -251,19 +252,15 @@ int char_class(char c)
  */
 Token aa_func02(char *lexeme) {
 	Token t;
-	/*WHEN CALLED THE FUNCTION MUST
-		1. CHECK IF THE LEXEME IS A KEYWORD.
-		IF YES, IT MUST RETURN A TOKEN WITH THE CORRESPONDING ATTRIBUTE
-		FOR THE KEYWORD.THE ATTRIBUTE CODE FOR THE KEYWORD
-		IS ITS INDEX IN THE KEYWORD LOOKUP TABLE(kw_table in table.h).
-		IF THE LEXEME IS NOT A KEYWORD, GO TO STEP 2.
-
-		2. SET a AVID TOKEN.
-		IF THE lexeme IS LONGER than VID_LEN(see token.h) CHARACTERS,
-		ONLY FIRST VID_LEN CHARACTERS ARE STORED
-		INTO THE VARIABLE ATTRIBUTE ARRAY vid_lex[](see token.h) .
-		ADD \0 AT THE END TO MAKE A C - type STRING.
-	*/
+	int keyword = iskeyword(lexeme);
+	if (keyword != -1) {
+		t.code = KW_T;
+		t.attribute.kwt_idx = keyword;
+	}else {
+		t.code = AVID_T;
+		strncpy(t.attribute.vid_lex, lexeme, VID_LEN);
+		t.attribute.vid_lex[VID_LEN] = '\0';
+	}
 	return t;
 }
 

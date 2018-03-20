@@ -46,7 +46,7 @@
 /*transition table - type of states defined in separate table */
 int  st_table[NUMBER_OF_STATES][TABLE_COLUMNS] = 
 {
-	//[a-zG-Z]	[A-F]	0	[1-9]	.	$	x	other
+	//[a-wyzG-Z]	[A-F]	0	[1-9]	.	$	x	other
 	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 0
 	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 1
 	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 2

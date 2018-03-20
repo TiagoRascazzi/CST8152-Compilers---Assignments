@@ -190,6 +190,10 @@ Token malar_next_token(Buffer * sc_buf)
 			.THE ARGUMENT TO THE FUNCTION IS THE STRING STORED IN lex_buf.
 			....
 		*/
+		char c = 'a';
+		char_class(c);
+
+
 		b_free(lex_buf);
 		return t;
 
@@ -224,21 +228,20 @@ int get_next_state(int state, char c, int *accept)
 
 
 /*
- * TODO FIRST
+ * Return the column of the transistion table based on charracter
  */
 int char_class(char c)
 {
-	int val;
-
-	/*THIS FUNCTION RETURNS THE COLUMN NUMBER IN THE TRANSITION
-		TABLE st_table FOR THE INPUT CHARACTER c.
-		SOME COLUMNS MAY REPRESENT A CHARACTER CLASS .
-		FOR EXAMPLE IF COLUMN 1 REPRESENTS[A - Z]
-		THE FUNCTION RETURNS 1 EVERY TIME c IS ONE
-		OF THE LETTERS A, B, ..., Z.
-*/
-		return val;
+	if (c >= 'a' && c <= 'w' || c == 'y' || c == 'z' || c >= 'G' && c <= 'Z') return 0;
+	if (c >= 'A' && c <= 'F')	return 1;
+	if (c == '0') return 2;
+	if (c >= '1' && c <= '9') return 3;
+	if (c == '.') return 4;
+	if (c == '$') return 5;
+	if (c == 'x') return 6;
+	return 7;
 }
+
 
 /**************************************************************
  * HERE YOU WRITE THE DEFINITIONS FOR YOUR ACCEPTING FUNCTIONS. 

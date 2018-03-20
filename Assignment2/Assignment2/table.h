@@ -36,32 +36,56 @@
 
 
 /*REPLACE *ESN* WITH YOUR ERROR STATE NUMBER*/
-#define ES 1 /*ESN* /* Error state */
-#define IS -1    /* Inavalid state */
+#define ES 12	/* Error state */
+#define ER 13	/* Error state with retract */
+#define IS -1	/* Invalid state */
 
 /* State transition table definition */
-
-/*REPLACE *CN* WITH YOUR COLUMN NUMBER*/
-
-#define AS5 1 /*TODO REMOVE */
-#define AS2 1 /*TODO REMOVE*/
-#define AS8  /*TODO REMOVE*/
-
-#define TABLE_COLUMNS 1 /*CN*/
+#define NUMBER_OF_STATES 14
+#define TABLE_COLUMNS 8
 /*transition table - type of states defined in separate table */
-int  st_table[][TABLE_COLUMNS] = {
-
-	 0 /* TODO Add working table from reference*/
-
+int  st_table[NUMBER_OF_STATES][TABLE_COLUMNS] = 
+{
+	//[a-zG-Z]	[A-F]	0	[1-9]	.	$	x	other
+	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 0
+	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 1
+	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 2
+	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 3
+	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 4
+	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 5
+	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 6
+	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 7
+	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 8
+	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 9
+	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 10
+	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 11
+	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 12
+	{ 0,		0,		0,	0,		0,	0,	0,	0 }  //State 13
 };
 
 /* Accepting state table definition */
 /*REPLACE *N1*, *N2*, and *N3* WITH YOUR NUMBERS */
-#define ASWR  0   /*N1*  /* accepting state with retract */
-#define ASNR  0  /*N2*  /* accepting state with no retract */
+#define ASWR  1   /*N1*  /* accepting state with retract */
+#define ASNR  2  /*N2*  /* accepting state with no retract */
 #define NOAS  0  /*N3*  /* not accepting state */
 
-int as_table[] = { 0 /*YOUR INITIALIZATION HERE - USE ASWR, ASNR, NOAS*/ };
+int as_table[NUMBER_OF_STATES] = 
+{  
+	NOAS, //State 0
+	NOAS, //State 1
+	ASWR, //State 2
+	ASNR, //State 3
+	NOAS, //State 4
+	ASWR, //State 5
+	NOAS, //State 6
+	NOAS, //State 7
+	ASWR, //State 8
+	NOAS, //State 9
+	NOAS, //State 10
+	ASWR, //State 11
+	ASNR, //State 12
+	ASWR  //State 13
+};
 
 /* Accepting action function declarations */
 
@@ -70,38 +94,39 @@ ONE FUNCTION PROTOTYPE.THEY ALL RETURN Token AND TAKE
 ONE ARGUMENT : A string REPRESENTING A TOKEN LEXEME.
 */
 
-Token aa_funcXX(char *lexeme);
+Token aa_func02(char *lexeme);	// AVID
+Token aa_func03(char *lexeme);	// SVID
+Token aa_func05(char *lexeme);	// DIL
+Token aa_func08(char *lexeme);	// FPL
+Token aa_func11(char *lexeme);	// HIL
+//TODO maybe error state
+Token aa_func12(char *lexeme);	// ER
+Token aa_func13(char *lexeme);	// ES
 
-/*Replace XX with the number of the accepting state : 02, 03 and so on. */
 
-/* defining a new type: pointer to function (of one char * argument)
-returning Token
-*/
-
+/* defining a new type: pointer to function (of one char * argument) returning Token */
 typedef Token(*PTR_AAF)(char *lexeme);
 
-
-/* Accepting function (action) callback table (array) definition */
-/* If you do not want to use the typedef, the equvalent declaration is:
-* Token (*aa_table[])(char lexeme[]) = {
-*/
-
-PTR_AAF aa_table[] = { 0
-
-
-	/*HERE YOU MUST PROVIDE AN INITIALIZATION FOR AN ARRAY OF POINTERS
-	TO ACCEPTING FUNCTIONS.THE ARRAY HAS THE SAME SIZE AS as_table[].
-	YOU MUST INITIALIZE THE ARRAY ELEMENTS WITH THE CORRESPONDING
-	ACCEPTING FUNCTIONS(FOR THE STATES MARKED AS ACCEPTING IN as_table[]).
-	THE REST OF THE ELEMENTS MUST BE SET TO NULL.
-	*/
-
+PTR_AAF aa_table[NUMBER_OF_STATES] = 
+{
+	NULL,		//State 0
+	NULL,		//State 1
+	aa_func02,	//State 2
+	aa_func03,	//State 3
+	NULL,		//State 4
+	aa_func05,	//State 5
+	NULL,		//State 6
+	NULL,		//State 7
+	aa_func08,	//State 8
+	NULL,		//State 9
+	NULL,		//State 10
+	aa_func11,	//State 11
+	aa_func12,	//State 12
+	aa_func13	//State 13
 };
 
 /* Keyword lookup table (.AND. and .OR. are not keywords) */
-
 #define KWT_SIZE  10
-
 char * kw_table[] =
 {
 	"ELSE",

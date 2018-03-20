@@ -234,7 +234,7 @@ or #undef DEBUF is used - see the top of the file.
 	return next;
 }
 
-int char_class (char c)
+int char_class (char c) //TODO FIRST
 {
         int val;
 
@@ -291,7 +291,7 @@ WHEN CALLED THE FUNCTION MUST
 
 ACCEPTING FUNCTION FOR THE floating-point literal (FPL)
 
-Token aa_funcXX(char lexeme[]){
+Token aa_funcXX(char lexeme[]){ // atof
 
 THE FUNCTION MUST CONVERT THE LEXEME TO A FLOATING POINT VALUE,
 WHICH IS THE ATTRIBUTE FOR THE TOKEN.

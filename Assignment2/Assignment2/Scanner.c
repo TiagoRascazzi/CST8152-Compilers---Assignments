@@ -25,6 +25,7 @@
 #include <string.h>  /* string functions */
 #include <limits.h>  /* integer types constants */
 #include <float.h>   /* floating-point types constants */
+#include <math.h>
 
 /*#define NDEBUG        to suppress assert() call */
 #include <assert.h>  /* assert() prototype */
@@ -190,8 +191,6 @@ Token malar_next_token(Buffer * sc_buf)
 			.THE ARGUMENT TO THE FUNCTION IS THE STRING STORED IN lex_buf.
 			....
 		*/
-		char c = 'a';
-		char_class(c);
 
 
 		b_free(lex_buf);
@@ -385,6 +384,40 @@ Token aa_func13(char *lexeme) {
  **************************************************************/
 long atolh(char * lexeme) {
 	/* THE FUNCTION CONVERTS AN ASCII STRING REPRESENTING AN HEXADECIMAL INTEGER CONSTANT TO INTEGER VALUE */
+	/* If no valid conversion could be performed, it returns zero */
+	if (lexeme[0] != '0')
+		return 0;
+	long l = 0;
+	for (int i = 0; i < sizeof(lexeme); i++) {
+		char nextChar = lexeme[sizeof(lexeme)-i] ;
+
+		int digit = 0;
+		switch (nextChar) {
+		case '1': digit = 1; break;
+		case '2': digit = 2; break;
+		case '3': digit = 3; break;
+		case '4': digit = 4; break;
+		case '5': digit = 5; break;
+		case '6': digit = 6; break;
+		case '7': digit = 7; break;
+		case '8': digit = 8; break;
+		case '9': digit = 9; break;
+		case 'A': digit = 10; break;
+		case 'B': digit = 11; break;
+		case 'C': digit = 12; break;
+		case 'D': digit = 13; break;
+		case 'E': digit = 14; break;
+		case 'F': digit = 15; break;
+		case 'x': return l;
+		default: return 0;
+		}
+		int p = 16;
+		if (i == 0) p = 1;
+		for (int j = 0; j < i-1; j++)
+			p *= p;
+		l += digit * p;
+	}
+	return 0;
 }
 
 /**************************************************************

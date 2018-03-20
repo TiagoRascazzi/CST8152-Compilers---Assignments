@@ -423,5 +423,12 @@ long atolh(char * lexeme) {
 /**************************************************************
  * HERE YOU WRITE YOUR ADDITIONAL FUNCTIONS(IF ANY).
  **************************************************************/
-int iskeyword(char * kw_lexeme) {}
+int iskeyword(char * kw_lexeme) {
+	for (int i = 0; i < KWT_SIZE; ++i) {
+		if (strcmp(kw_lexeme, kw_table[i]) == 0) {
+			return i;
+		}
+	}
+	return -1;
+}
 

@@ -192,7 +192,7 @@ Token malar_next_token(Buffer * sc_buf)
 			....
 		*/
 
-		Token t = aa_func02("thisisaveryveryverylongvid");
+		Token t = aa_func03("thisisaveryveryverylongvid");
 
 		b_free(lex_buf);
 		return t;
@@ -252,10 +252,11 @@ int char_class(char c)
  */
 Token aa_func02(char *lexeme) {
 	Token t;
-	int keyword = iskeyword(lexeme);
-	if (keyword != -1) {
+
+	int keywordIndex = iskeyword(lexeme);
+	if (keywordIndex != -1) {
 		t.code = KW_T;
-		t.attribute.kwt_idx = keyword;
+		t.attribute.kwt_idx = keywordIndex;
 	}else {
 		t.code = AVID_T;
 		strncpy(t.attribute.vid_lex, lexeme, VID_LEN);
@@ -270,14 +271,15 @@ Token aa_func02(char *lexeme) {
 Token aa_func03(char *lexeme) {
 	Token t;
 
-	/* WHEN CALLED THE FUNCTION MUST
-		1. SET a SVID TOKEN.
-		   IF THE lexeme IS LONGER than VID_LEN characters,
-		   ONLY FIRST VID_LEN-1 CHARACTERS ARE STORED
-		   INTO THE VARIABLE ATTRIBUTE ARRAY vid_lex[],
-		   AND THEN THE $ CHARACTER IS APPENDED TO THE NAME.
-		   ADD \0 AT THE END TO MAKE A C-type STRING.
-   */
+	t.code = SVID_T;
+	if (strlen(lexeme) > VID_LEN) {
+		strncpy(t.attribute.vid_lex, lexeme, VID_LEN-1);
+		t.attribute.vid_lex[VID_LEN - 1] = '$';
+	}else {
+		strncpy(t.attribute.vid_lex, lexeme, VID_LEN);
+	}
+
+	t.attribute.vid_lex[VID_LEN] = '\0';
 
 	return t;
 }
@@ -385,8 +387,8 @@ long atolh(char * lexeme) {
 	if (lexeme[0] != '0')
 		return 0;
 	long l = 0;
-	for (int i = 0; i < sizeof(lexeme); i++) {
-		char nextChar = lexeme[sizeof(lexeme)-i] ;
+	for (int i = 0; i < strlen(lexeme); i++) {
+		char nextChar = lexeme[strlen(lexeme)-i] ;
 
 		int digit = 0;
 		switch (nextChar) {

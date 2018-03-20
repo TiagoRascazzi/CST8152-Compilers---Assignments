@@ -290,16 +290,13 @@ Token aa_func03(char *lexeme) {
 Token aa_func05(char *lexeme) {
 	Token t;
 
-	/* THE FUNCTION MUST CONVERT THE LEXEME REPRESENTING A DECIMAL CONSTANT
-		TO A DECIMAL INTEGER VALUE, WHICH IS THE ATTRIBUTE FOR THE TOKEN.
-		THE VALUE MUST BE IN THE SAME RANGE AS the value of 2-byte integer in C.
-		IN CASE OF ERROR (OUT OF RANGE) THE FUNCTION MUST RETURN ERROR TOKEN
-		THE ERROR TOKEN ATTRIBUTE IS  lexeme. IF THE ERROR lexeme IS LONGER
-		than ERR_LEN characters, ONLY THE FIRST ERR_LEN-3 characters ARE
-		STORED IN err_lex. THEN THREE DOTS ... ARE ADDED TO THE END OF THE
-		err_lex C-type string. 
-		BEFORE RETURNING THE FUNCTION MUST SET THE APROPRIATE TOKEN CODE
-	*/
+	if (isValidIL(lexeme)) {
+		t.code = INL_T;
+		t.attribute.int_value = atoi(lexeme);
+	}else {
+		t.code = ERR_T;
+		strcpy(t.attribute.err_lex, errorLexemeFormat(lexeme));
+	}
 
 	return t;
 }
@@ -430,4 +427,17 @@ int iskeyword(char * kw_lexeme) {
 	}
 	return -1;
 }
+int isValidIL(char* lexeme) {
+	/* 
+	THE VALUE MUST BE IN THE SAME RANGE AS the value of 2-byte integer in C.
+	*/
+}
 
+char* errorLexemeFormat(char* er_lexeme) {
+	/* IN CASE OF ERROR(OUT OF RANGE) THE FUNCTION MUST RETURN ERROR TOKEN
+		THE ERROR TOKEN ATTRIBUTE IS  lexeme.IF THE ERROR lexeme IS LONGER
+		than ERR_LEN characters, ONLY THE FIRST ERR_LEN - 3 characters ARE
+		STORED IN err_lex.THEN THREE DOTS ... ARE ADDED TO THE END OF THE
+		err_lex C - type string. */
+	return er_lexeme;
+}

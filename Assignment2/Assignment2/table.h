@@ -47,20 +47,20 @@
 int  st_table[NUMBER_OF_STATES][TABLE_COLUMNS] = 
 {
 	//[a-wyzG-Z]	[A-F]	0	[1-9]	.	$	x	other
-	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 0
-	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 1
-	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 2
-	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 3
-	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 4
-	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 5
-	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 6
-	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 7
-	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 8
-	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 9
-	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 10
-	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 11
-	{ 0,		0,		0,	0,		0,	0,	0,	0 }, //State 12
-	{ 0,		0,		0,	0,		0,	0,	0,	0 }  //State 13
+	{ 0,			0,		0,	0,		0,	0,	0,	0 }, //State 0
+	{ 0,			0,		0,	0,		0,	0,	0,	0 }, //State 1
+	{ 0,			0,		0,	0,		0,	0,	0,	0 }, //State 2
+	{ 0,			0,		0,	0,		0,	0,	0,	0 }, //State 3
+	{ 0,			0,		0,	0,		0,	0,	0,	0 }, //State 4
+	{ 0,			0,		0,	0,		0,	0,	0,	0 }, //State 5
+	{ 0,			0,		0,	0,		0,	0,	0,	0 }, //State 6
+	{ 0,			0,		0,	0,		0,	0,	0,	0 }, //State 7
+	{ 0,			0,		0,	0,		0,	0,	0,	0 }, //State 8
+	{ 0,			0,		0,	0,		0,	0,	0,	0 }, //State 9
+	{ 0,			0,		0,	0,		0,	0,	0,	0 }, //State 10
+	{ 0,			0,		0,	0,		0,	0,	0,	0 }, //State 11
+	{ 0,			0,		0,	0,		0,	0,	0,	0 }, //State 12
+	{ 0,			0,		0,	0,		0,	0,	0,	0 }  //State 13
 };
 
 /* Accepting state table definition */
@@ -99,7 +99,6 @@ Token aa_func03(char *lexeme);	// SVID
 Token aa_func05(char *lexeme);	// DIL
 Token aa_func08(char *lexeme);	// FPL
 Token aa_func11(char *lexeme);	// HIL
-//TODO maybe error state
 Token aa_func12(char *lexeme);	// ER
 Token aa_func13(char *lexeme);	// ES
 

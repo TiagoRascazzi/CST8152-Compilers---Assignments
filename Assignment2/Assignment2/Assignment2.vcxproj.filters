@@ -55,5 +55,8 @@
     <None Include="ass2w.pls">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="assTestFile.pls">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

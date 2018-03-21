@@ -1,15 +1,14 @@
-/* Filename: scanner.c
-/* PURPOSE:
-*    SCANNER.C: Functions implementing a Lexical Analyzer (Scanner)
-*    as required for CST8152, Assignment #2
-*    scanner_init() must be called before using the scanner.
-*    The file is incomplete;
-*    Provided by: Svillen Ranev
-*    Version: 1.18.1
-*    Date: 1 February 2018
-*******************************************************************
-*    REPLACE THIS HEADER WITH YOUR HEADER
-*******************************************************************
+/*
+* File name: scanner.c
+* Compiler: MS Visual Studio 2015, gcc
+* Author: Tiago Donchegay, 040867850, Nicholas Richer, 
+* Course: CST8152_010 Compilers
+* Assignment: 2
+* Date: 
+* Professor: Svillen Ranev
+* Purpose: 
+* Function list: 
+*
 */
 
 /* The #define _CRT_SECURE_NO_WARNINGS should be used in MS Visual Studio projects
@@ -55,8 +54,12 @@ static int char_class(char c);					/* character class function */
 static int get_next_state(int, char, int *);	/* state machine function */
 static int iskeyword(char * kw_lexeme);			/*keywords lookup functuion */
 static long atolh(char * lexeme);				/* converts hexadecimal string to decimal value */
+static int isValidIL(char* lexeme);
+static int isValidFPL(char* lexeme);
+static char* errorLexemeFormat(char* er_lexeme);
 
-/*Initializes scanner */ /*TODO initialize scanner*/
+/*Initializes scanner */ 
+/*TODO initialize scanner*/
 int scanner_init(Buffer * sc_buf) {
 	if (b_isempty(sc_buf)) return EXIT_FAILURE;/*1*/
 
@@ -69,7 +72,15 @@ int scanner_init(Buffer * sc_buf) {
 	/*no need - global ANSI C */
 }
 
-/* TODO this is the main part of the scanner */
+/*
+* Purpose: Find the next token in the buffer
+* Author: Nicholas Richer, Tiago Donchegay
+* Versions: 1.0
+* Called functions: b_getc(), printf(), 
+* Parameters:
+*		sc_buf:	The buffer containing the source file to scan
+* Return: The next token that was matched
+*/
 Token malar_next_token(Buffer * sc_buf)
 {
 	Token t = { 0 }; /* token to return after pattern recognition. Set all structure members to 0 */
@@ -78,11 +89,14 @@ Token malar_next_token(Buffer * sc_buf)
 	short lexstart;  /*start offset of a lexeme in the input char buffer (array) */
 	short lexend;    /*end   offset of a lexeme in the input char buffer (array)*/
 	int accept = NOAS; /* type of state - initially not accepting */
-
 	/* DECLARE YOUR LOCAL VARIABLES HERE IF NEEDED */
 
+<<<<<<< HEAD
 	int numLine = 0;
 
+=======
+	
+>>>>>>> 1fba12d77a0c296d7b60c08c3517705e40840c1c
 	while (1) { /* endless loop broken by token returns it will generate a warning */
 
 		/* GET THE NEXT SYMBOL FROM THE INPUT BUFFER */
@@ -105,13 +119,52 @@ Token malar_next_token(Buffer * sc_buf)
 		}
 
 
+<<<<<<< HEAD
 		/* VERY ROUGH CONCEPT ROOM FOR IMPROVEMENT */
 		if (c == '!') { /*Chracter might be comment?*/
 						/*b_mark(sc_buf, b_getcoffset(sc_buf)); /* mark buffer */
+=======
+		switch (c){
+		case ' ': continue;
+		case -1:
+		case 0:
+			t.code = SEOF_T; /*no attribute */ return t;
+		case '(': t.code = LPR_T; /*no attribute */ return t;
+		case ')': t.code = RPR_T; /*no attribute */ return t; 
+		case '{': t.code = LBR_T; /*no attribute */ return t;
+		case '}': t.code = RBR_T; /*no attribute */ return t; 
+		case ',': t.code = COM_T; /*no attribute */ return t;
+		case ';': t.code = EOS_T; /*no attribute */ return t;
+		case '#': t.code = SCC_OP_T; /*no attribute */ return t;
+		case '+': t.code = ART_OP_T; t.attribute.arr_op = PLUS; return t;
+		case '-': t.code = ART_OP_T; t.attribute.arr_op = MINUS; return t;
+		case '*': t.code = ART_OP_T; t.attribute.arr_op = MULT; return t;
+		case '/': t.code = ART_OP_T; t.attribute.arr_op = DIV; return t;//EQ, NE, GT, LT
+
+		case '=':
+		{
+			c = b_getc(sc_buf);/* get next character */
+
+			switch (c) {
+			case '=': t.code = REL_OP_T; t.attribute.rel_op = EQ; return t;
+			default:
+				b_rewind(sc_buf);
+				t.code = ASS_OP_T; /*no attribute */ return t;
+			}
+
+		}
+
+
+		case '!': /* Character might be comment */
+		{
+			
+			b_mark(sc_buf, b_getcoffset(sc_buf)); /* mark buffer */
+>>>>>>> 1fba12d77a0c296d7b60c08c3517705e40840c1c
 
 			c = b_getc(sc_buf); /* get next character */
 
-			if (c == '!') { /* confirmed comment */
+			/* confirmed comment */
+			if (c == '!') { 
 				while (c != '\n') {
 					c = b_getc(sc_buf);
 					/*printf("%c", c);*/
@@ -125,6 +178,14 @@ Token malar_next_token(Buffer * sc_buf)
 				t.code = ERR_T; /*What is our error?*/
 				return t;
 			}
+		}
+		break;
+		default:
+			/* THE STRING LITERAL IS ILLEGAL */
+			/* SET ERROR TOKEN FOR ILLEGAL STRING(see assignment) */
+			/* DO NOT STORE THE ILLEGAL STRINg IN THE str_LTBL */
+			return t;
+
 
 		}
 
@@ -162,18 +223,18 @@ Token malar_next_token(Buffer * sc_buf)
 		if (c == ' ') continue;
 		if (c == '{') {
 			t.code = RBR_T; /*no attribute * / return t;
-			if (c == '+') {
-				t.code = ART_OP_T; t.attribute.arr_op = PLUS * / return t;
+		if (c == '+') {
+			t.code = ART_OP_T; t.attribute.arr_op = PLUS * / return t;
 				...
 
-					IF(c == '.') TRY TO PROCESS.AND. or .OR.
+		IF(c == '.') TRY TO PROCESS.AND. or .OR.
 					IF SOMETHING ELSE FOLLOWS.OR THE LAST.IS MISSING
 					RETURN AN ERROR TOKEN
-					IF(c == '!') TRY TO PROCESS COMMENT
+		IF(c == '!') TRY TO PROCESS COMMENT
 					IF THE FOLLOWING CHAR IS NOT !REPORT AN ERROR
 					ELSE IN A LOOP SKIP CHARACTERS UNTIL line terminator is found THEN continue;
 				...
-					IF STRING(FOR EXAMPLE, "text") IS FOUND
+		IF STRING(FOR EXAMPLE, "text") IS FOUND
 					SET MARK TO MARK THE BEGINNING OF THE STRING
 					IF THE STRING IS LEGAL
 					USING b_addc(..)COPY THE text FROM INPUT BUFFER INTO str_LTBL
@@ -184,14 +245,14 @@ Token malar_next_token(Buffer * sc_buf)
 						of the string(TEXT in the example))
 
 					return t;
-				ELSE
+		ELSE
 					THE STRING LITERAL IS ILLEGAL
 					SET ERROR TOKEN FOR ILLEGAL STRING(see assignment)
 					DO NOT STORE THE ILLEGAL STRINg IN THE str_LTBL
 
 					return t;
 
-				IF(c == ANOTHER CHARACTER)
+		IF(c == ANOTHER CHARACTER)
 					SET TOKEN
 					return t;
 	*/
@@ -271,8 +332,15 @@ int get_next_state(int state, char c, int *accept)
 }
 
 
+
 /*
- * Return the column of the transistion table based on charracter
+ * Purpose: Match the column of the transistion table to a given character
+ * Author: Tiago Donchegay
+ * Versions: 1.0
+ * Called functions: none
+ * Parameters:
+ *		c:	The charactor to match to a column
+ * Return: The appropriate column number of the transistion table
  */
 int char_class(char c)
 {
@@ -287,12 +355,14 @@ int char_class(char c)
 }
 
 
-/**************************************************************
- * HERE YOU WRITE THE DEFINITIONS FOR YOUR ACCEPTING FUNCTIONS. 
- **************************************************************/
-
 /*
- * ACCEPTING FUNCTION FOR THE arithmentic variable identifier AND keywords (VID - AVID/KW)
+ * Purpose: ACCEPTING FUNCTION FOR THE arithmentic variable identifier AND keywords (VID - AVID/KW)
+ * Author: Tiago Donchegay
+ * Versions: 1.0
+ * Called functions: iskeyword(), strncpy()
+ * Parameters:
+ *		lexeme:	The lexeme to convert to AVID/KW token
+ * Return: The appropriate token based on lexeme
  */
 Token aa_func02(char *lexeme) {
 	Token t;
@@ -309,8 +379,15 @@ Token aa_func02(char *lexeme) {
 	return t;
 }
 
+
 /*
- * ACCEPTING FUNCTION FOR THE string variable identifier (VID - SVID)
+ * Purpose: ACCEPTING FUNCTION FOR THE string variable identifier (VID - SVID)
+ * Author: Tiago Donchegay
+ * Versions: 1.0
+ * Called functions: strlen(), strncpy()
+ * Parameters:
+ *		lexeme:	The lexeme to convert to SVID token
+ * Return: Return SVID token with formated name
  */
 Token aa_func03(char *lexeme) {
 	Token t;
@@ -329,7 +406,13 @@ Token aa_func03(char *lexeme) {
 }
 
 /*
- * ACCEPTING FUNCTION FOR THE integer literal(IL) - decimal constant (DIL)
+ * Purpose: ACCEPTING FUNCTION FOR THE integer literal(IL) - decimal constant (DIL)
+ * Author: Tiago Donchegay
+ * Versions: 1.0
+ * Called functions: isValidIL(), atoi(), strcpy(), errorLexemeFormat()
+ * Parameters:
+ *		lexeme:	The lexeme to convert to DIL token
+ * Return: Return DIL token exept if out of range it return an error token
  */
 Token aa_func05(char *lexeme) {
 	Token t;
@@ -345,28 +428,38 @@ Token aa_func05(char *lexeme) {
 	return t;
 }
 
+
 /*
- * ACCEPTING FUNCTION FOR THE floating-point literal (FPL)
+ * Purpose: ACCEPTING FUNCTION FOR THE floating-point literal (FPL)
+ * Author: Tiago Donchegay
+ * Versions: 1.0
+ * Called functions: isValidFPL(), atof(), strcpy(), errorLexemeFormat()
+ * Parameters:
+ *		lexeme:	The lexeme to convert to FPL token
+ * Return: Return FPL token exept if out of range it return an error token
  */
 Token aa_func08(char *lexeme) {
 	Token t;
 
-	/* THE FUNCTION MUST CONVERT THE LEXEME TO A FLOATING POINT VALUE,
-		WHICH IS THE ATTRIBUTE FOR THE TOKEN.
-		THE VALUE MUST BE IN THE SAME RANGE AS the value of 4-byte float in C.
-		IN CASE OF ERROR (OUT OF RANGE) THE FUNCTION MUST RETURN ERROR TOKEN
-		THE ERROR TOKEN ATTRIBUTE IS  lexeme. IF THE ERROR lexeme IS LONGER
-		than ERR_LEN characters, ONLY THE FIRST ERR_LEN-3 characters ARE
-		STORED IN err_lex. THEN THREE DOTS ... ARE ADDED TO THE END OF THE
-		err_lex C-type string. 
-		BEFORE RETURNING THE FUNCTION MUST SET THE APROPRIATE TOKEN CODE 
-	*/
+	if (isValidFPL(lexeme)) {
+		t.code = FPL_T;
+		t.attribute.flt_value = atof(lexeme);
+	}else {
+		t.code = ERR_T;
+		strcpy(t.attribute.err_lex, errorLexemeFormat(lexeme));
+	}
 
 	return t;
 }
 
 /*
- * ACCEPTING FUNCTION FOR THE integer literal(IL) - hexadecimal constant (HIL)
+ * Purpose: ACCEPTING FUNCTION FOR THE integer literal(IL) - hexadecimal constant (HIL)
+ * Author: Nicholas Richer
+ * Versions: 1.0
+ * Called functions: 
+ * Parameters:
+ *		lexeme:	The lexeme to convert to HIL token
+ * Return: Return HIL token exept if out of range it return an error token
  */
 Token aa_func11(char *lexeme) {
 	Token t;
@@ -392,8 +485,15 @@ Token aa_func11(char *lexeme) {
 	return t;
 }
 
+
 /*
- * ACCEPTING FUNCTION FOR THE ERROR TOKEN 
+ * Purpose: ACCEPTING FUNCTION FOR THE ERROR TOKEN with no retract
+ * Author: Nicholas Richer
+ * Versions: 1.0
+ * Called functions:
+ * Parameters:
+ *		lexeme:	The lexeme to convert to ERROR token
+ * Return: 
  */
 Token aa_func12(char *lexeme) {
 	Token t;
@@ -408,10 +508,16 @@ Token aa_func12(char *lexeme) {
 	*/
 
 	return t;
-}	// ER
+}
 
 /*
- *
+ * Purpose: ACCEPTING FUNCTION FOR THE ERROR TOKEN with retract
+ * Author: Nicholas Richer
+ * Versions: 1.0
+ * Called functions:
+ * Parameters:
+ *		lexeme:	The lexeme to convert to ERROR token
+ * Return:
  */
 Token aa_func13(char *lexeme) {
 	Token t;
@@ -419,15 +525,24 @@ Token aa_func13(char *lexeme) {
 	/*  */
 
 	return t;
-}	// ES
+}
 	
 
 /**************************************************************
  * CONVERSION FUNCTIONS
  **************************************************************/
+
+/*
+ * Purpose: CONVERTS AN ASCII STRING REPRESENTING AN HEXADECIMAL INTEGER CONSTANT TO INTEGER VALUE
+ * Author: Tiago Donchegay
+ * Versions: 1.0
+ * Called functions: strlen()
+ * Parameters:
+ *		lexeme:	The lexeme to convert to Integer value
+ * Return:
+ *		The value calculated based on lexeme If no valid conversion could be performed, it returns zero
+ */
 long atolh(char * lexeme) {
-	/* THE FUNCTION CONVERTS AN ASCII STRING REPRESENTING AN HEXADECIMAL INTEGER CONSTANT TO INTEGER VALUE */
-	/* If no valid conversion could be performed, it returns zero */
 	if (lexeme[0] != '0')
 		return 0;
 	long l = 0;
@@ -466,6 +581,17 @@ long atolh(char * lexeme) {
 /**************************************************************
  * HERE YOU WRITE YOUR ADDITIONAL FUNCTIONS(IF ANY).
  **************************************************************/
+
+/*
+ * Purpose: Get the index of the keyword lexeme
+ * Author: Tiago Donchegay
+ * Versions: 1.0
+ * Called functions: strcmp()
+ * Parameters:
+ *		lexeme:	The keyword lexeme to get id from
+ * Return:
+ *		The index of the keyword lexem. return -1 if invalid
+ */
 int iskeyword(char * kw_lexeme) {
 	for (int i = 0; i < KWT_SIZE; ++i) {
 		if (strcmp(kw_lexeme, kw_table[i]) == 0) {
@@ -474,17 +600,74 @@ int iskeyword(char * kw_lexeme) {
 	}
 	return -1;
 }
+
+/*
+* Purpose: Verify that the lexeme can be convert to int and that it is in the same range as the value of 2-byte integer in C.
+* Author: Tiago Donchegay
+* Versions: 1.0
+* Called functions: atol()
+* Parameters:
+*		lexeme:	The lexeme to verify if it can be convert to int and stay in the correct range
+* Return:
+*		True if the lexeme is valid
+*/
 int isValidIL(char* lexeme) {
-	/* 
-	THE VALUE MUST BE IN THE SAME RANGE AS the value of 2-byte integer in C.
-	*/
+	long l = atol(lexeme);
+	return ((l >= -32768 || l <= 32767) && !(l == 0 && lexeme[0] != '0'));
 }
 
+/*
+* Purpose: Verify that the lexeme can be convert to float and that it is in the same range the value of 4 - byte float in C.
+* Author: Tiago Donchegay
+* Versions: 1.0
+* Called functions: atof()
+* Parameters:
+*		lexeme:	The lexeme to verify if it can be convert to float and stay not lose data
+* Return:
+*		True if the lexeme is valid
+*/
+int isValidFPL(char* lexeme) {
+	double d = strtod(lexeme, NULL);
+	return (((d >= FLT_MIN || d <= FLT_MAX) && d != HUGE_VALF && d != -HUGE_VALF) && !(d == 0 && !containOnlyZeros(lexeme)));
+}
+/*
+* Purpose: Verify that the lexeme has only zeros of dot
+* Author: Tiago Donchegay
+* Versions: 1.0
+* Called functions: strlen()
+* Parameters:
+*		lexeme:	The lexeme to verify if it only contains zeros and or dot
+* Return:
+*		True if the lexeme only contains zeros and or dot
+*/
+int containOnlyZeros(char* lexeme) {
+	for (int i = 0; i < strlen(lexeme);i++) 
+		if (lexeme[i] != '0' && lexeme[i] != '.')
+			return 0;
+	return 1;
+}
+
+
+/*
+* Purpose: Format the lexeme to fit in error token
+* Author: Tiago Donchegay
+* Versions: 1.0
+* Called functions: strlen()
+* Parameters:
+*		lexeme:	The lexeme to format
+* Return:
+*		The lexeme if the lexeme if the lexeme is too long replace the end with "..."
+*/
 char* errorLexemeFormat(char* er_lexeme) {
-	/* IN CASE OF ERROR(OUT OF RANGE) THE FUNCTION MUST RETURN ERROR TOKEN
-		THE ERROR TOKEN ATTRIBUTE IS  lexeme.IF THE ERROR lexeme IS LONGER
-		than ERR_LEN characters, ONLY THE FIRST ERR_LEN - 3 characters ARE
-		STORED IN err_lex.THEN THREE DOTS ... ARE ADDED TO THE END OF THE
-		err_lex C - type string. */
-	return er_lexeme;
+	char err_lex[ERR_LEN + 1];
+	if (strlen(er_lexeme) > ERR_LEN) {
+		strncpy(err_lex, er_lexeme, VID_LEN - 3);
+		err_lex[VID_LEN - 3] = '.';
+		err_lex[VID_LEN - 2] = '.';
+		err_lex[VID_LEN - 1] = '.';
+		err_lex[VID_LEN ] = '\0';
+	}else {
+		strcpy(err_lex, er_lexeme);
+	}
+	return err_lex;
 }

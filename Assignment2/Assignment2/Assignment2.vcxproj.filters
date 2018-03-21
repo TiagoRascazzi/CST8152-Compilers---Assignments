@@ -18,13 +18,13 @@
     <ClCompile Include="buffer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Scanner.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Scanner.ref.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="platy_st.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scanner.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

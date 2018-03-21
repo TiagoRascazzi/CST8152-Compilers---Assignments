@@ -109,10 +109,26 @@ Token malar_next_token(Buffer * sc_buf)
 		case '}': t.code = RBR_T; /*no attribute */ return t; 
 		case ',': t.code = COM_T; /*no attribute */ return t;
 		case ';': t.code = EOS_T; /*no attribute */ return t;
+		case '#': t.code = SCC_OP_T; /*no attribute */ return t;
 		case '+': t.code = ART_OP_T; t.attribute.arr_op = PLUS; return t;
 		case '-': t.code = ART_OP_T; t.attribute.arr_op = MINUS; return t;
 		case '*': t.code = ART_OP_T; t.attribute.arr_op = MULT; return t;
-		case '/': t.code = ART_OP_T; t.attribute.arr_op = DIV; return t;
+		case '/': t.code = ART_OP_T; t.attribute.arr_op = DIV; return t;//EQ, NE, GT, LT
+
+		case '=':
+		{
+			c = b_getc(sc_buf);/* get next character */
+
+			switch (c) {
+			case '=': t.code = REL_OP_T; t.attribute.rel_op = EQ; return t;
+			default:
+				b_rewind(sc_buf);
+				t.code = ASS_OP_T; /*no attribute */ return t;
+			}
+
+		}
+
+
 		case '!': /* Character might be comment */
 		{
 			

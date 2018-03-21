@@ -91,53 +91,103 @@ Token malar_next_token(Buffer * sc_buf)
 	int accept = NOAS; /* type of state - initially not accepting */
 	/* DECLARE YOUR LOCAL VARIABLES HERE IF NEEDED */
 
+<<<<<<< HEAD
 	int numLine = 0;
+
+=======
+	
+>>>>>>> 1fba12d77a0c296d7b60c08c3517705e40840c1c
 	while (1) { /* endless loop broken by token returns it will generate a warning */
 
 		/* GET THE NEXT SYMBOL FROM THE INPUT BUFFER */
 		c = b_getc(sc_buf);
 
+		switch (c)
+		{
+		case '\0': case 255: case EOF: case '0xFF':
+			t.code = SEOF_T; return t;
+		case '{':
+			t.code = LBR_T; return t;
+		case '}':
+			t.code = RBR_T; return t;
+		case '(':
+			t.code = LPR_T; return t;
+		case ')':
+			t.code = RPR_T; return t;
+		default:
+			break;
+		}
+
+
+<<<<<<< HEAD
 		/* VERY ROUGH CONCEPT ROOM FOR IMPROVEMENT */
 		if (c == '!') { /*Chracter might be comment?*/
 						/*b_mark(sc_buf, b_getcoffset(sc_buf)); /* mark buffer */
+=======
+		switch (c){
+		case ' ': continue;
+		case -1:
+		case 0:
+			t.code = SEOF_T; /*no attribute */ return t;
+		case '(': t.code = LPR_T; /*no attribute */ return t;
+		case ')': t.code = RPR_T; /*no attribute */ return t; 
+		case '{': t.code = LBR_T; /*no attribute */ return t;
+		case '}': t.code = RBR_T; /*no attribute */ return t; 
+		case ',': t.code = COM_T; /*no attribute */ return t;
+		case ';': t.code = EOS_T; /*no attribute */ return t;
+		case '#': t.code = SCC_OP_T; /*no attribute */ return t;
+		case '+': t.code = ART_OP_T; t.attribute.arr_op = PLUS; return t;
+		case '-': t.code = ART_OP_T; t.attribute.arr_op = MINUS; return t;
+		case '*': t.code = ART_OP_T; t.attribute.arr_op = MULT; return t;
+		case '/': t.code = ART_OP_T; t.attribute.arr_op = DIV; return t;//EQ, NE, GT, LT
+
+		case '=':
+		{
+			c = b_getc(sc_buf);/* get next character */
+
 			switch (c) {
-			//case ' ': continue;
-			case EOF: case '\0': case 255: case '0xFF':
-				t.code = SEOF_T; /*no attribute */ return t;
-			case '(': t.code = LPR_T; /*no attribute */ return t;
-			case ')': t.code = RPR_T; /*no attribute */ return t;
-			case '{': t.code = LBR_T; /*no attribute */ return t;
-			case '}': t.code = RBR_T; /*no attribute */ return t;
-			case ',': t.code = COM_T; /*no attribute */ return t;
-			case ';': t.code = EOS_T; /*no attribute */ return t;
-			case '#': t.code = SCC_OP_T; /*no attribute */ return t;
-			case '+': t.code = ART_OP_T; t.attribute.arr_op = PLUS; return t;
-			case '-': t.code = ART_OP_T; t.attribute.arr_op = MINUS; return t;
-			case '*': t.code = ART_OP_T; t.attribute.arr_op = MULT; return t;
-			case '/': t.code = ART_OP_T; t.attribute.arr_op = DIV; return t;//EQ, NE, GT, LT
+			case '=': t.code = REL_OP_T; t.attribute.rel_op = EQ; return t;
+			default:
+				b_rewind(sc_buf);
+				t.code = ASS_OP_T; /*no attribute */ return t;
+			}
 
-			case '=':
-			{
-				c = b_getc(sc_buf);/* get next character */
+		}
 
-				switch (c) {
-				case '=': t.code = REL_OP_T; t.attribute.rel_op = EQ; return t;
-				default:
-					b_rewind(sc_buf);
-					t.code = ASS_OP_T; /*no attribute */ return t;
+
+		case '!': /* Character might be comment */
+		{
+			
+			b_mark(sc_buf, b_getcoffset(sc_buf)); /* mark buffer */
+>>>>>>> 1fba12d77a0c296d7b60c08c3517705e40840c1c
+
+			c = b_getc(sc_buf); /* get next character */
+
+			/* confirmed comment */
+			if (c == '!') { 
+				while (c != '\n') {
+					c = b_getc(sc_buf);
+					/*printf("%c", c);*/
 				}
 
+				printf("Ignoring Comment Line %d\n", numLine);
+				numLine++;
+				continue;
 			}
+			else {
+				t.code = ERR_T; /*What is our error?*/
+				return t;
 			}
 		}
-		else { // TODO THIS IS HACKY WAY TO STOP FROM GOING ON FOREVER
-			t.code = SEOF_T;
-			return t;
-		}
-
+		break;
+		default:
 			/* THE STRING LITERAL IS ILLEGAL */
 			/* SET ERROR TOKEN FOR ILLEGAL STRING(see assignment) */
 			/* DO NOT STORE THE ILLEGAL STRINg IN THE str_LTBL */
+			return t;
+
+
+		}
 
 
 

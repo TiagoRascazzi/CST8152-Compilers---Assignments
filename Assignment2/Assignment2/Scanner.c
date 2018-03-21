@@ -581,11 +581,26 @@ int containOnlyZeros(char* lexeme) {
 }
 
 
+/*
+* Purpose: Format the lexeme to fit in error token
+* Author: Tiago Donchegay
+* Versions: 1.0
+* Called functions: strlen()
+* Parameters:
+*		lexeme:	The lexeme to format
+* Return:
+*		The lexeme if the lexeme if the lexeme is too long replace the end with "..."
+*/
 char* errorLexemeFormat(char* er_lexeme) {
-	/* IN CASE OF ERROR(OUT OF RANGE) THE FUNCTION MUST RETURN ERROR TOKEN
-		THE ERROR TOKEN ATTRIBUTE IS  lexeme.IF THE ERROR lexeme IS LONGER
-		than ERR_LEN characters, ONLY THE FIRST ERR_LEN - 3 characters ARE
-		STORED IN err_lex.THEN THREE DOTS ... ARE ADDED TO THE END OF THE
-		err_lex C - type string. */
-	return er_lexeme;
+	char err_lex[ERR_LEN + 1];
+	if (strlen(er_lexeme) > ERR_LEN) {
+		strncpy(err_lex, er_lexeme, VID_LEN - 3);
+		err_lex[VID_LEN - 3] = '.';
+		err_lex[VID_LEN - 2] = '.';
+		err_lex[VID_LEN - 1] = '.';
+		err_lex[VID_LEN ] = '\0';
+	}else {
+		strcpy(err_lex, er_lexeme);
+	}
+	return err_lex;
 }

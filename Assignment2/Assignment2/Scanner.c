@@ -91,13 +91,39 @@ Token malar_next_token(Buffer * sc_buf)
 	int accept = NOAS; /* type of state - initially not accepting */
 	/* DECLARE YOUR LOCAL VARIABLES HERE IF NEEDED */
 
+<<<<<<< HEAD
+	int numLine = 0;
+
+=======
 	
+>>>>>>> 1fba12d77a0c296d7b60c08c3517705e40840c1c
 	while (1) { /* endless loop broken by token returns it will generate a warning */
 
 		/* GET THE NEXT SYMBOL FROM THE INPUT BUFFER */
 		c = b_getc(sc_buf);
 
+		switch (c)
+		{
+		case '\0': case 255: case EOF: case '0xFF':
+			t.code = SEOF_T; return t;
+		case '{':
+			t.code = LBR_T; return t;
+		case '}':
+			t.code = RBR_T; return t;
+		case '(':
+			t.code = LPR_T; return t;
+		case ')':
+			t.code = RPR_T; return t;
+		default:
+			break;
+		}
 
+
+<<<<<<< HEAD
+		/* VERY ROUGH CONCEPT ROOM FOR IMPROVEMENT */
+		if (c == '!') { /*Chracter might be comment?*/
+						/*b_mark(sc_buf, b_getcoffset(sc_buf)); /* mark buffer */
+=======
 		switch (c){
 		case ' ': continue;
 		case -1:
@@ -133,6 +159,7 @@ Token malar_next_token(Buffer * sc_buf)
 		{
 			
 			b_mark(sc_buf, b_getcoffset(sc_buf)); /* mark buffer */
+>>>>>>> 1fba12d77a0c296d7b60c08c3517705e40840c1c
 
 			c = b_getc(sc_buf); /* get next character */
 
@@ -140,10 +167,11 @@ Token malar_next_token(Buffer * sc_buf)
 			if (c == '!') { 
 				while (c != '\n') {
 					c = b_getc(sc_buf);
-					printf("%c", c);
+					/*printf("%c", c);*/
 				}
 
-				printf("\nComment found \n");
+				printf("Ignoring Comment Line %d\n", numLine);
+				numLine++;
 				continue;
 			}
 			else {
@@ -160,6 +188,8 @@ Token malar_next_token(Buffer * sc_buf)
 
 
 		}
+
+
 
 		/* Part 1: Implementation of token driven scanner */
 		/* every token is possessed by its own dedicated code */
@@ -269,7 +299,7 @@ Token malar_next_token(Buffer * sc_buf)
 		/*Token t = aa_func03("thisisaveryveryverylongvid");*/
 
 		b_free(lex_buf);
-		t.code = SEOF_T; /*TODO remove testinf end of file???*/
+		//t.code = SEOF_T; /*TODO remove testinf end of file???*/
 		return t;
 
 	}//end while(1)

@@ -101,7 +101,7 @@ Token malar_next_token(Buffer * sc_buf)
 		switch (c){
 		case ' ': continue;
 		case -1:
-		case 0:
+		case 0: 
 			t.code = SEOF_T; /*no attribute */ return t;
 		case '(': t.code = LPR_T; /*no attribute */ return t;
 		case ')': t.code = RPR_T; /*no attribute */ return t; 

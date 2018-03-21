@@ -526,11 +526,21 @@ int iskeyword(char * kw_lexeme) {
 	return -1;
 }
 
+/*
+* Purpose: HE VALUE MUST BE IN THE SAME RANGE AS the value of 2-byte integer in C.
+* Author: Tiago Donchegay
+* Versions: 1.0
+* Called functions: atol()
+* Parameters:
+*		lexeme:	The lexeme to verify if it can be convert to int and stay in the correct range
+* Return:
+*		True if the lexeme is valid
+*/
 int isValidIL(char* lexeme) {
-	/* 
-	THE VALUE MUST BE IN THE SAME RANGE AS the value of 2-byte integer in C.
-	*/
+	long l = atol(lexeme);
+	return ((l >= -32768 || l <= 32767) && !(l == 0 && lexeme[0] != '0'));
 }
+
 int isValidFPL(char* lexeme) {
 	/*
 	THE VALUE MUST BE IN THE SAME RANGE AS the value of 4 - byte float in C.

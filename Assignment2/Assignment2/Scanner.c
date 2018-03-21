@@ -329,16 +329,13 @@ Token aa_func05(char *lexeme) {
 Token aa_func08(char *lexeme) {
 	Token t;
 
-	/* THE FUNCTION MUST CONVERT THE LEXEME TO A FLOATING POINT VALUE,
-		WHICH IS THE ATTRIBUTE FOR THE TOKEN.
-		THE VALUE MUST BE IN THE SAME RANGE AS the value of 4-byte float in C.
-		IN CASE OF ERROR (OUT OF RANGE) THE FUNCTION MUST RETURN ERROR TOKEN
-		THE ERROR TOKEN ATTRIBUTE IS  lexeme. IF THE ERROR lexeme IS LONGER
-		than ERR_LEN characters, ONLY THE FIRST ERR_LEN-3 characters ARE
-		STORED IN err_lex. THEN THREE DOTS ... ARE ADDED TO THE END OF THE
-		err_lex C-type string. 
-		BEFORE RETURNING THE FUNCTION MUST SET THE APROPRIATE TOKEN CODE 
-	*/
+	if (isValidFPL(lexeme)) {
+		t.code = FPL_T;
+		t.attribute.flt_value = atof(lexeme);
+	}else {
+		t.code = ERR_T;
+		strcpy(t.attribute.err_lex, errorLexemeFormat(lexeme));
+	}
 
 	return t;
 }
@@ -452,9 +449,15 @@ int iskeyword(char * kw_lexeme) {
 	}
 	return -1;
 }
+
 int isValidIL(char* lexeme) {
 	/* 
 	THE VALUE MUST BE IN THE SAME RANGE AS the value of 2-byte integer in C.
+	*/
+}
+int isValidFPL(char* lexeme) {
+	/*
+	THE VALUE MUST BE IN THE SAME RANGE AS the value of 4 - byte float in C.
 	*/
 }
 

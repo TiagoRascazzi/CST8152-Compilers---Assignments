@@ -54,6 +54,9 @@ static int char_class(char c);					/* character class function */
 static int get_next_state(int, char, int *);	/* state machine function */
 static int iskeyword(char * kw_lexeme);			/*keywords lookup functuion */
 static long atolh(char * lexeme);				/* converts hexadecimal string to decimal value */
+static int isValidIL(char* lexeme);
+static int isValidFPL(char* lexeme);
+static char* errorLexemeFormat(char* er_lexeme);
 
 /*Initializes scanner */ 
 /*TODO initialize scanner*/
@@ -86,9 +89,14 @@ Token malar_next_token(Buffer * sc_buf)
 	short lexstart;  /*start offset of a lexeme in the input char buffer (array) */
 	short lexend;    /*end   offset of a lexeme in the input char buffer (array)*/
 	int accept = NOAS; /* type of state - initially not accepting */
-
 	/* DECLARE YOUR LOCAL VARIABLES HERE IF NEEDED */
 
+
+
+	isValidFPL("0.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001");
+	isValidFPL("0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001");
+
+	
 	while (1) { /* endless loop broken by token returns it will generate a warning */
 
 		/* GET THE NEXT SYMBOL FROM THE INPUT BUFFER */
@@ -527,7 +535,7 @@ int iskeyword(char * kw_lexeme) {
 }
 
 /*
-* Purpose: HE VALUE MUST BE IN THE SAME RANGE AS the value of 2-byte integer in C.
+* Purpose: Verify that the lexeme can be convert to int and that it is in the same range as the value of 2-byte integer in C.
 * Author: Tiago Donchegay
 * Versions: 1.0
 * Called functions: atol()
@@ -541,11 +549,37 @@ int isValidIL(char* lexeme) {
 	return ((l >= -32768 || l <= 32767) && !(l == 0 && lexeme[0] != '0'));
 }
 
+/*
+* Purpose: Verify that the lexeme can be convert to float and that it is in the same range the value of 4 - byte float in C.
+* Author: Tiago Donchegay
+* Versions: 1.0
+* Called functions: atof()
+* Parameters:
+*		lexeme:	The lexeme to verify if it can be convert to float and stay not lose data
+* Return:
+*		True if the lexeme is valid
+*/
 int isValidFPL(char* lexeme) {
-	/*
-	THE VALUE MUST BE IN THE SAME RANGE AS the value of 4 - byte float in C.
-	*/
+	double d = strtod(lexeme, NULL);
+	return (((d >= FLT_MIN || d <= FLT_MAX) && d != HUGE_VALF && d != -HUGE_VALF) && !(d == 0 && !containOnlyZeros(lexeme)));
 }
+/*
+* Purpose: Verify that the lexeme has only zeros of dot
+* Author: Tiago Donchegay
+* Versions: 1.0
+* Called functions: strlen()
+* Parameters:
+*		lexeme:	The lexeme to verify if it only contains zeros and or dot
+* Return:
+*		True if the lexeme only contains zeros and or dot
+*/
+int containOnlyZeros(char* lexeme) {
+	for (int i = 0; i < strlen(lexeme);i++) 
+		if (lexeme[i] != '0' && lexeme[i] != '.')
+			return 0;
+	return 1;
+}
+
 
 char* errorLexemeFormat(char* er_lexeme) {
 	/* IN CASE OF ERROR(OUT OF RANGE) THE FUNCTION MUST RETURN ERROR TOKEN

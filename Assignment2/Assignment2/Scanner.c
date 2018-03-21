@@ -91,11 +91,6 @@ Token malar_next_token(Buffer * sc_buf)
 	int accept = NOAS; /* type of state - initially not accepting */
 	/* DECLARE YOUR LOCAL VARIABLES HERE IF NEEDED */
 
-
-
-	isValidFPL("0.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001");
-	isValidFPL("0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001");
-
 	
 	while (1) { /* endless loop broken by token returns it will generate a warning */
 
@@ -103,12 +98,30 @@ Token malar_next_token(Buffer * sc_buf)
 		c = b_getc(sc_buf);
 
 
-		if (c == '!') { /*Chracter might be comment?*/
-			/*b_mark(sc_buf, b_getcoffset(sc_buf)); /* mark buffer */
+		switch (c){
+		case ' ': continue;
+		case -1:
+		case 0:
+			t.code = SEOF_T; /*no attribute */ return t;
+		case '(': t.code = LPR_T; /*no attribute */ return t;
+		case ')': t.code = RPR_T; /*no attribute */ return t; 
+		case '{': t.code = LBR_T; /*no attribute */ return t;
+		case '}': t.code = RBR_T; /*no attribute */ return t; 
+		case ',': t.code = COM_T; /*no attribute */ return t;
+		case ';': t.code = EOS_T; /*no attribute */ return t;
+		case '+': t.code = ART_OP_T; t.attribute.arr_op = PLUS; return t;
+		case '-': t.code = ART_OP_T; t.attribute.arr_op = MINUS; return t;
+		case '*': t.code = ART_OP_T; t.attribute.arr_op = MULT; return t;
+		case '/': t.code = ART_OP_T; t.attribute.arr_op = DIV; return t;
+		case '!': /* Character might be comment */
+		{
+			
+			b_mark(sc_buf, b_getcoffset(sc_buf)); /* mark buffer */
 
 			c = b_getc(sc_buf); /* get next character */
 
-			if (c == '!') { /* confirmed comment */
+			/* confirmed comment */
+			if (c == '!') { 
 				while (c != '\n') {
 					c = b_getc(sc_buf);
 					printf("%c", c);
@@ -121,6 +134,14 @@ Token malar_next_token(Buffer * sc_buf)
 				t.code = ERR_T; /*What is our error?*/
 				return t;
 			}
+		}
+		break;
+		default:
+			/* THE STRING LITERAL IS ILLEGAL */
+			/* SET ERROR TOKEN FOR ILLEGAL STRING(see assignment) */
+			/* DO NOT STORE THE ILLEGAL STRINg IN THE str_LTBL */
+			return t;
+
 
 		}
 
@@ -156,18 +177,18 @@ Token malar_next_token(Buffer * sc_buf)
 		if (c == ' ') continue;
 		if (c == '{') {
 			t.code = RBR_T; /*no attribute * / return t;
-			if (c == '+') {
-				t.code = ART_OP_T; t.attribute.arr_op = PLUS * / return t;
+		if (c == '+') {
+			t.code = ART_OP_T; t.attribute.arr_op = PLUS * / return t;
 				...
 
-					IF(c == '.') TRY TO PROCESS.AND. or .OR.
+		IF(c == '.') TRY TO PROCESS.AND. or .OR.
 					IF SOMETHING ELSE FOLLOWS.OR THE LAST.IS MISSING
 					RETURN AN ERROR TOKEN
-					IF(c == '!') TRY TO PROCESS COMMENT
+		IF(c == '!') TRY TO PROCESS COMMENT
 					IF THE FOLLOWING CHAR IS NOT !REPORT AN ERROR
 					ELSE IN A LOOP SKIP CHARACTERS UNTIL line terminator is found THEN continue;
 				...
-					IF STRING(FOR EXAMPLE, "text") IS FOUND
+		IF STRING(FOR EXAMPLE, "text") IS FOUND
 					SET MARK TO MARK THE BEGINNING OF THE STRING
 					IF THE STRING IS LEGAL
 					USING b_addc(..)COPY THE text FROM INPUT BUFFER INTO str_LTBL
@@ -178,14 +199,14 @@ Token malar_next_token(Buffer * sc_buf)
 						of the string(TEXT in the example))
 
 					return t;
-				ELSE
+		ELSE
 					THE STRING LITERAL IS ILLEGAL
 					SET ERROR TOKEN FOR ILLEGAL STRING(see assignment)
 					DO NOT STORE THE ILLEGAL STRINg IN THE str_LTBL
 
 					return t;
 
-				IF(c == ANOTHER CHARACTER)
+		IF(c == ANOTHER CHARACTER)
 					SET TOKEN
 					return t;
 	*/

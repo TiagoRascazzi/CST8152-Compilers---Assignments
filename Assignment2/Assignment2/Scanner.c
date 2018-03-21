@@ -1,15 +1,14 @@
-/* Filename: scanner.c
-/* PURPOSE:
-*    SCANNER.C: Functions implementing a Lexical Analyzer (Scanner)
-*    as required for CST8152, Assignment #2
-*    scanner_init() must be called before using the scanner.
-*    The file is incomplete;
-*    Provided by: Svillen Ranev
-*    Version: 1.18.1
-*    Date: 1 February 2018
-*******************************************************************
-*    REPLACE THIS HEADER WITH YOUR HEADER
-*******************************************************************
+/*
+* File name: scanner.c
+* Compiler: MS Visual Studio 2015, gcc
+* Author: Tiago Donchegay, 040867850, Nicholas Richer, 
+* Course: CST8152_010 Compilers
+* Assignment: 2
+* Date: 
+* Professor: Svillen Ranev
+* Purpose: 
+* Function list: 
+*
 */
 
 /* The #define _CRT_SECURE_NO_WARNINGS should be used in MS Visual Studio projects
@@ -56,7 +55,8 @@ static int get_next_state(int, char, int *);	/* state machine function */
 static int iskeyword(char * kw_lexeme);			/*keywords lookup functuion */
 static long atolh(char * lexeme);				/* converts hexadecimal string to decimal value */
 
-/*Initializes scanner */ /*TODO initialize scanner*/
+/*Initializes scanner */ 
+/*TODO initialize scanner*/
 int scanner_init(Buffer * sc_buf) {
 	if (b_isempty(sc_buf)) return EXIT_FAILURE;/*1*/
 
@@ -69,7 +69,15 @@ int scanner_init(Buffer * sc_buf) {
 	/*no need - global ANSI C */
 }
 
-/* TODO this is the main part of the scanner */
+/*
+* Purpose: Find the next token in the buffer
+* Author: Nicholas Richer, Tiago Donchegay
+* Versions: 1.0
+* Called functions: b_getc(), printf(), 
+* Parameters:
+*		sc_buf:	The buffer containing the source file to scan
+* Return: The next token that was matched
+*/
 Token malar_next_token(Buffer * sc_buf)
 {
 	Token t = { 0 }; /* token to return after pattern recognition. Set all structure members to 0 */
@@ -249,8 +257,15 @@ int get_next_state(int state, char c, int *accept)
 }
 
 
+
 /*
- * Return the column of the transistion table based on charracter
+ * Purpose: Match the column of the transistion table to a given character
+ * Author: Tiago Donchegay
+ * Versions: 1.0
+ * Called functions: none
+ * Parameters:
+ *		c:	The charactor to match to a column
+ * Return: The appropriate column number of the transistion table
  */
 int char_class(char c)
 {
@@ -265,12 +280,14 @@ int char_class(char c)
 }
 
 
-/**************************************************************
- * HERE YOU WRITE THE DEFINITIONS FOR YOUR ACCEPTING FUNCTIONS. 
- **************************************************************/
-
 /*
- * ACCEPTING FUNCTION FOR THE arithmentic variable identifier AND keywords (VID - AVID/KW)
+ * Purpose: ACCEPTING FUNCTION FOR THE arithmentic variable identifier AND keywords (VID - AVID/KW)
+ * Author: Tiago Donchegay
+ * Versions: 1.0
+ * Called functions: iskeyword(), strncpy()
+ * Parameters:
+ *		lexeme:	The lexeme to convert to AVID/KW token
+ * Return: The appropriate token based on lexeme
  */
 Token aa_func02(char *lexeme) {
 	Token t;
@@ -287,8 +304,15 @@ Token aa_func02(char *lexeme) {
 	return t;
 }
 
+
 /*
- * ACCEPTING FUNCTION FOR THE string variable identifier (VID - SVID)
+ * Purpose: ACCEPTING FUNCTION FOR THE string variable identifier (VID - SVID)
+ * Author: Tiago Donchegay
+ * Versions: 1.0
+ * Called functions: strlen(), strncpy()
+ * Parameters:
+ *		lexeme:	The lexeme to convert to SVID token
+ * Return: Return SVID token with formated name
  */
 Token aa_func03(char *lexeme) {
 	Token t;
@@ -307,7 +331,13 @@ Token aa_func03(char *lexeme) {
 }
 
 /*
- * ACCEPTING FUNCTION FOR THE integer literal(IL) - decimal constant (DIL)
+ * Purpose: ACCEPTING FUNCTION FOR THE integer literal(IL) - decimal constant (DIL)
+ * Author: Tiago Donchegay
+ * Versions: 1.0
+ * Called functions: isValidIL(), atoi(), strcpy(), errorLexemeFormat()
+ * Parameters:
+ *		lexeme:	The lexeme to convert to DIL token
+ * Return: Return DIL token exept if out of range it return an error token
  */
 Token aa_func05(char *lexeme) {
 	Token t;
@@ -323,8 +353,15 @@ Token aa_func05(char *lexeme) {
 	return t;
 }
 
+
 /*
- * ACCEPTING FUNCTION FOR THE floating-point literal (FPL)
+ * Purpose: ACCEPTING FUNCTION FOR THE floating-point literal (FPL)
+ * Author: Tiago Donchegay
+ * Versions: 1.0
+ * Called functions: isValidFPL(), atof(), strcpy(), errorLexemeFormat()
+ * Parameters:
+ *		lexeme:	The lexeme to convert to FPL token
+ * Return: Return FPL token exept if out of range it return an error token
  */
 Token aa_func08(char *lexeme) {
 	Token t;
@@ -341,7 +378,13 @@ Token aa_func08(char *lexeme) {
 }
 
 /*
- * ACCEPTING FUNCTION FOR THE integer literal(IL) - hexadecimal constant (HIL)
+ * Purpose: ACCEPTING FUNCTION FOR THE integer literal(IL) - hexadecimal constant (HIL)
+ * Author: Nicholas Richer
+ * Versions: 1.0
+ * Called functions: 
+ * Parameters:
+ *		lexeme:	The lexeme to convert to HIL token
+ * Return: Return HIL token exept if out of range it return an error token
  */
 Token aa_func11(char *lexeme) {
 	Token t;
@@ -367,8 +410,15 @@ Token aa_func11(char *lexeme) {
 	return t;
 }
 
+
 /*
- * ACCEPTING FUNCTION FOR THE ERROR TOKEN 
+ * Purpose: ACCEPTING FUNCTION FOR THE ERROR TOKEN with no retract
+ * Author: Nicholas Richer
+ * Versions: 1.0
+ * Called functions:
+ * Parameters:
+ *		lexeme:	The lexeme to convert to ERROR token
+ * Return: 
  */
 Token aa_func12(char *lexeme) {
 	Token t;
@@ -383,10 +433,16 @@ Token aa_func12(char *lexeme) {
 	*/
 
 	return t;
-}	// ER
+}
 
 /*
- *
+ * Purpose: ACCEPTING FUNCTION FOR THE ERROR TOKEN with retract
+ * Author: Nicholas Richer
+ * Versions: 1.0
+ * Called functions:
+ * Parameters:
+ *		lexeme:	The lexeme to convert to ERROR token
+ * Return:
  */
 Token aa_func13(char *lexeme) {
 	Token t;
@@ -394,15 +450,24 @@ Token aa_func13(char *lexeme) {
 	/*  */
 
 	return t;
-}	// ES
+}
 	
 
 /**************************************************************
  * CONVERSION FUNCTIONS
  **************************************************************/
+
+/*
+ * Purpose: CONVERTS AN ASCII STRING REPRESENTING AN HEXADECIMAL INTEGER CONSTANT TO INTEGER VALUE
+ * Author: Tiago Donchegay
+ * Versions: 1.0
+ * Called functions: strlen()
+ * Parameters:
+ *		lexeme:	The lexeme to convert to Integer value
+ * Return:
+ *		The value calculated based on lexeme If no valid conversion could be performed, it returns zero
+ */
 long atolh(char * lexeme) {
-	/* THE FUNCTION CONVERTS AN ASCII STRING REPRESENTING AN HEXADECIMAL INTEGER CONSTANT TO INTEGER VALUE */
-	/* If no valid conversion could be performed, it returns zero */
 	if (lexeme[0] != '0')
 		return 0;
 	long l = 0;
@@ -441,6 +506,17 @@ long atolh(char * lexeme) {
 /**************************************************************
  * HERE YOU WRITE YOUR ADDITIONAL FUNCTIONS(IF ANY).
  **************************************************************/
+
+/*
+ * Purpose: Get the index of the keyword lexeme
+ * Author: Tiago Donchegay
+ * Versions: 1.0
+ * Called functions: strcmp()
+ * Parameters:
+ *		lexeme:	The keyword lexeme to get id from
+ * Return:
+ *		The index of the keyword lexem. return -1 if invalid
+ */
 int iskeyword(char * kw_lexeme) {
 	for (int i = 0; i < KWT_SIZE; ++i) {
 		if (strcmp(kw_lexeme, kw_table[i]) == 0) {

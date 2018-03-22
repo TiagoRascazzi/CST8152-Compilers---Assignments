@@ -56,6 +56,7 @@ static int iskeyword(char * kw_lexeme);			/*keywords lookup functuion */
 static long atolh(char * lexeme);				/* converts hexadecimal string to decimal value */
 static int isValidIL(char* lexeme);
 static int isValidFPL(char* lexeme);
+static int isValidHIL(char* lexeme);
 static char* errorLexemeFormat(char* er_lexeme);
 
 /*Initializes scanner */
@@ -90,6 +91,9 @@ Token malar_next_token(Buffer * sc_buf)
 	short lexend;    /*end   offset of a lexeme in the input char buffer (array)*/
 	int accept = NOAS; /* type of state - initially not accepting */
 					   /* DECLARE YOUR LOCAL VARIABLES HERE IF NEEDED */
+
+	aa_func11("0xFFFF");
+	aa_func11("0xF");
 
 
 	while (1) { /* endless loop broken by token returns it will generate a warning */
@@ -513,8 +517,16 @@ Token aa_func08(char *lexeme) {
 Token aa_func11(char *lexeme) {
 	Token t;
 
-	long hex = atolh(lexeme);
-	int length = strlen(lexeme);
+	if (isValidHIL(lexeme)) {
+		t.code = INL_T;
+		t.attribute.int_value = atolh(lexeme);
+	}
+	else {
+		t.code = ERR_T;
+		strcpy(t.attribute.err_lex, errorLexemeFormat(lexeme));
+	}
+
+	return t;
 
 	/* THE FUNCTION MUST CONVERT THE LEXEME REPRESENTING AN HEXADECIMAL CONSTANT
 	TO A DECIMAL INTEGER VALUE WHICH IS THE ATTRIBUTE FOR THE TOKEN.
@@ -537,7 +549,7 @@ Token aa_func11(char *lexeme) {
 
 /*
 * Purpose: ACCEPTING FUNCTION FOR THE ERROR TOKEN with no retract
-* Author: Nicholas Richer
+* Author: Nicholas Heggart-Richer
 * Versions: 1.0
 * Called functions:
 * Parameters:
@@ -592,6 +604,8 @@ Token aa_func13(char *lexeme) {
 *		The value calculated based on lexeme If no valid conversion could be performed, it returns zero
 */
 long atolh(char * lexeme) {
+	return strtol(lexeme, NULL, 0);
+	/* TODO IMPLEMENT ARE OWN HEX CONVERTER
 	if (lexeme[0] != '0')
 		return 0;
 	long l = 0;
@@ -600,6 +614,8 @@ long atolh(char * lexeme) {
 
 		int digit = 0;
 		switch (nextChar) {
+		case '\0': digit = 0; break;
+		case '0': digit = 0; break;
 		case '1': digit = 1; break;
 		case '2': digit = 2; break;
 		case '3': digit = 3; break;
@@ -625,6 +641,7 @@ long atolh(char * lexeme) {
 		l += digit * p;
 	}
 	return 0;
+	*/
 }
 
 /**************************************************************
@@ -651,6 +668,24 @@ int iskeyword(char * kw_lexeme) {
 }
 
 /*
+* Purpose: Verify that the lexeme can be convert to an int and that it is in the same range as the value of 2-byte integer in C.
+* Author: Nicholas Heggart-Richer
+* Versions: 1.0
+* Called functions: atolh()
+* Parameters:
+*		lexeme:	The lexeme to verify if it can be convert to int and stay in the correct range
+* Return:
+*		True if the lexeme is valid
+*/
+int isValidHIL(char* lexeme) {
+	long l = atolh(lexeme); /*Convert hex string to long*/
+
+	/*Is long less than USHRT_MAX*/
+	return ((l >= 0 && l <= USHRT_MAX - 1)) && !(l == 0 && !containOnlyZeros(lexeme));
+
+}
+
+/*
 * Purpose: Verify that the lexeme can be convert to int and that it is in the same range as the value of 2-byte integer in C.
 * Author: Tiago Donchegay
 * Versions: 1.0
@@ -662,7 +697,7 @@ int iskeyword(char * kw_lexeme) {
 */
 int isValidIL(char* lexeme) {
 	long l = atol(lexeme);
-	return ((l >= -32768 || l <= 32767) && !(l == 0 && lexeme[0] != '0'));
+	return ((l >= SHRT_MIN || l <= SHRT_MAX) && !(l == 0 && !containOnlyZeros(lexeme)));
 }
 
 /*

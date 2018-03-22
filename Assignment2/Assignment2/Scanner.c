@@ -414,7 +414,7 @@ int char_class(char c)
 * Return: The appropriate token based on lexeme
 */
 Token aa_func02(char *lexeme) {
-	Token t;
+	Token t = { 0 };
 
 	int keywordIndex = iskeyword(lexeme);
 	if (keywordIndex != -1) {

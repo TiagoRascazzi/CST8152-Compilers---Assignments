@@ -140,8 +140,6 @@ int main(int argc, char ** argv) {
 	printf("Token\t\tAttribute\n");
 	printf("----------------------------------\n");
 	printf("TESTING, NOT REAL PRODUCT\n"); /*TODO REMOVE PRINTF for testing*/
-	//TODO remove - calling temporarely malar_next_token to test functions
-	malar_next_token(sc_buf);
 	//TODO uncomment
 	do {
 		t = malar_next_token(sc_buf);

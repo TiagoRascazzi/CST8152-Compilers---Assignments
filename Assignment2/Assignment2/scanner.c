@@ -103,7 +103,12 @@ Token malar_next_token(Buffer * sc_buf)
 		c = b_getc(sc_buf);
 
 		switch (c) {
-		case ' ': continue;
+		case ' ':
+		case '\t':
+		case '\v':
+		case '\f':
+		case '\r':
+			continue;
 		case '\n': ++line; continue;
 		case SEOF1:
 		case SEOF2:
@@ -147,7 +152,10 @@ Token malar_next_token(Buffer * sc_buf)
 			}else if(c == 'O' && b_getc(sc_buf) == 'R' && b_getc(sc_buf) == '.' ) {
 				t.code = LOG_OP_T; t.attribute.log_op = OR; return t;
 			}else {
-				return aa_func12("Log op");
+				char cerr[2];
+				cerr[0] = '.';
+				cerr[1] = '\0';
+				return aa_func12(cerr);
 			}
 		}
 
@@ -512,11 +520,11 @@ Token aa_func12(char *lexeme) {
 	t.code = ERR_T;
 
 	if (strlen(lexeme) > ERR_LEN) {
-		strncpy(t.attribute.err_lex, lexeme, VID_LEN - 3);
-		t.attribute.err_lex[VID_LEN - 3] = '.';
-		t.attribute.err_lex[VID_LEN - 2] = '.';
-		t.attribute.err_lex[VID_LEN - 1] = '.';
-		t.attribute.err_lex[VID_LEN] = '\0';
+		strncpy(t.attribute.err_lex, lexeme, ERR_LEN - 3);
+		t.attribute.err_lex[ERR_LEN - 3] = '.';
+		t.attribute.err_lex[ERR_LEN - 2] = '.';
+		t.attribute.err_lex[ERR_LEN - 1] = '.';
+		t.attribute.err_lex[ERR_LEN] = '\0';
 	}
 	else {
 		strcpy(t.attribute.err_lex, lexeme);
@@ -650,7 +658,7 @@ int isValidHIL(char* lexeme) {
 */
 int isValidIL(char* lexeme) {
 	long l = atol(lexeme);
-	return ((l >= SHRT_MIN || l <= SHRT_MAX) && !(l == 0 && !containOnlyZeros(lexeme)));
+	return ((l >= SHRT_MIN && l <= SHRT_MAX) && !(l == 0 && !containOnlyZeros(lexeme)));
 }
 
 /*
@@ -665,7 +673,7 @@ int isValidIL(char* lexeme) {
 */
 int isValidFPL(char* lexeme) {
 	double d = strtod(lexeme, NULL);
-	return (((d >= FLT_MIN || d <= FLT_MAX) && d != HUGE_VALF && d != -HUGE_VALF) && !(d == 0 && !containOnlyZeros(lexeme)));
+	return (((d >= FLT_MIN && d <= FLT_MAX) && d != HUGE_VALF && d != -HUGE_VALF) && !(d == 0 && !containOnlyZeros(lexeme)));
 }
 /*
 * Purpose: Verify that the lexeme has only zeros of dot

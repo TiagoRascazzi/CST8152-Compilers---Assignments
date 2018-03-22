@@ -139,11 +139,11 @@ int main(int argc, char ** argv) {
 	printf("\nScanning source file...\n\n");
 	printf("Token\t\tAttribute\n");
 	printf("----------------------------------\n");
-	printf("TESTING, NOT REAL PRODUCT\n"); /*TODO REMOVE PRINTF for testing*/
+	//printf("TESTING, NOT REAL PRODUCT\n"); /*TODO REMOVE PRINTF for testing*/
 	//TODO uncomment
 	do {
 		t = malar_next_token(sc_buf);
-		printf("%d. ", line);
+		//printf("%d. ", line);
 		print_token(t);
 	} while (t.code != SEOF_T);
 	/*print String Literal Table if not empty*/

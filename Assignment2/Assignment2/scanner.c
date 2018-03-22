@@ -191,8 +191,15 @@ Token malar_next_token(Buffer * sc_buf)
 				continue;
 			}else{
 				b_retract(sc_buf);
-				aa_func13("Comment err");
-				return t;
+				char cerr[3];
+				cerr[0] = '!';
+				cerr[1] = (c = b_getc(sc_buf));
+				cerr[2] = '\0';
+
+				while ((c = b_getc(sc_buf)) != '\n' && c != SEOF1 && c != SEOF2);
+
+				b_retract(sc_buf);
+				return aa_func13(cerr);
 			}
 			break;
 		}

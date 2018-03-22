@@ -24,7 +24,7 @@
     <ClCompile Include="platy_st.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scanner.c">
+    <ClCompile Include="scannerTest.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -550,11 +550,11 @@ char b_rflag(Buffer * const pBD)
 */
 short b_retract(Buffer * const pBD)
 {
-	/* Check if the buffer pointer is NULL or cannot retract*/
-	if (pBD == NULL || pBD->getc_offset <= 0) {
+	/* Check if the buffer pointer is NULL */
+	if (pBD == NULL) {
 		return RT_FAIL1;
 	}
-	return --pBD->getc_offset;
+	return pBD->getc_offset > 0 ? --pBD->getc_offset : pBD->getc_offset;
 }
 
 /*

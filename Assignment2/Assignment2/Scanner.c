@@ -57,7 +57,7 @@ static long atolh(char * lexeme);				/* converts hexadecimal string to decimal v
 static int isValidIL(char* lexeme);
 static int isValidFPL(char* lexeme);
 static int isValidHIL(char* lexeme);
-static void errorLexemeFormat(char* er_lexeme, Token* );
+static Token errorLexemeFormat(char* er_lexeme);
 static int containOnlyZeros(char* lexeme);
 
 /*Initializes scanner */
@@ -450,10 +450,8 @@ Token aa_func05(char *lexeme) {
 	if (isValidIL(lexeme)) {
 		t.code = INL_T;
 		t.attribute.int_value = atoi(lexeme);
-	}
-	else {
-		errorLexemeFormat(lexeme, &t);
-		return t;
+	}else {
+		return errorLexemeFormat(lexeme);
 	}
 
 	return t;
@@ -475,10 +473,8 @@ Token aa_func08(char *lexeme) {
 	if (isValidFPL(lexeme)) {
 		t.code = FPL_T;
 		t.attribute.flt_value = atof(lexeme);
-	}
-	else {
-		errorLexemeFormat(lexeme, &t);
-		return t;
+	}else {
+		return errorLexemeFormat(lexeme);
 	}
 
 	return t;
@@ -499,10 +495,8 @@ Token aa_func11(char *lexeme) {
 	if (isValidHIL(lexeme)) {
 		t.code = INL_T;
 		t.attribute.int_value = atolh(lexeme);
-	}
-	else {
-		errorLexemeFormat(lexeme, &t);
-		return t;
+	}else {
+		return errorLexemeFormat(lexeme);
 	}
 
 	return t;
@@ -534,9 +528,9 @@ Token aa_func11(char *lexeme) {
 * Return:
 */
 Token aa_func12(char *lexeme) {
-	Token t = { 0 };
+	/* Token t = { 0 }; */
 
-	errorLexemeFormat(lexeme, &t);
+	return errorLexemeFormat(lexeme);
 
 	/* THE FUNCTION SETS THE ERROR TOKEN. lexeme[] CONTAINS THE ERROR
 	THE ATTRIBUTE OF THE ERROR TOKEN IS THE lexeme ITSELF
@@ -547,7 +541,7 @@ Token aa_func12(char *lexeme) {
 	BEFORE RETURNING THE FUNCTION MUST SET THE APROPRIATE TOKEN CODE
 	*/
 
-	return t;
+	/* return t; */
 }
 
 /*
@@ -560,13 +554,13 @@ Token aa_func12(char *lexeme) {
 * Return:
 */
 Token aa_func13(char *lexeme) {
-	Token t = { 0 };
+	/* Token t = { 0 }; */
 
-	errorLexemeFormat(lexeme, &t);
+	return errorLexemeFormat(lexeme);
 
 	/*  */
 
-	return t;
+	/* return t; */
 }
 
 
@@ -727,17 +721,18 @@ int containOnlyZeros(char* lexeme) {
 * Return:
 *		The lexeme if the lexeme if the lexeme is too long replace the end with "..."
 */
-void errorLexemeFormat(char* er_lexeme, Token* t) {
-	t->code = ERR_T;
+Token errorLexemeFormat(char* er_lexeme) {
+	Token t = { 0 };
+	t.code = ERR_T;
 
 	if (strlen(er_lexeme) > ERR_LEN) {
-		strncpy(t->attribute.err_lex, er_lexeme, VID_LEN - 3);
-		t->attribute.err_lex[VID_LEN - 3] = '.';
-		t->attribute.err_lex[VID_LEN - 2] = '.';
-		t->attribute.err_lex[VID_LEN - 1] = '.';
-		t->attribute.err_lex[VID_LEN] = '\0';
+		strncpy(t.attribute.err_lex, er_lexeme, VID_LEN - 3);
+		t.attribute.err_lex[VID_LEN - 3] = '.';
+		t.attribute.err_lex[VID_LEN - 2] = '.';
+		t.attribute.err_lex[VID_LEN - 1] = '.';
+		t.attribute.err_lex[VID_LEN] = '\0';
+	}else {
+		strcpy(t.attribute.err_lex, er_lexeme);
 	}
-	else {
-		strcpy(t->attribute.err_lex, er_lexeme);
-	}
+	return t;
 }

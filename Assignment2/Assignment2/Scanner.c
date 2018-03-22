@@ -57,7 +57,8 @@ static long atolh(char * lexeme);				/* converts hexadecimal string to decimal v
 static int isValidIL(char* lexeme);
 static int isValidFPL(char* lexeme);
 static int isValidHIL(char* lexeme);
-static char* errorLexemeFormat(char* er_lexeme);
+static void errorLexemeFormat(char* er_lexeme, Token* );
+static int containOnlyZeros(char* lexeme);
 
 /*Initializes scanner */
 /*TODO initialize scanner*/
@@ -92,36 +93,13 @@ Token malar_next_token(Buffer * sc_buf)
 	int accept = NOAS; /* type of state - initially not accepting */
 					   /* DECLARE YOUR LOCAL VARIABLES HERE IF NEEDED */
 
-	aa_func11("0xFFFF");
-	aa_func11("0xF");
+	short coffset = 0;
 
 
 	while (1) { /* endless loop broken by token returns it will generate a warning */
 
 				/* GET THE NEXT SYMBOL FROM THE INPUT BUFFER */
 		c = b_getc(sc_buf);
-
-		/*
-			done #define SEOF_T    1  /* Source end-of-file token * /
-			done #define SCC_OP_T  7  /* String concatenation operator token * /
-			done #define ASS_OP_T  8  /* Assignment operator token * /
-			done #define ART_OP_T  9  /* Arithmetic operator token * /
-			done #define REL_OP_T 10  /* Relational operator token * / 
-			done #define LOG_OP_T 11  /* Logical operator token * /
-			done #define LPR_T    12  /* Left parenthesis token * /
-			done #define RPR_T    13  /* Right parenthesis token * /
-			done #define LBR_T    14  /* Left brace token * /
-			done #define RBR_T    15  /* Right brace token * /
-			done #define COM_T    17  /* Comma token * /
-			done #define EOS_T    18  /* End of statement *(semi - colon) * / 
-			done #define STR_T     6  /* String literal token * /
-
-			#define AVID_T    2  /* Arithmetic Variable identifier token * /
-			#define SVID_T    3  /* String Variable identifier token * /
-			#define FPL_T     4  /* Floating point literal token * /
-			#define INL_T     5  /* Integer literal token * /
-			#define KW_T     16  /* Keyword token * /
-		*/
 
 		switch (c) {
 		case ' ': continue;
@@ -187,7 +165,7 @@ Token malar_next_token(Buffer * sc_buf)
 			}
 
 			b_reset(sc_buf);
-			short coffset = b_limit(str_LTBL);
+			coffset = b_limit(str_LTBL);
 			while ( ( c = b_getc(sc_buf) ) != '"') b_addc(str_LTBL, c);
 			b_addc(str_LTBL, '\0');
 
@@ -206,9 +184,10 @@ Token malar_next_token(Buffer * sc_buf)
 				while (b_getc(sc_buf) != '\n');
 				b_retract(sc_buf);//TODO decide if use ++line; instead
 				continue;
-			}else {
+			}else{
 				t.code = ERR_T;
 				strcpy(t.attribute.err_lex, "Comment err"); //TODO notsure if correct atribute
+				b_retract(sc_buf);
 				return t;
 			}
 			break;
@@ -298,7 +277,7 @@ Token malar_next_token(Buffer * sc_buf)
 		lexstart = b_mark(sc_buf, b_getcoffset(sc_buf)-1);
 
 		/* CODE YOUR FINATE STATE MACHINE HERE(FSM or DFA)
-		/* IT IMPLEMENTS THE FOLLOWING ALGORITHM : */
+			IT IMPLEMENTS THE FOLLOWING ALGORITHM : */
 
 
 		/*
@@ -339,7 +318,7 @@ Token malar_next_token(Buffer * sc_buf)
 		*/
 		lex_buf = b_allocate( lexend - lexstart + 1, 0, 'f');  //TODO check if buffer is null
 		b_reset(sc_buf);
-		for (int i = lexstart; i < lexend; i++) {
+		for (int i = lexstart; i < lexend; i++) { // TODO For loop required? Not Ansi C compliant
 			c = b_getc(sc_buf);
 			b_addc(lex_buf, c);
 		}
@@ -393,7 +372,7 @@ int get_next_state(int state, char c, int *accept)
 */
 int char_class(char c)
 {
-	if (c >= 'a' && c <= 'w' || c == 'y' || c == 'z' || c >= 'G' && c <= 'Z') return 0;
+	if ((c >= 'a' && c <= 'w') || c == 'y' || c == 'z' || (c >= 'G' && c <= 'Z')) return 0;
 	if (c >= 'A' && c <= 'F')	return 1;
 	if (c == '0') return 2;
 	if (c >= '1' && c <= '9') return 3;
@@ -440,7 +419,7 @@ Token aa_func02(char *lexeme) {
 * Return: Return SVID token with formated name
 */
 Token aa_func03(char *lexeme) {
-	Token t;
+	Token t = { 0 };
 
 	t.code = SVID_T;
 	if (strlen(lexeme) > VID_LEN) {
@@ -466,15 +445,15 @@ Token aa_func03(char *lexeme) {
 * Return: Return DIL token exept if out of range it return an error token
 */
 Token aa_func05(char *lexeme) {
-	Token t;
+	Token t = { 0 };
 
 	if (isValidIL(lexeme)) {
 		t.code = INL_T;
 		t.attribute.int_value = atoi(lexeme);
 	}
 	else {
-		t.code = ERR_T;
-		strcpy(t.attribute.err_lex, errorLexemeFormat(lexeme));
+		errorLexemeFormat(lexeme, &t);
+		return t;
 	}
 
 	return t;
@@ -491,15 +470,15 @@ Token aa_func05(char *lexeme) {
 * Return: Return FPL token exept if out of range it return an error token
 */
 Token aa_func08(char *lexeme) {
-	Token t;
+	Token t = { 0 };
 
 	if (isValidFPL(lexeme)) {
 		t.code = FPL_T;
 		t.attribute.flt_value = atof(lexeme);
 	}
 	else {
-		t.code = ERR_T;
-		strcpy(t.attribute.err_lex, errorLexemeFormat(lexeme));
+		errorLexemeFormat(lexeme, &t);
+		return t;
 	}
 
 	return t;
@@ -515,15 +494,15 @@ Token aa_func08(char *lexeme) {
 * Return: Return HIL token exept if out of range it return an error token
 */
 Token aa_func11(char *lexeme) {
-	Token t;
+	Token t = { 0 };
 
 	if (isValidHIL(lexeme)) {
 		t.code = INL_T;
 		t.attribute.int_value = atolh(lexeme);
 	}
 	else {
-		t.code = ERR_T;
-		strcpy(t.attribute.err_lex, errorLexemeFormat(lexeme));
+		errorLexemeFormat(lexeme, &t);
+		return t;
 	}
 
 	return t;
@@ -542,8 +521,6 @@ Token aa_func11(char *lexeme) {
 	err_lex C-type string.
 	BEFORE RETURNING THE FUNCTION MUST SET THE APROPRIATE TOKEN CODE
 	*/
-
-	return t;
 }
 
 
@@ -557,7 +534,9 @@ Token aa_func11(char *lexeme) {
 * Return:
 */
 Token aa_func12(char *lexeme) {
-	Token t;
+	Token t = { 0 };
+
+	errorLexemeFormat(lexeme, &t);
 
 	/* THE FUNCTION SETS THE ERROR TOKEN. lexeme[] CONTAINS THE ERROR
 	THE ATTRIBUTE OF THE ERROR TOKEN IS THE lexeme ITSELF
@@ -581,7 +560,9 @@ Token aa_func12(char *lexeme) {
 * Return:
 */
 Token aa_func13(char *lexeme) {
-	Token t;
+	Token t = { 0 };
+
+	errorLexemeFormat(lexeme, &t);
 
 	/*  */
 
@@ -605,6 +586,7 @@ Token aa_func13(char *lexeme) {
 */
 long atolh(char * lexeme) {
 	return strtol(lexeme, NULL, 0);
+
 	/* TODO IMPLEMENT ARE OWN HEX CONVERTER
 	if (lexeme[0] != '0')
 		return 0;
@@ -659,7 +641,9 @@ long atolh(char * lexeme) {
 *		The index of the keyword lexem. return -1 if invalid
 */
 int iskeyword(char * kw_lexeme) {
-	for (int i = 0; i < KWT_SIZE; ++i) {
+	int i;
+
+	for (i = 0; i < KWT_SIZE; ++i) {
 		if (strcmp(kw_lexeme, kw_table[i]) == 0) {
 			return i;
 		}
@@ -725,7 +709,8 @@ int isValidFPL(char* lexeme) {
 *		True if the lexeme only contains zeros and or dot
 */
 int containOnlyZeros(char* lexeme) {
-	for (int i = 0; i < strlen(lexeme); i++)
+	int i;
+	for (i = 0; i < strlen(lexeme); i++)
 		if (lexeme[i] != '0' && lexeme[i] != '.')
 			return 0;
 	return 1;
@@ -742,17 +727,17 @@ int containOnlyZeros(char* lexeme) {
 * Return:
 *		The lexeme if the lexeme if the lexeme is too long replace the end with "..."
 */
-char* errorLexemeFormat(char* er_lexeme) {
-	char err_lex[ERR_LEN + 1];
+void errorLexemeFormat(char* er_lexeme, Token* t) {
+	t->code = ERR_T;
+
 	if (strlen(er_lexeme) > ERR_LEN) {
-		strncpy(err_lex, er_lexeme, VID_LEN - 3);
-		err_lex[VID_LEN - 3] = '.';
-		err_lex[VID_LEN - 2] = '.';
-		err_lex[VID_LEN - 1] = '.';
-		err_lex[VID_LEN] = '\0';
+		strncpy(t->attribute.err_lex, er_lexeme, VID_LEN - 3);
+		t->attribute.err_lex[VID_LEN - 3] = '.';
+		t->attribute.err_lex[VID_LEN - 2] = '.';
+		t->attribute.err_lex[VID_LEN - 1] = '.';
+		t->attribute.err_lex[VID_LEN] = '\0';
 	}
 	else {
-		strcpy(err_lex, er_lexeme);
+		strcpy(t->attribute.err_lex, er_lexeme);
 	}
-	return err_lex;
 }

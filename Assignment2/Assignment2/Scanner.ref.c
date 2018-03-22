@@ -76,6 +76,29 @@ Token malar_next_token(Buffer * sc_buf)
    int accept = NOAS; /* type of state - initially not accepting */                                        
         
    DECLARE YOUR LOCAL VARIABLES HERE IF NEEDED   
+
+
+	   /*
+	   done #define SEOF_T    1  /* Source end-of-file token * /
+	   done #define SCC_OP_T  7  /* String concatenation operator token * /
+	   done #define ASS_OP_T  8  /* Assignment operator token * /
+	   done #define ART_OP_T  9  /* Arithmetic operator token * /
+	   done #define REL_OP_T 10  /* Relational operator token * /
+	   done #define LOG_OP_T 11  /* Logical operator token * /
+	   done #define LPR_T    12  /* Left parenthesis token * /
+	   done #define RPR_T    13  /* Right parenthesis token * /
+	   done #define LBR_T    14  /* Left brace token * /
+	   done #define RBR_T    15  /* Right brace token * /
+	   done #define COM_T    17  /* Comma token * /
+	   done #define EOS_T    18  /* End of statement *(semi - colon) * /
+	   done #define STR_T     6  /* String literal token * /
+
+	   #define AVID_T    2  /* Arithmetic Variable identifier token * /
+	   #define SVID_T    3  /* String Variable identifier token * /
+	   #define FPL_T     4  /* Floating point literal token * /
+	   #define INL_T     5  /* Integer literal token * /
+	   #define KW_T     16  /* Keyword token * /
+	   */
                 
         while (1){ /* endless loop broken by token returns it will generate a warning */
                 

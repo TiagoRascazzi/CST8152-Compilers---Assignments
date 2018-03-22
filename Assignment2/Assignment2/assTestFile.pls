@@ -8,8 +8,8 @@ PLATYPUS {
  sum008 = 7.87050 ;
  READ(a,sum008);
  i=0; 
- WHILE TRUE (i < 32767 .OR. i == )REPEAT{
-   i = i + ;
+ WHILE TRUE (i < 32767 .OR. i == 0x7FFF)REPEAT{
+   i = i + 0x2;
    a=
    a*i/0.5
    ;
@@ -24,7 +24,7 @@ PLATYPUS {
  WRITE("\* This is a platypus -:)-<-<-- \*");
  WRITE(text$);
  
- IF FALSE (text$ == "program".OR.sum008<>8..AND.i>)THEN {
+ IF FALSE (text$ == "program".OR.sum008<>8..AND.i>0x10)THEN {
   WRITE(sum008);
   WRITE();
  }

@@ -57,7 +57,7 @@ static long atolh(char * lexeme);				/* converts hexadecimal string to decimal v
 static int isValidIL(char* lexeme);
 static int isValidFPL(char* lexeme);
 static int isValidHIL(char* lexeme);
-static Token errorLexemeFormat(char* er_lexeme);
+//static Token errorLexemeFormat(char* er_lexeme);
 static int containOnlyZeros(char* lexeme);
 
 /*Initializes scanner */
@@ -85,12 +85,12 @@ int scanner_init(Buffer * sc_buf) {
 */
 Token malar_next_token(Buffer * sc_buf)
 {
-	Token t = { 0 }; /* token to return after pattern recognition. Set all structure members to 0 */
-	unsigned char c; /* input symbol */
-	int state = 0; /* initial state of the FSM */
-	short lexstart;  /*start offset of a lexeme in the input char buffer (array) */
-	short lexend;    /*end   offset of a lexeme in the input char buffer (array)*/
-	int accept = NOAS; /* type of state - initially not accepting */
+	Token t = { 0 };	/* token to return after pattern recognition. Set all structure members to 0 */
+	unsigned char c;	/* input symbol */
+	int state = 0;		/* initial state of the FSM */
+	short lexstart;		/*start offset of a lexeme in the input char buffer (array) */
+	short lexend;		/*end   offset of a lexeme in the input char buffer (array)*/
+	int accept = NOAS;	/* type of state - initially not accepting */
 
 	/* DECLARE YOUR LOCAL VARIABLES HERE IF NEEDED */
 
@@ -99,7 +99,7 @@ Token malar_next_token(Buffer * sc_buf)
 
 	while (1) { /* endless loop broken by token returns it will generate a warning */
 
-				/* GET THE NEXT SYMBOL FROM THE INPUT BUFFER */
+		/* GET THE NEXT SYMBOL FROM THE INPUT BUFFER */
 		c = b_getc(sc_buf);
 
 		switch (c) {
@@ -147,9 +147,7 @@ Token malar_next_token(Buffer * sc_buf)
 			}else if(c == 'O' && b_getc(sc_buf) == 'R' && b_getc(sc_buf) == '.' ) {
 				t.code = LOG_OP_T; t.attribute.log_op = OR; return t;
 			}else {
-				t.code = ERR_T;
-				strcpy(t.attribute.err_lex, "Log op"); //TODO notsure if correct atribute
-				return t;
+				return aa_func12("Log op");
 			}
 		}
 
@@ -159,9 +157,7 @@ Token malar_next_token(Buffer * sc_buf)
 
 			while ((c = b_getc(sc_buf)) != '"') {
 				if (c == SEOF1 || c == SEOF2) {
-					t.code = ERR_T;
-					strcpy(t.attribute.err_lex, "String lit"); //TODO not sure if correct atribute
-					return t;
+					return aa_func12("String lit");
 				}
 			}
 
@@ -186,9 +182,8 @@ Token malar_next_token(Buffer * sc_buf)
 				b_retract(sc_buf);//TODO decide if use ++line; instead
 				continue;
 			}else{
-				t.code = ERR_T;
-				strcpy(t.attribute.err_lex, "Comment err"); //TODO notsure if correct atribute
 				b_retract(sc_buf);
+				aa_func13("Comment err");
 				return t;
 			}
 			break;
@@ -452,7 +447,7 @@ Token aa_func05(char *lexeme) {
 		t.code = INL_T;
 		t.attribute.int_value = atoi(lexeme);
 	}else {
-		return errorLexemeFormat(lexeme);
+		return aa_func12(lexeme);
 	}
 
 	return t;
@@ -475,7 +470,7 @@ Token aa_func08(char *lexeme) {
 		t.code = FPL_T;
 		t.attribute.flt_value = atof(lexeme);
 	}else {
-		return errorLexemeFormat(lexeme);
+		return aa_func12(lexeme);
 	}
 
 	return t;
@@ -497,25 +492,9 @@ Token aa_func11(char *lexeme) {
 		t.code = INL_T;
 		t.attribute.int_value = atolh(lexeme);
 	}else {
-		return errorLexemeFormat(lexeme);
+		return aa_func12(lexeme);
 	}
-
 	return t;
-
-	/* THE FUNCTION MUST CONVERT THE LEXEME REPRESENTING AN HEXADECIMAL CONSTANT
-	TO A DECIMAL INTEGER VALUE WHICH IS THE ATTRIBUTE FOR THE TOKEN.
-	THE VALUE MUST BE IN THE SAME RANGE AS the value of 2-byte integer in C.
-	THIS FUNCTION IS SIMILAR TO THE FUNCTION ABOVE
-	THE MAIN DIFFERENCE IE THAT THIS FUNCTION CALLS
-	THE FUNCTION atolh(char * lexeme) WHICH CONVERTS AN ASCII STRING
-	REPRESENTING AN HEXADECIMAL NUMBER TO INTEGER VALUE
-	IN CASE OF ERROR (OUT OF RANGE) THE FUNCTION MUST RETURN ERROR TOKEN
-	THE ERROR TOKEN ATTRIBUTE IS  lexeme. IF THE ERROR lexeme IS LONGER
-	than ERR_LEN characters, ONLY THE FIRST ERR_LEN-3 characters ARE
-	STORED IN err_lex. THEN THREE DOTS ... ARE ADDED TO THE END OF THE
-	err_lex C-type string.
-	BEFORE RETURNING THE FUNCTION MUST SET THE APROPRIATE TOKEN CODE
-	*/
 }
 
 
@@ -523,45 +502,41 @@ Token aa_func11(char *lexeme) {
 * Purpose: ACCEPTING FUNCTION FOR THE ERROR TOKEN with no retract
 * Author: Nicholas Heggart-Richer
 * Versions: 1.0
-* Called functions:
+* Called functions: strlen(), strncpy()
 * Parameters:
 *		lexeme:	The lexeme to convert to ERROR token
 * Return:
 */
 Token aa_func12(char *lexeme) {
-	/* Token t = { 0 }; */
+	Token t = { 0 };
+	t.code = ERR_T;
 
-	return errorLexemeFormat(lexeme);
-
-	/* THE FUNCTION SETS THE ERROR TOKEN. lexeme[] CONTAINS THE ERROR
-	THE ATTRIBUTE OF THE ERROR TOKEN IS THE lexeme ITSELF
-	AND IT MUST BE STORED in err_lex. IF THE ERROR lexeme IS LONGER
-	than ERR_LEN characters, ONLY THE FIRST ERR_LEN-3 characters ARE
-	STORED IN err_lex. THEN THREE DOTS ... ARE ADDED TO THE END OF THE
-	err_lex C-type string.
-	BEFORE RETURNING THE FUNCTION MUST SET THE APROPRIATE TOKEN CODE
-	*/
-
-	/* return t; */
+	if (strlen(lexeme) > ERR_LEN) {
+		strncpy(t.attribute.err_lex, lexeme, VID_LEN - 3);
+		t.attribute.err_lex[VID_LEN - 3] = '.';
+		t.attribute.err_lex[VID_LEN - 2] = '.';
+		t.attribute.err_lex[VID_LEN - 1] = '.';
+		t.attribute.err_lex[VID_LEN] = '\0';
+	}
+	else {
+		strcpy(t.attribute.err_lex, lexeme);
+	}
+	return t;
 }
 
-/*
-* Purpose: ACCEPTING FUNCTION FOR THE ERROR TOKEN with retract
+/* 
+* Purpose: ACCEPTING FUNCTION FOR THE ERROR TOKEN with retract 
 * Author: Nicholas Richer
 * Versions: 1.0
-* Called functions:
+* Called functions: b_retract(), aa_func12()
 * Parameters:
 *		lexeme:	The lexeme to convert to ERROR token
 * Return:
+*		The lexeme if the lexeme if the lexeme is too long replace the end with "..."
 */
 Token aa_func13(char *lexeme) {
-	/* Token t = { 0 }; */
-
-	return errorLexemeFormat(lexeme);
-
-	/*  */
-
-	/* return t; */
+	//b_retract(sc_buf);
+	return aa_func12(lexeme);
 }
 
 
@@ -580,9 +555,9 @@ Token aa_func13(char *lexeme) {
 *		The value calculated based on lexeme If no valid conversion could be performed, it returns zero
 */
 long atolh(char * lexeme) {
-	//return strtol(lexeme, NULL, 0);
+	return strtol(lexeme, NULL, 0); 
 
-	/* TODO IMPLEMENT ARE OWN HEX CONVERTER */
+	/* laking negative number
 	if (lexeme[0] != '0')
 		return 0;
 	long l = 0;
@@ -617,7 +592,7 @@ long atolh(char * lexeme) {
 		l += digit * p;
 	}
 	return 0;
-	
+	*/
 }
 
 /**************************************************************
@@ -708,31 +683,4 @@ int containOnlyZeros(char* lexeme) {
 		if (lexeme[i] != '0' && lexeme[i] != '.')
 			return 0;
 	return 1;
-}
-
-
-/*
-* Purpose: Format the lexeme to fit in error token
-* Author: Tiago Donchegay
-* Versions: 1.0
-* Called functions: strlen()
-* Parameters:
-*		lexeme:	The lexeme to format
-* Return:
-*		The lexeme if the lexeme if the lexeme is too long replace the end with "..."
-*/
-Token errorLexemeFormat(char* er_lexeme) {
-	Token t = { 0 };
-	t.code = ERR_T;
-
-	if (strlen(er_lexeme) > ERR_LEN) {
-		strncpy(t.attribute.err_lex, er_lexeme, VID_LEN - 3);
-		t.attribute.err_lex[VID_LEN - 3] = '.';
-		t.attribute.err_lex[VID_LEN - 2] = '.';
-		t.attribute.err_lex[VID_LEN - 1] = '.';
-		t.attribute.err_lex[VID_LEN] = '\0';
-	}else {
-		strcpy(t.attribute.err_lex, er_lexeme);
-	}
-	return t;
 }

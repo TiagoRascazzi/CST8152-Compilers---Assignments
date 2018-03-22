@@ -534,7 +534,7 @@ short b_retract(Buffer * const pBD)
 	if (pBD == NULL) {
 		return RT_FAIL1;
 	}
-	return --pBD->getc_offset;
+	return pBD->getc_offset > 0 ? --pBD->getc_offset : pBD->getc_offset;
 }
 
 /*

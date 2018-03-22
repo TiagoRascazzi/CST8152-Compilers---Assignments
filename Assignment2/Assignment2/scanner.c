@@ -678,6 +678,7 @@ int isValidFPL(char* lexeme) {
 *		True if the lexeme only contains zeros and or dot
 */
 int containOnlyZeros(char* lexeme) {
+	/*TODO Test*/
 	int i;
 	for (i = 0; i < strlen(lexeme); i++)
 		if (lexeme[i] != '0' && lexeme[i] != '.')

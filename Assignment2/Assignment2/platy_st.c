@@ -145,6 +145,7 @@ int main(int argc, char ** argv) {
 	//TODO uncomment
 	do {
 		t = malar_next_token(sc_buf);
+		printf("%d. ", line);
 		print_token(t);
 	} while (t.code != SEOF_T);
 	/*print String Literal Table if not empty*/

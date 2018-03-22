@@ -63,7 +63,7 @@ static char* errorLexemeFormat(char* er_lexeme);
 int scanner_init(Buffer * sc_buf) {
 	if (b_isempty(sc_buf)) return EXIT_FAILURE;/*1*/
 
-											   /* in case the buffer has been read previously  */
+	/* in case the buffer has been read previously  */
 	b_rewind(sc_buf);
 	b_clear(str_LTBL);
 	line = 1;
@@ -97,66 +97,118 @@ Token malar_next_token(Buffer * sc_buf)
 				/* GET THE NEXT SYMBOL FROM THE INPUT BUFFER */
 		c = b_getc(sc_buf);
 
+		/*
+			done #define SEOF_T    1  /* Source end-of-file token * /
+			done #define SCC_OP_T  7  /* String concatenation operator token * /
+			done #define ASS_OP_T  8  /* Assignment operator token * /
+			done #define ART_OP_T  9  /* Arithmetic operator token * /
+			done #define REL_OP_T 10  /* Relational operator token * / 
+			done #define LOG_OP_T 11  /* Logical operator token * /
+			done #define LPR_T    12  /* Left parenthesis token * /
+			done #define RPR_T    13  /* Right parenthesis token * /
+			done #define LBR_T    14  /* Left brace token * /
+			done #define RBR_T    15  /* Right brace token * /
+			done #define COM_T    17  /* Comma token * /
+			done #define EOS_T    18  /* End of statement *(semi - colon) * / 
+			done #define STR_T     6  /* String literal token * /
+
+			#define AVID_T    2  /* Arithmetic Variable identifier token * /
+			#define SVID_T    3  /* String Variable identifier token * /
+			#define FPL_T     4  /* Floating point literal token * /
+			#define INL_T     5  /* Integer literal token * /
+			#define KW_T     16  /* Keyword token * /
+		*/
 
 		switch (c) {
 		case ' ': continue;
-		case -1:
-		case 0:
-			t.code = SEOF_T; /*no attribute */ return t;
-		case '(': t.code = LPR_T; /*no attribute */ return t;
-		case ')': t.code = RPR_T; /*no attribute */ return t;
-		case '{': t.code = LBR_T; /*no attribute */ return t;
-		case '}': t.code = RBR_T; /*no attribute */ return t;
-		case ',': t.code = COM_T; /*no attribute */ return t;
-		case ';': t.code = EOS_T; /*no attribute */ return t;
-		case '#': t.code = SCC_OP_T; /*no attribute */ return t;
+		case '\n': ++line; continue;
+		case SEOF1:
+		case SEOF2:
+			t.code = SEOF_T; /* no attribute */ return t;
+		case '(': t.code = LPR_T; /* no attribute */ return t;
+		case ')': t.code = RPR_T; /* no attribute */ return t;
+		case '{': t.code = LBR_T; /* no attribute */ return t;
+		case '}': t.code = RBR_T; /* no attribute */ return t;
+		case ',': t.code = COM_T; /* no attribute */ return t;
+		case ';': t.code = EOS_T; /* no attribute */ return t;
+		case '#': t.code = SCC_OP_T; /* no attribute */ return t;
 		case '+': t.code = ART_OP_T; t.attribute.arr_op = PLUS; return t;
 		case '-': t.code = ART_OP_T; t.attribute.arr_op = MINUS; return t;
 		case '*': t.code = ART_OP_T; t.attribute.arr_op = MULT; return t;
-		case '/': t.code = ART_OP_T; t.attribute.arr_op = DIV; return t;//EQ, NE, GT, LT
+		case '/': t.code = ART_OP_T; t.attribute.arr_op = DIV; return t;
 
+		case '>': t.code = REL_OP_T; t.attribute.rel_op = GT; return t;
+		case '<':
+		{
+			b_mark(sc_buf, b_getcoffset(sc_buf));
+			switch (b_getc(sc_buf)) {
+			case '>': t.code = REL_OP_T; t.attribute.rel_op = NE; return t;
+			default: b_reset(sc_buf); t.code = REL_OP_T; t.attribute.rel_op = LT; return t;
+			}
+		}
 		case '=':
 		{
-			c = b_getc(sc_buf);/* get next character */
-
-			switch (c) {
+			b_mark(sc_buf, b_getcoffset(sc_buf));
+			switch (b_getc(sc_buf)) {
 			case '=': t.code = REL_OP_T; t.attribute.rel_op = EQ; return t;
-			default:
-				b_rewind(sc_buf);
-				t.code = ASS_OP_T; /*no attribute */ return t;
+			default: b_reset(sc_buf); t.code = ASS_OP_T; /*no attribute */ return t;
+			}
+		}
+
+		case '.': //Logical operator
+		{
+			b_mark(sc_buf, b_getcoffset(sc_buf));
+			c = b_getc(sc_buf);
+			if (c == 'A' && b_getc(sc_buf) == 'N' && b_getc(sc_buf) == 'D' && b_getc(sc_buf) == '.' ) {
+				t.code = LOG_OP_T; t.attribute.log_op = AND; return t;
+			}else if(c == 'O' && b_getc(sc_buf) == 'R' && b_getc(sc_buf) == '.' ) {
+				t.code = LOG_OP_T; t.attribute.log_op = OR; return t;
+			}else {
+				t.code = ERR_T;
+				strcpy(t.attribute.err_lex, "Log op"); //TODO notsure if correct atribute
+				return t;
+			}
+		}
+
+		case '"': //String literal
+		{
+			b_mark(sc_buf, b_getcoffset(sc_buf));
+
+			while ((c = b_getc(sc_buf)) != '"') {
+				if (c == SEOF1 || c == SEOF2) {
+					t.code = ERR_T;
+					strcpy(t.attribute.err_lex, "String lit"); //TODO not sure if correct atribute
+					return t;
+				}
 			}
 
+			b_reset(sc_buf);
+			short coffset = b_limit(str_LTBL);
+			while ( ( c = b_getc(sc_buf) ) != '"') b_addc(str_LTBL, c);
+			b_addc(str_LTBL, '\0');
+
+			t.code = STR_T;
+			t.attribute.str_offset = coffset;
+			return t;
 		}
 
 
 		case '!': /* Character might be comment */
 		{
-
 			b_mark(sc_buf, b_getcoffset(sc_buf)); /* mark buffer */
 
-			c = b_getc(sc_buf); /* get next character */
-
-								/* confirmed comment */
-			if (c == '!') {
-				while (c != '\n') {
-					c = b_getc(sc_buf);
-					printf("%c", c);
-				}
-
-				printf("\nComment found \n");
+			/* confirmed comment */
+			if (b_getc(sc_buf) == '!') {
+				while (b_getc(sc_buf) != '\n');
+				b_retract(sc_buf);//TODO decide if use ++line; instead
 				continue;
-			}
-			else {
-				t.code = ERR_T; /*What is our error?*/
+			}else {
+				t.code = ERR_T;
+				strcpy(t.attribute.err_lex, "Comment err"); //TODO notsure if correct atribute
 				return t;
 			}
+			break;
 		}
-		break;
-		default:
-			/* THE STRING LITERAL IS ILLEGAL */
-			/* SET ERROR TOKEN FOR ILLEGAL STRING(see assignment) */
-			/* DO NOT STORE THE ILLEGAL STRINg IN THE str_LTBL */
-			return t;
 
 
 		}
@@ -204,6 +256,7 @@ Token malar_next_token(Buffer * sc_buf)
 		IF THE FOLLOWING CHAR IS NOT !REPORT AN ERROR
 		ELSE IN A LOOP SKIP CHARACTERS UNTIL line terminator is found THEN continue;
 		...
+
 		IF STRING(FOR EXAMPLE, "text") IS FOUND
 		SET MARK TO MARK THE BEGINNING OF THE STRING
 		IF THE STRING IS LEGAL
@@ -228,16 +281,21 @@ Token malar_next_token(Buffer * sc_buf)
 		*/
 
 
+
+
+
+
 		/* Part 2: Implementation of Finite State Machine (DFA)
 		or Transition Table driven Scanner
 		Note: Part 2 must follow Part 1
 		*/
 
 		/* SET THE MARK AT THE BEGINING OF THE LEXEME AND SAVE IT IN lexstart */
-		lexstart = b_mark(sc_buf, /*UNKNOWN for now*/0);
+		lexstart = b_mark(sc_buf, b_getcoffset(sc_buf)-1);
 
 		/* CODE YOUR FINATE STATE MACHINE HERE(FSM or DFA)
-		/* IT IMPLEMENTS THE FOLLOWING ALGORITHM :
+		/* IT IMPLEMENTS THE FOLLOWING ALGORITHM : */
+
 
 		/*
 		FSM0.Begin with state = 0 and the input character c
@@ -246,14 +304,24 @@ Token malar_next_token(Buffer * sc_buf)
 		FSM2.Get the next character
 		FSM3.If the state is not accepting(accept == NOAS), go to step FSM1
 		If the step is accepting, token is found, leave the machine and
-		call an accepting function as described below.
+		call an accepting function as described below.*/
+
+		state = get_next_state(state, c, &accept);
+		while(accept == NOAS) {
+			c = b_getc(sc_buf);
+			state = get_next_state(state, c, &accept);
+		}
 
 
-		RETRACT  getc_offset IF THE FINAL STATE IS A RETRACTING FINAL STATE
+		//RETRACT  getc_offset IF THE FINAL STATE IS A RETRACTING FINAL STATE
+		if (accept == ASWR) {
+			b_retract(sc_buf);
+		}
 
-		SET lexend TO getc_offset USING AN APPROPRIATE BUFFER FUNCTION
+		//SET lexend TO getc_offset USING AN APPROPRIATE BUFFER FUNCTION
+		lexend = b_getcoffset(sc_buf);
 
-		CREATE  A TEMPORRARY LEXEME BUFFER HERE;
+		/*CREATE  A TEMPORRARY LEXEME BUFFER HERE;
 		lex_buf = b_allocate(...);
 		.RETRACT getc_offset to the MARK SET PREVIOUSLY AT THE BEGINNING OF THE LEXEME AND
 		.USING b_getc() COPY THE LEXEME BETWEEN lexstart AND lexend FROM THE INPUT BUFFER INTO lex_buf USING b_addc(...),
@@ -265,11 +333,18 @@ Token malar_next_token(Buffer * sc_buf)
 		.THE ARGUMENT TO THE FUNCTION IS THE STRING STORED IN lex_buf.
 		....
 		*/
+		lex_buf = b_allocate( lexend - lexstart + 1, 0, 'f');  //TODO check if buffer is null
+		b_reset(sc_buf);
+		for (int i = lexstart; i < lexend; i++) {
+			c = b_getc(sc_buf);
+			b_addc(lex_buf, c);
+		}
+		b_addc(lex_buf, '\0');
 
-		/*Token t = aa_func03("thisisaveryveryverylongvid");*/
+		t = (*aa_table[state])(b_location(lex_buf, 0) );
+
 
 		b_free(lex_buf);
-		t.code = SEOF_T; /*TODO remove testinf end of file???*/
 		return t;
 
 	}//end while(1)

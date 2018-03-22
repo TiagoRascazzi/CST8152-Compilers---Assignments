@@ -26,6 +26,9 @@
 *    '\0' or one of 255,0xFF,EOF
 */
 
+#define SEOF1 0
+#define SEOF2 255
+
 /*  Special case tokens processed separately one by one
 *  in the token-driven part of the scanner
 *  '=' , ' ' , '(' , ')' , '{' , '}' , == , <> , '>' , '<' , ';',
@@ -48,13 +51,13 @@ int  st_table[NUMBER_OF_STATES][TABLE_COLUMNS] =
 {
 	//[a-wyzG-Z]	[A-F]	0	[1-9]	.	$	x	other
 	{ 1,			1,		6,	4,		ES,	ES,	ES,	ES}, //State 0
-	{ 1,			1,		1,	1,		2,	3,	2,	2 }, //State 1
+	{ 1,			1,		1,	1,		ES,	3,	2,	2 }, //State 1
 	{ IS,			IS,		IS,	IS,		IS,	IS,	IS,	IS}, //State 2
 	{ IS,			IS,		IS,	IS,		IS,	IS,	IS,	IS}, //State 3
-	{ 5,			5,		4,	4,		7,	5,	5,	 5}, //State 4
+	{ ES,			ES,		4,	4,		7,	5,	ES,	 5}, //State 4
 	{ IS,			IS,		IS,	IS,		IS,	IS,	IS,	IS}, //State 5
-	{ 5,			5,		6,	5,		7,	5,	9,	 5}, //State 6
-	{ 8,			8,		7,	7,		8,	8,	8,	 8}, //State 7
+	{ ES,			ES,		6,	5,		7,	ES,	9,	 5}, //State 6
+	{ ES,			ES,		7,	7,		ES,	8,	ES,	 8}, //State 7
 	{ IS,			IS,		IS,	IS,		IS,	IS,	IS,	IS}, //State 8
 	{ ES,			10,		10,	10,		ES,	ES,	ES,	ES}, //State 9
 	{ ES,			10,		10,	10,		ES,	ES,	ES,	11}, //State 10

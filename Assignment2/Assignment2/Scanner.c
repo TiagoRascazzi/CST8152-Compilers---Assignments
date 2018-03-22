@@ -91,7 +91,8 @@ Token malar_next_token(Buffer * sc_buf)
 	short lexstart;  /*start offset of a lexeme in the input char buffer (array) */
 	short lexend;    /*end   offset of a lexeme in the input char buffer (array)*/
 	int accept = NOAS; /* type of state - initially not accepting */
-					   /* DECLARE YOUR LOCAL VARIABLES HERE IF NEEDED */
+
+	/* DECLARE YOUR LOCAL VARIABLES HERE IF NEEDED */
 
 	short coffset = 0;
 
@@ -579,18 +580,17 @@ Token aa_func13(char *lexeme) {
 *		The value calculated based on lexeme If no valid conversion could be performed, it returns zero
 */
 long atolh(char * lexeme) {
-	return strtol(lexeme, NULL, 0);
+	//return strtol(lexeme, NULL, 0);
 
-	/* TODO IMPLEMENT ARE OWN HEX CONVERTER
+	/* TODO IMPLEMENT ARE OWN HEX CONVERTER */
 	if (lexeme[0] != '0')
 		return 0;
 	long l = 0;
 	for (int i = 0; i < strlen(lexeme); i++) {
-		char nextChar = lexeme[strlen(lexeme) - i];
+		char nextChar = lexeme[strlen(lexeme) - i -1];
 
 		int digit = 0;
 		switch (nextChar) {
-		case '\0': digit = 0; break;
 		case '0': digit = 0; break;
 		case '1': digit = 1; break;
 		case '2': digit = 2; break;
@@ -613,11 +613,11 @@ long atolh(char * lexeme) {
 		int p = 16;
 		if (i == 0) p = 1;
 		for (int j = 0; j < i - 1; j++)
-			p *= p;
+			p *= 16;
 		l += digit * p;
 	}
 	return 0;
-	*/
+	
 }
 
 /**************************************************************

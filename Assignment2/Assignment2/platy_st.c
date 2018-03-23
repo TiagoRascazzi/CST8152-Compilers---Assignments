@@ -12,7 +12,7 @@
 * The define does not have any effect in other compiler projects.
 */
 #define _CRT_SECURE_NO_WARNINGS
-#define _CRTDBG_MAP_ALLOC //TODO remove mem leak detect
+#define _CRTDBG_MAP_ALLOC /* TODO remove mem leak detect */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -61,7 +61,7 @@ void print_token(Token t);
 int main(int argc, char ** argv) {
 
 
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);//TODO remove mem leak detect
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);/* TODO remove mem leak detect */
 
 	Buffer *sc_buf; /* pointer to input (source) buffer */
 	FILE *fi;       /* input file handle */
@@ -139,11 +139,8 @@ int main(int argc, char ** argv) {
 	printf("\nScanning source file...\n\n");
 	printf("Token\t\tAttribute\n");
 	printf("----------------------------------\n");
-	/*printf("TESTING, NOT REAL PRODUCT\n");*/ /*TODO REMOVE PRINTF for testing*/
-	//TODO uncomment
 	do {
 		t = malar_next_token(sc_buf);
-		/* TODO remove completely printf("%d. ", line); */
 		print_token(t);
 	} while (t.code != SEOF_T);
 	/*print String Literal Table if not empty*/

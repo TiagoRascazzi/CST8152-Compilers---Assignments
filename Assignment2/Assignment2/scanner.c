@@ -44,7 +44,7 @@ extern Buffer * str_LTBL;	/*String literal table */
 int line;					/* current line number of the source code */
 extern int scerrnum;		/* defined in platy_st.c - run-time error number */
 
-							/* Local(file) global objects - variables */
+			/* Local(file) global objects - variables */
 static Buffer *lex_buf;/*pointer to temporary lexeme buffer*/
 
 					   /* No other global variable declarations/definitiond are allowed */
@@ -90,7 +90,12 @@ Token malar_next_token(Buffer * sc_buf)
 	short lexend;		/* end offset of a lexeme in the input char buffer (array) */
 	int accept = NOAS;	/* type of state - initially not accepting */
 
+	/*Local variables*/
 	short coffset = 0;
+	int errBufStart = 0;
+	int errBufEnd = 0;
+	int i = 0;
+	Buffer* errBuf = NULL;
 
 	if (sc_buf == NULL) {
 		t.code = RTE_T;
@@ -111,12 +116,12 @@ Token malar_next_token(Buffer * sc_buf)
 		case '\v':
 		case '\f':
 		case '\r':
-			continue;					// Ignore the whitespaces
-		case '\n': ++line; continue;	//Count the lines
+			continue;					/* Ignore the whitespaces */
+		case '\n': ++line; continue;	/* Count the lines */
 		case SEOF1:
 		case SEOF2:
-			t.code = SEOF_T; /* no attribute */ return t;		//Check end of file 
-		case '(': t.code = LPR_T; /* no attribute */ return t;	
+			t.code = SEOF_T; /* no attribute */ return t; /* Check end of file */ 
+		case '(': t.code = LPR_T; /* no attribute */ return t;
 		case ')': t.code = RPR_T; /* no attribute */ return t;
 		case '{': t.code = LBR_T; /* no attribute */ return t;
 		case '}': t.code = RBR_T; /* no attribute */ return t;
@@ -146,15 +151,17 @@ Token malar_next_token(Buffer * sc_buf)
 			}
 		}
 
-		case '.': //Logical operator
+		case '.': /* Logical operator */
 		{
 			b_mark(sc_buf, b_getcoffset(sc_buf));
 			c = b_getc(sc_buf);
-			if (c == 'A' && b_getc(sc_buf) == 'N' && b_getc(sc_buf) == 'D' && b_getc(sc_buf) == '.' ) {
+			if (c == 'A' && b_getc(sc_buf) == 'N' && b_getc(sc_buf) == 'D' && b_getc(sc_buf) == '.') {
 				t.code = LOG_OP_T; t.attribute.log_op = AND; return t;
-			}else if(c == 'O' && b_getc(sc_buf) == 'R' && b_getc(sc_buf) == '.' ) {
+			}
+			else if (c == 'O' && b_getc(sc_buf) == 'R' && b_getc(sc_buf) == '.') {
 				t.code = LOG_OP_T; t.attribute.log_op = OR; return t;
-			}else {
+			}
+			else {
 				char cerr[2];
 				cerr[0] = '.';
 				cerr[1] = '\0';
@@ -163,17 +170,17 @@ Token malar_next_token(Buffer * sc_buf)
 			}
 		}
 
-		case '"': //String literal
+		case '"': /* String literal */
 		{
 			b_mark(sc_buf, b_getcoffset(sc_buf));
 
-			int errBufStart = b_getcoffset(sc_buf);
+			errBufStart = b_getcoffset(sc_buf);
 			while ((c = b_getc(sc_buf)) != '"') {
 				if (c == SEOF1 || c == SEOF2) {
 
-					int errBufEnd = b_getcoffset(sc_buf);
+					errBufEnd = b_getcoffset(sc_buf);
 
-					Buffer* errBuf = b_allocate(errBufEnd - errBufStart + 1, 0, 'f');
+					errBuf = b_allocate(errBufEnd - errBufStart + 1, 0, 'f');
 
 					if (errBuf == NULL) {
 						t.code = RTE_T;
@@ -184,7 +191,7 @@ Token malar_next_token(Buffer * sc_buf)
 
 					b_reset(sc_buf);
 					b_addc(errBuf, '"');
-					for (int i = errBufStart; i < errBufEnd; i++) {
+					for (i = errBufStart; i < errBufEnd; i++) {
 						c = b_getc(sc_buf);
 						b_addc(errBuf, c);
 					}
@@ -199,7 +206,7 @@ Token malar_next_token(Buffer * sc_buf)
 
 			b_reset(sc_buf);
 			coffset = b_limit(str_LTBL);
-			while ( ( c = b_getc(sc_buf) ) != '"') b_addc(str_LTBL, c);
+			while ((c = b_getc(sc_buf)) != '"') b_addc(str_LTBL, c);
 			b_addc(str_LTBL, '\0');
 
 			t.code = STR_T;
@@ -217,7 +224,8 @@ Token malar_next_token(Buffer * sc_buf)
 				while ((c = b_getc(sc_buf)) != '\n' && c != SEOF1 && c != SEOF2);
 				b_retract(sc_buf);
 				continue;
-			}else{
+			}
+			else {
 				b_retract(sc_buf);
 				t.code = ERR_T;
 
@@ -239,22 +247,22 @@ Token malar_next_token(Buffer * sc_buf)
 		 * or Transition Table driven Scanner
 		 */
 
-		/* SET THE MARK AT THE BEGINING OF THE LEXEME AND SAVE IT IN lexstart */
-		lexstart = b_mark(sc_buf, b_getcoffset(sc_buf)-1);
+		 /* SET THE MARK AT THE BEGINING OF THE LEXEME AND SAVE IT IN lexstart */
+		lexstart = b_mark(sc_buf, b_getcoffset(sc_buf) - 1);
 
 		state = get_next_state(state, c, &accept);
-		while(accept == NOAS)
+		while (accept == NOAS)
 			state = get_next_state(state, b_getc(sc_buf), &accept);
 
 		/* RETRACT  getc_offset IF THE FINAL STATE IS A RETRACTING FINAL STATE */
 		if (accept == ASWR || accept == ER)
 			b_retract(sc_buf);
-		
+
 		/* SET lexend TO getc_offset USING AN APPROPRIATE BUFFER FUNCTION */
 		lexend = b_getcoffset(sc_buf);
 
 		/* CREATE  A TEMPORRARY LEXEME BUFFER HERE */
-		lex_buf = b_allocate( lexend - lexstart + 1, 0, 'f');
+		lex_buf = b_allocate(lexend - lexstart + 1, 0, 'f');
 
 		if (lex_buf == NULL) {
 			t.code = RTE_T;
@@ -264,11 +272,11 @@ Token malar_next_token(Buffer * sc_buf)
 		}
 
 		b_reset(sc_buf);
-		for (int i = lexstart; i < lexend; i++)  // TODO State machine doens't work on n=001;
+		for (i = lexstart; i < lexend; i++)
 			b_addc(lex_buf, b_getc(sc_buf));
 		b_addc(lex_buf, '\0');
 
-		t = (*aa_table[state])(b_location(lex_buf, 0) );
+		t = (*aa_table[state])(b_location(lex_buf, 0));
 
 
 		b_free(lex_buf);
@@ -280,7 +288,7 @@ Token malar_next_token(Buffer * sc_buf)
 * DO NOT MODIFY THE CODE OF THIS FUNCTION
 * YOU CAN REMOVE THE COMMENTS
 */
-int get_next_state(int state, char c, int *accept){
+int get_next_state(int state, char c, int *accept) {
 	int col;
 	int next;
 	col = char_class(c);
@@ -312,7 +320,7 @@ int get_next_state(int state, char c, int *accept){
 *		c:	The charactor to match to a column
 * Return: The appropriate column number of the transistion table
 */
-int char_class(char c){
+int char_class(char c) {
 	if ((c >= 'a' && c <= 'w') || c == 'y' || c == 'z' || (c >= 'G' && c <= 'Z')) return 0;
 	if (c >= 'A' && c <= 'F')	return 1;
 	if (c == '0') return 2;
@@ -333,7 +341,7 @@ int char_class(char c){
 *		lexeme:	The lexeme to convert to AVID/KW token
 * Return: The appropriate token based on lexeme
 */
-Token aa_func02(char *lexeme){
+Token aa_func02(char *lexeme) {
 	Token t = { 0 };
 
 	int keywordIndex = iskeyword(lexeme);
@@ -359,15 +367,16 @@ Token aa_func02(char *lexeme){
 *		lexeme:	The lexeme to convert to SVID token
 * Return: Return SVID token with formated name
 */
-Token aa_func03(char *lexeme){
+Token aa_func03(char *lexeme) {
 	Token t = { 0 };
-	
+
 	t.code = SVID_T;
-	if (strlen(lexeme) > VID_LEN){
+	if (strlen(lexeme) > VID_LEN) {
 		strncpy(t.attribute.vid_lex, lexeme, VID_LEN - 1);
 		t.attribute.vid_lex[VID_LEN - 1] = '$';
 		t.attribute.vid_lex[VID_LEN] = '\0';
-	}else {
+	}
+	else {
 		strcpy(t.attribute.vid_lex, lexeme);
 	}
 	return t;
@@ -388,7 +397,8 @@ Token aa_func05(char *lexeme) {
 	if (isValidIL(lexeme)) {
 		t.code = INL_T;
 		t.attribute.int_value = atoi(lexeme);
-	}else {
+	}
+	else {
 		return aa_func12(lexeme);
 	}
 	return t;
@@ -404,13 +414,14 @@ Token aa_func05(char *lexeme) {
 *		lexeme:	The lexeme to convert to FPL token
 * Return: Return FPL token exept if out of range it return an error token
 */
-Token aa_func08(char *lexeme){
+Token aa_func08(char *lexeme) {
 	Token t = { 0 };
 
-	if (isValidFPL(lexeme)){
+	if (isValidFPL(lexeme)) {
 		t.code = FPL_T;
 		t.attribute.flt_value = atof(lexeme);
-	}else {
+	}
+	else {
 		return aa_func12(lexeme);
 	}
 	return t;
@@ -425,13 +436,14 @@ Token aa_func08(char *lexeme){
 *		lexeme:	The lexeme to convert to HIL token
 * Return: Return HIL token exept if out of range it return an error token
 */
-Token aa_func11(char *lexeme){
+Token aa_func11(char *lexeme) {
 	Token t = { 0 };
 
 	if (isValidHIL(lexeme)) {
 		t.code = INL_T;
 		t.attribute.int_value = atolh(lexeme);
-	}else {
+	}
+	else {
 		return aa_func12(lexeme);
 	}
 	return t;
@@ -447,7 +459,7 @@ Token aa_func11(char *lexeme){
 *		lexeme:	The lexeme to convert to ERROR token
 * Return:
 */
-Token aa_func12(char *lexeme){
+Token aa_func12(char *lexeme) {
 	Token t = { 0 };
 	t.code = ERR_T;
 
@@ -457,7 +469,8 @@ Token aa_func12(char *lexeme){
 		t.attribute.err_lex[ERR_LEN - 2] = '.';
 		t.attribute.err_lex[ERR_LEN - 1] = '.';
 		t.attribute.err_lex[ERR_LEN] = '\0';
-	}else {
+	}
+	else {
 		strcpy(t.attribute.err_lex, lexeme);
 	}
 	return t;
@@ -489,7 +502,7 @@ Token aa_func13(char *lexeme) {
 * Parameters:
 *		lexeme:	The lexeme to convert to Integer value
 * Return:
-*		The value calculated based on lexeme 
+*		The value calculated based on lexeme
 */
 long atolh(char * lexeme) {
 	return strtol(lexeme, NULL, 0);
@@ -529,7 +542,7 @@ int iskeyword(char * kw_lexeme) {
 * Return:
 *		True if the lexeme is valid
 */
-int isValidHIL(char* lexeme){
+int isValidHIL(char* lexeme) {
 	long l = atolh(lexeme);
 	return l >= 0 && l <= USHRT_MAX - 1;
 
@@ -562,5 +575,5 @@ int isValidIL(char* lexeme) {
 */
 int isValidFPL(char* lexeme) {
 	double d = strtod(lexeme, NULL);
-	return d >= FLT_MIN && d <= FLT_MAX || d == 0.0f;
+	return (d >= FLT_MIN && d <= FLT_MAX) || d == 0.0f;
 }

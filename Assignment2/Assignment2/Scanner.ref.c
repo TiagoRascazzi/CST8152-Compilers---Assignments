@@ -257,7 +257,7 @@ or #undef DEBUF is used - see the top of the file.
 	return next;
 }
 
-int char_class (char c) //TODO FIRST
+int char_class (char c) 
 {
         int val;
 

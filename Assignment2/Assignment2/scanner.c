@@ -118,35 +118,35 @@ Token malar_next_token(Buffer * sc_buf)
 		case '\n': ++line; continue;	/* Count the lines */
 		case SEOF1:
 		case SEOF2:
-			t.code = SEOF_T; /* no attribute */ return t;					//Check end of file 
-		case '(': t.code = LPR_T; /* no attribute */ return t;				//Check for left parenthese
-		case ')': t.code = RPR_T; /* no attribute */ return t;				//Check for right parenthese
-		case '{': t.code = LBR_T; /* no attribute */ return t;				//Check for left braket
-		case '}': t.code = RBR_T; /* no attribute */ return t;				//Check for right braket
-		case ',': t.code = COM_T; /* no attribute */ return t;				//Check for comma
-		case ';': t.code = EOS_T; /* no attribute */ return t;				//Check for semicolon
-		case '#': t.code = SCC_OP_T; /* no attribute */ return t;			//Check for hash character
-		case '+': t.code = ART_OP_T; t.attribute.arr_op = PLUS; return t;	//Check for plus arithmetic operator
-		case '-': t.code = ART_OP_T; t.attribute.arr_op = MINUS; return t;	//Check for minus arithmetic operator
-		case '*': t.code = ART_OP_T; t.attribute.arr_op = MULT; return t;	//Check for multiplication arithmetic operator
-		case '/': t.code = ART_OP_T; t.attribute.arr_op = DIV; return t;	//Check for division arithmetic operator
-
-		case '>': t.code = REL_OP_T; t.attribute.rel_op = GT; return t;		//Check for the greater then relational operator
+			t.code = SEOF_T; /* no attribute */ return t;					/*Check end of file 							  */
+		case '(': t.code = LPR_T; /* no attribute */ return t;				/*Check for left parenthese						  */
+		case ')': t.code = RPR_T; /* no attribute */ return t;				/*Check for right parenthese					  */
+		case '{': t.code = LBR_T; /* no attribute */ return t;				/*Check for left braket							  */
+		case '}': t.code = RBR_T; /* no attribute */ return t;				/*Check for right braket						  */
+		case ',': t.code = COM_T; /* no attribute */ return t;				/*Check for comma								  */
+		case ';': t.code = EOS_T; /* no attribute */ return t;				/*Check for semicolon							  */
+		case '#': t.code = SCC_OP_T; /* no attribute */ return t;			/*Check for hash character						  */
+		case '+': t.code = ART_OP_T; t.attribute.arr_op = PLUS; return t;	/*Check for plus arithmetic operator			  */
+		case '-': t.code = ART_OP_T; t.attribute.arr_op = MINUS; return t;	/*Check for minus arithmetic operator			  */
+		case '*': t.code = ART_OP_T; t.attribute.arr_op = MULT; return t;	/*Check for multiplication arithmetic operator	  */
+		case '/': t.code = ART_OP_T; t.attribute.arr_op = DIV; return t;	/*Check for division arithmetic operator		  */
+																			
+		case '>': t.code = REL_OP_T; t.attribute.rel_op = GT; return t;		/*Check for the greater then relational operator  */
 
 		case '<':
 		{
 			b_mark(sc_buf, b_getcoffset(sc_buf));
 			switch (b_getc(sc_buf)) {
-			case '>': t.code = REL_OP_T; t.attribute.rel_op = NE; return t;						//Check for the not equal relational operator
-			default: b_reset(sc_buf); t.code = REL_OP_T; t.attribute.rel_op = LT; return t;		//Check for the lesser then relational operator
+			case '>': t.code = REL_OP_T; t.attribute.rel_op = NE; return t;						/*Check for the not equal relational operator */
+			default: b_reset(sc_buf); t.code = REL_OP_T; t.attribute.rel_op = LT; return t;		/*Check for the lesser then relational operator */
 			}
 		}
 		case '=':
 		{
 			b_mark(sc_buf, b_getcoffset(sc_buf));
 			switch (b_getc(sc_buf)) {
-			case '=': t.code = REL_OP_T; t.attribute.rel_op = EQ; return t;				//Check for the equal relational operator
-			default: b_reset(sc_buf); t.code = ASS_OP_T; /*no attribute */ return t;	//Check for the assignment operator
+			case '=': t.code = REL_OP_T; t.attribute.rel_op = EQ; return t;				/* Check for the equal relational operator */
+			default: b_reset(sc_buf); t.code = ASS_OP_T; /*no attribute */ return t;	/* Check for the assignment operator */
 			}
 		}
 
@@ -156,11 +156,11 @@ Token malar_next_token(Buffer * sc_buf)
 			c = b_getc(sc_buf);
 
 			if (c == 'A' && b_getc(sc_buf) == 'N' && b_getc(sc_buf) == 'D' && b_getc(sc_buf) == '.' ) {
-				t.code = LOG_OP_T; t.attribute.log_op = AND; return t;	//Check for the logical operator and
+				t.code = LOG_OP_T; t.attribute.log_op = AND; return t;	/* Check for the logical operator and */
 			}else if(c == 'O' && b_getc(sc_buf) == 'R' && b_getc(sc_buf) == '.' ) {
-				t.code = LOG_OP_T; t.attribute.log_op = OR; return t;	//Check for the logical operator or
+				t.code = LOG_OP_T; t.attribute.log_op = OR; return t;	/* Check for the logical operator or */
 			}else {
-				//If invalid logical operator
+				/* If invalid logical operator */
 				t.code = ERR_T;
 				t.attribute.err_lex[0] = '.';
 				t.attribute.err_lex[1] = '\0';

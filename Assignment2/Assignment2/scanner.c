@@ -155,6 +155,7 @@ Token malar_next_token(Buffer * sc_buf)
 				char cerr[2];
 				cerr[0] = '.';
 				cerr[1] = '\0';
+				b_retract(sc_buf);
 				return aa_func12(cerr);
 			}
 		}
@@ -191,15 +192,16 @@ Token malar_next_token(Buffer * sc_buf)
 				continue;
 			}else{
 				b_retract(sc_buf);
-				char cerr[3];
-				cerr[0] = '!';
-				cerr[1] = (c = b_getc(sc_buf));
-				cerr[2] = '\0';
+				t.code = ERR_T;
+
+				t.attribute.err_lex[0] = '!';
+				t.attribute.err_lex[1] = (c = b_getc(sc_buf));
+				t.attribute.err_lex[2] = '\0';
 
 				while ((c = b_getc(sc_buf)) != '\n' && c != SEOF1 && c != SEOF2);
 
 				b_retract(sc_buf);
-				return aa_func13(cerr);
+				return t;
 			}
 			break;
 		}
@@ -301,7 +303,7 @@ Token malar_next_token(Buffer * sc_buf)
 		call an accepting function as described below.*/
 
 		state = get_next_state(state, c, &accept);
-		while(accept == NOAS) {
+		while(accept == NOAS){
 			c = b_getc(sc_buf);
 			state = get_next_state(state, c, &accept);
 		}
@@ -405,7 +407,7 @@ int char_class(char c)
 *		lexeme:	The lexeme to convert to AVID/KW token
 * Return: The appropriate token based on lexeme
 */
-Token aa_func02(char *lexeme) {
+Token aa_func02(char *lexeme){
 	Token t = { 0 };
 
 	int keywordIndex = iskeyword(lexeme);
@@ -431,18 +433,17 @@ Token aa_func02(char *lexeme) {
 *		lexeme:	The lexeme to convert to SVID token
 * Return: Return SVID token with formated name
 */
-Token aa_func03(char *lexeme) {
+Token aa_func03(char *lexeme){
 	Token t = { 0 };
 
 	t.code = SVID_T;
-	if (strlen(lexeme) > VID_LEN) {
+	if (strlen(lexeme) > VID_LEN){
 		strncpy(t.attribute.vid_lex, lexeme, VID_LEN - 1);
 		t.attribute.vid_lex[VID_LEN - 1] = '$';
 	}
 	else {
 		strncpy(t.attribute.vid_lex, lexeme, VID_LEN);
 	}
-
 	t.attribute.vid_lex[VID_LEN] = '\0';
 
 	return t;
@@ -502,7 +503,7 @@ Token aa_func08(char *lexeme){
 *		lexeme:	The lexeme to convert to HIL token
 * Return: Return HIL token exept if out of range it return an error token
 */
-Token aa_func11(char *lexeme) {
+Token aa_func11(char *lexeme){
 	Token t = { 0 };
 
 	if (isValidHIL(lexeme)) {
@@ -524,7 +525,7 @@ Token aa_func11(char *lexeme) {
 *		lexeme:	The lexeme to convert to ERROR token
 * Return:
 */
-Token aa_func12(char *lexeme) {
+Token aa_func12(char *lexeme){
 	Token t = { 0 };
 	t.code = ERR_T;
 
@@ -572,7 +573,7 @@ Token aa_func13(char *lexeme) {
 *		The value calculated based on lexeme If no valid conversion could be performed, it returns zero
 */
 long atolh(char * lexeme) {
-	return strtol(lexeme, NULL, 0); 
+	return strtol(lexeme, NULL, 0);
 
 	/* laking negative number
 	if (lexeme[0] != '0')
@@ -647,11 +648,11 @@ int iskeyword(char * kw_lexeme) {
 * Return:
 *		True if the lexeme is valid
 */
-int isValidHIL(char* lexeme) {
+int isValidHIL(char* lexeme){
 	long l = atolh(lexeme); /*Convert hex string to long TODO FIX Redundent??*/
 
 	/*Is long less than USHRT_MAX*/
-	return ((l >= 0 && l <= USHRT_MAX - 1)) && !(l == 0 && !containOnlyZeros(lexeme));
+	return ((l >= 0 && l <= USHRT_MAX - 1)); //&& !(l == 0 && !containOnlyZeros(lexeme));
 
 }
 
@@ -695,10 +696,11 @@ int isValidFPL(char* lexeme) {
 * Return:
 *		True if the lexeme only contains zeros and or dot
 */
-int containOnlyZeros(char* lexeme) {
+int containOnlyZeros(char* lexeme){
 	int i;
 	for (i = 0; i < strlen(lexeme); i++)
-		if (lexeme[i] != '0' && lexeme[i] != '.')
+		if (lexeme[i] != '0' && lexeme[i] != '.') { // || (i == 1 && lexeme[i] != 'x')
 			return 0;
+		}
 	return 1;
 }

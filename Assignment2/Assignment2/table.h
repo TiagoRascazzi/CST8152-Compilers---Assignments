@@ -56,10 +56,10 @@ int  st_table[NUMBER_OF_STATES][TABLE_COLUMNS] =
 	{ IS,			IS,		IS,	IS,		IS,	IS,	IS,	IS}, //State 3
 	{ ES,			ES,		4,	4,		7,	5,	ES,	 5}, //State 4
 	{ IS,			IS,		IS,	IS,		IS,	IS,	IS,	IS}, //State 5
-	{ ES,			ES,		6,	5,		7,	ES,	9,	 5}, //State 6
+	{ ES,			ES,		6,	ES,		7,	ES,	9,	 5}, //State 6
 	{ 8,			8,		7,	7,		8,	8,	ES,	 8}, //State 7
 	{ IS,			IS,		IS,	IS,		IS,	IS,	IS,	IS}, //State 8
-	{ ES,			10,		10,	10,		ES,	ES,	ES,	ES}, //State 9
+	{ ES,			10,		10,	10,		ER,	ER,	ER,	ER}, //State 9
 	{ ES,			10,		10,	10,		ES,	ES,	ES,	11}, //State 10
 	{ IS,			IS,		IS,	IS,		IS,	IS,	IS,	IS}, //State 11
 	{ IS,			IS,		IS,	IS,		IS,	IS,	IS,	IS}, //State 12

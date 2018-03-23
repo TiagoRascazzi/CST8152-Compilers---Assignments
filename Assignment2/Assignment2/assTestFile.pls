@@ -1,1 +1,1 @@
-n=001;  !! illegal decimal literal
+0.0L

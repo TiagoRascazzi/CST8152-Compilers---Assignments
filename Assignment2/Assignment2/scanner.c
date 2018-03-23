@@ -186,7 +186,7 @@ Token malar_next_token(Buffer * sc_buf)
 
 			/* confirmed comment */
 			if (b_getc(sc_buf) == '!') {
-				while (b_getc(sc_buf) != '\n');
+				while ((c = b_getc(sc_buf)) != '\n' && c != SEOF1 && c != SEOF2);
 				b_retract(sc_buf);//TODO decide if use ++line; instead
 				continue;
 			}else{
@@ -307,8 +307,10 @@ Token malar_next_token(Buffer * sc_buf)
 		}
 
 
+
+
 		//RETRACT  getc_offset IF THE FINAL STATE IS A RETRACTING FINAL STATE
-		if (accept == ASWR) {
+		if (accept == ASWR || accept == ER){
 			b_retract(sc_buf);
 		}
 
@@ -329,7 +331,7 @@ Token malar_next_token(Buffer * sc_buf)
 		*/
 		lex_buf = b_allocate( lexend - lexstart + 1, 0, 'f');  //TODO check if buffer is null
 		b_reset(sc_buf);
-		for (int i = lexstart; i < lexend; i++) { // TODO For loop required? Not Ansi C compliant
+		for (int i = lexstart; i < lexend; i++) { // TODO State machine doens't work on n=001;
 			c = b_getc(sc_buf);
 			b_addc(lex_buf, c);
 		}
@@ -478,10 +480,10 @@ Token aa_func05(char *lexeme) {
 *		lexeme:	The lexeme to convert to FPL token
 * Return: Return FPL token exept if out of range it return an error token
 */
-Token aa_func08(char *lexeme) {
+Token aa_func08(char *lexeme){
 	Token t = { 0 };
 
-	if (isValidFPL(lexeme)) {
+	if (isValidFPL(lexeme)){
 		t.code = FPL_T;
 		t.attribute.flt_value = atof(lexeme);
 	}else {
@@ -646,7 +648,7 @@ int iskeyword(char * kw_lexeme) {
 *		True if the lexeme is valid
 */
 int isValidHIL(char* lexeme) {
-	long l = atolh(lexeme); /*Convert hex string to long*/
+	long l = atolh(lexeme); /*Convert hex string to long TODO FIX Redundent??*/
 
 	/*Is long less than USHRT_MAX*/
 	return ((l >= 0 && l <= USHRT_MAX - 1)) && !(l == 0 && !containOnlyZeros(lexeme));
@@ -680,7 +682,8 @@ int isValidIL(char* lexeme) {
 */
 int isValidFPL(char* lexeme) {
 	double d = strtod(lexeme, NULL);
-	return (((d >= FLT_MIN && d <= FLT_MAX) && d != HUGE_VALF && d != -HUGE_VALF) && !(d == 0 && !containOnlyZeros(lexeme)));
+	return (d >= FLT_MIN && d <= FLT_MAX || d == 0.0f);
+	//return (((d >= FLT_MIN && d <= FLT_MAX) && d != HUGE_VALF && d != -HUGE_VALF) && !(d == 0.0 && !containOnlyZeros(lexeme)));
 }
 /*
 * Purpose: Verify that the lexeme has only zeros of dot

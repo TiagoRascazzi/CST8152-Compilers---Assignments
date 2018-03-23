@@ -88,7 +88,12 @@ Token malar_next_token(Buffer * sc_buf)
 	short lexend;		/* end offset of a lexeme in the input char buffer (array) */
 	int accept = NOAS;	/* type of state - initially not accepting */
 
-	/* Check if the buffer is null */
+	/*Local variables*/
+	int errBufStart = 0;
+	int errBufEnd = 0;
+	int i = 0;
+	Buffer* errBuf = NULL;
+
 	if (sc_buf == NULL) {
 		/* Generate a runtime error token */
 		t.code = RTE_T;
@@ -109,8 +114,8 @@ Token malar_next_token(Buffer * sc_buf)
 		case '\v':
 		case '\f':
 		case '\r':
-			continue;					// Ignore the whitespaces
-		case '\n': ++line; continue;	//Count the lines
+			continue;					/* Ignore the whitespaces */
+		case '\n': ++line; continue;	/* Count the lines */
 		case SEOF1:
 		case SEOF2:
 			t.code = SEOF_T; /* no attribute */ return t;					//Check end of file 
@@ -127,6 +132,7 @@ Token malar_next_token(Buffer * sc_buf)
 		case '/': t.code = ART_OP_T; t.attribute.arr_op = DIV; return t;	//Check for division arithmetic operator
 
 		case '>': t.code = REL_OP_T; t.attribute.rel_op = GT; return t;		//Check for the greater then relational operator
+
 		case '<':
 		{
 			b_mark(sc_buf, b_getcoffset(sc_buf));
@@ -144,10 +150,11 @@ Token malar_next_token(Buffer * sc_buf)
 			}
 		}
 
-		case '.': //Logical operator
+		case '.': /* Logical operator */
 		{
 			b_mark(sc_buf, b_getcoffset(sc_buf));
 			c = b_getc(sc_buf);
+
 			if (c == 'A' && b_getc(sc_buf) == 'N' && b_getc(sc_buf) == 'D' && b_getc(sc_buf) == '.' ) {
 				t.code = LOG_OP_T; t.attribute.log_op = AND; return t;	//Check for the logical operator and
 			}else if(c == 'O' && b_getc(sc_buf) == 'R' && b_getc(sc_buf) == '.' ) {
@@ -157,24 +164,25 @@ Token malar_next_token(Buffer * sc_buf)
 				t.code = ERR_T;
 				t.attribute.err_lex[0] = '.';
 				t.attribute.err_lex[1] = '\0';
+
 				b_reset(sc_buf);
 				return t;
 			}
 		}
 
-		case '"': //String literal
+		case '"': /* String literal */
 		{
 			b_mark(sc_buf, b_getcoffset(sc_buf));
 
-			int errBufStart = b_getcoffset(sc_buf);
+			errBufStart = b_getcoffset(sc_buf);
 			/* loop until the next character is the closing quote */
 			while ((c = b_getc(sc_buf)) != '"') {
 				if (c == SEOF1 || c == SEOF2) {
 					/* if the end of the file is reached */
-					int errBufEnd = b_getcoffset(sc_buf);
+					errBufEnd = b_getcoffset(sc_buf);
 
 					/* Generate a buffer to hold the invalid string */
-					Buffer* errBuf = b_allocate(errBufEnd - errBufStart + 1, 0, 'f');
+					errBuf = b_allocate(errBufEnd - errBufStart + 1, 0, 'f');
 
 					/* Check if the buffer is null */
 					if (errBuf == NULL) {
@@ -186,9 +194,10 @@ Token malar_next_token(Buffer * sc_buf)
 					}
 
 					b_reset(sc_buf);
-					b_addc(errBuf, '"'); 
+
 					/* Copy the string to the error buffer */
-					for (int i = errBufStart; i < errBufEnd; i++) {
+					b_addc(errBuf, '"'); 
+					for (i = errBufStart; i < errBufEnd; i++) {
 						c = b_getc(sc_buf);
 						b_addc(errBuf, c);
 					}
@@ -245,11 +254,11 @@ Token malar_next_token(Buffer * sc_buf)
 		 */
 
 		/* set the mark and lexstart at the begining of the lexeme */
-		lexstart = b_mark(sc_buf, b_getcoffset(sc_buf)-1);
+		lexstart = b_mark(sc_buf, b_getcoffset(sc_buf) - 1);
 
 		/* get the next state until a accepting state */
 		state = get_next_state(state, c, &accept);
-		while(accept == NOAS)
+		while (accept == NOAS)
 			state = get_next_state(state, b_getc(sc_buf), &accept);
 
 		/* retract if needed */
@@ -272,8 +281,9 @@ Token malar_next_token(Buffer * sc_buf)
 		}
 
 		b_reset(sc_buf);
+
 		/* Copy the lexeme to the lexeme buffer */
-		for (int i = lexstart; i < lexend; i++)
+		for (i = lexstart; i < lexend; i++)
 			b_addc(lex_buf, b_getc(sc_buf));
 		b_addc(lex_buf, '\0');
 
@@ -290,7 +300,7 @@ Token malar_next_token(Buffer * sc_buf)
 * DO NOT MODIFY THE CODE OF THIS FUNCTION
 * YOU CAN REMOVE THE COMMENTS
 */
-int get_next_state(int state, char c, int *accept){
+int get_next_state(int state, char c, int *accept) {
 	int col;
 	int next;
 	col = char_class(c);
@@ -322,7 +332,7 @@ int get_next_state(int state, char c, int *accept){
 *		c:	The charactor to match to a column
 * Return: The appropriate column number of the transistion table
 */
-int char_class(char c){
+int char_class(char c) {
 	if ((c >= 'a' && c <= 'w') || c == 'y' || c == 'z' || (c >= 'G' && c <= 'Z')) return 0;
 	if (c >= 'A' && c <= 'F')	return 1;
 	if (c == '0') return 2;
@@ -343,7 +353,7 @@ int char_class(char c){
 *		lexeme:	The lexeme to convert to AVID/KW token
 * Return: The appropriate token based on lexeme
 */
-Token aa_func02(char *lexeme){
+Token aa_func02(char *lexeme) {
 	Token t = { 0 };
 
 	/* get if/which keyword is the lexeme */
@@ -372,7 +382,7 @@ Token aa_func02(char *lexeme){
 *		lexeme:	The lexeme to convert to SVID token
 * Return: Return SVID token with formated name
 */
-Token aa_func03(char *lexeme){
+Token aa_func03(char *lexeme) {
 	Token t = { 0 };
 	
 	/* Genarate SVID token */
@@ -382,7 +392,8 @@ Token aa_func03(char *lexeme){
 		strncpy(t.attribute.vid_lex, lexeme, VID_LEN - 1);
 		t.attribute.vid_lex[VID_LEN - 1] = '$';
 		t.attribute.vid_lex[VID_LEN] = '\0';
-	}else {
+	}
+	else {
 		strcpy(t.attribute.vid_lex, lexeme);
 	}
 	return t;
@@ -421,7 +432,7 @@ Token aa_func05(char *lexeme) {
 *		lexeme:	The lexeme to convert to FPL token
 * Return: Return FPL token exept if out of range it return an error token
 */
-Token aa_func08(char *lexeme){
+Token aa_func08(char *lexeme) {
 	Token t = { 0 };
 
 	if (isValidFPL(lexeme)){
@@ -444,7 +455,7 @@ Token aa_func08(char *lexeme){
 *		lexeme:	The lexeme to convert to HIL token
 * Return: Return HIL token exept if out of range it return an error token
 */
-Token aa_func11(char *lexeme){
+Token aa_func11(char *lexeme) {
 	Token t = { 0 };
 
 	if (isValidHIL(lexeme)) {
@@ -468,7 +479,7 @@ Token aa_func11(char *lexeme){
 *		lexeme:	The lexeme to convert to ERROR token
 * Return:
 */
-Token aa_func12(char *lexeme){
+Token aa_func12(char *lexeme) {
 	Token t = { 0 };
 
 	/* Genarate error token */
@@ -480,7 +491,8 @@ Token aa_func12(char *lexeme){
 		t.attribute.err_lex[ERR_LEN - 2] = '.';
 		t.attribute.err_lex[ERR_LEN - 1] = '.';
 		t.attribute.err_lex[ERR_LEN] = '\0';
-	}else {
+	}
+	else {
 		strcpy(t.attribute.err_lex, lexeme);
 	}
 	return t;
@@ -512,7 +524,7 @@ Token aa_func13(char *lexeme) {
 * Parameters:
 *		lexeme:	The lexeme to convert to Integer value
 * Return:
-*		The value calculated based on lexeme 
+*		The value calculated based on lexeme
 */
 long atolh(char * lexeme) {
 	return strtol(lexeme, NULL, 0);
@@ -553,7 +565,7 @@ int iskeyword(char * kw_lexeme) {
 * Return:
 *		True if the lexeme is valid
 */
-int isValidHIL(char* lexeme){
+int isValidHIL(char* lexeme) {
 	long l = atolh(lexeme);
 	return l >= 0 && l <= USHRT_MAX - 1;
 }
@@ -585,5 +597,5 @@ int isValidIL(char* lexeme) {
 */
 int isValidFPL(char* lexeme) {
 	double d = strtod(lexeme, NULL);
-	return d >= FLT_MIN && d <= FLT_MAX || d == 0.0f;
+	return (d >= FLT_MIN && d <= FLT_MAX) || d == 0.0f;
 }

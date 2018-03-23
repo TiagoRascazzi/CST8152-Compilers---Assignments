@@ -11,15 +11,15 @@
 * and standard sting library functions defined in string.h.
 * The define does not have any effect in other compiler projects.
 */
-#define _CRT_SECURE_NO_WARNINGS
-#define _CRTDBG_MAP_ALLOC /* TODO remove mem leak detect */
+/* #define _CRT_SECURE_NO_WARNINGS
+#define _CRTDBG_MAP_ALLOC */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
 
-#include <crtdbg.h>
+/* #include <crtdbg.h> */
 
 #include "buffer.h"
 #include "token.h"
@@ -61,7 +61,7 @@ void print_token(Token t);
 int main(int argc, char ** argv) {
 
 
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);/* TODO remove mem leak detect */
+	/* _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF); TODO remove mem leak detect */
 
 	Buffer *sc_buf; /* pointer to input (source) buffer */
 	FILE *fi;       /* input file handle */

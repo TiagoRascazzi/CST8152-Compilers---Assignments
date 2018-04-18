@@ -19,17 +19,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{C6217E0F-4495-405C-96EF-16CCC3D84AAD}</ProjectGuid>
+    <ProjectGuid>{5D7112D3-1654-4C68-84C3-C3ACE05E4731}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Assignment3</RootNamespace>
+    <RootNamespace>ass2error</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>a2error</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>NotSet</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -85,11 +86,9 @@
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
-      <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -144,33 +143,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="buffer.c" />
-    <ClCompile Include="parser.c" />
-    <ClCompile Include="platy.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="platy_st.c" />
-    <ClCompile Include="scanner.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="buffer.h" />
-    <ClInclude Include="parser.h" />
-    <ClInclude Include="table.h" />
-    <ClInclude Include="token.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ass3e.out" />
-    <None Include="ass3e.pls" />
-    <None Include="ass3r.out" />
-    <None Include="ass3r.pls" />
-    <None Include="ass3w1.out" />
-    <None Include="ass3w1.pls" />
-    <None Include="ass3w2.out" />
-    <None Include="ass3w2.pls" />
-    <None Include="ass3w3.out" />
-    <None Include="ass3w3.pls" />
-    <None Include="ass3w4.out" />
-    <None Include="ass3w4.pls" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

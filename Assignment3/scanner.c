@@ -53,9 +53,9 @@ static int char_class(char c);					/* character class function */
 static int get_next_state(int, char, int *);	/* state machine function */
 static int iskeyword(char * kw_lexeme);			/*keywords lookup functuion */
 static long atolh(char * lexeme);				/* converts hexadecimal string to decimal value */
-static int isValidIL(char* lexeme);
-static int isValidFPL(char* lexeme);
-static int isValidHIL(char* lexeme);
+static int isValidIL(char* lexeme);				/* Checks if Integer literal is valid */
+static int isValidFPL(char* lexeme);			/* Checks if Floating Point Literal is valid */
+static int isValidHIL(char* lexeme);			/* Checks if Hexidecimal Literal is valid */
 
 /*Initializes scanner */
 int scanner_init(Buffer * sc_buf) {
@@ -95,13 +95,15 @@ Token malar_next_token(Buffer * sc_buf)
 	int i = 0;
 	Buffer* errBuf = NULL;
 
+
+	/*
 	if (sc_buf == NULL) {
-		/* Generate a runtime error token */
-		t.code = RTE_T;
-		strcpy(t.attribute.err_lex, "RUN TIME ERROR: ");
-		scerrnum = 100;
-		return t;
-	}
+	 Generate a runtime error token
+	t.code = RTE_T;
+	strcpy(t.attribute.err_lex, "RUN TIME ERROR: ");
+	scerrnum = 100;
+	return t;
+	*/
 
 
 	while (1) { /* endless loop broken by token returns */

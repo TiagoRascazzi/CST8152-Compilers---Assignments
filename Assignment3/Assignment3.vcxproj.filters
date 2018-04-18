@@ -27,10 +27,13 @@
     <ClCompile Include="parser.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="platy.c">
+    <ClCompile Include="scanner.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scanner.c">
+    <ClCompile Include="platy_st.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="platy.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

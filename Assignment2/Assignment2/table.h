@@ -104,7 +104,7 @@ Token aa_func05(char *lexeme);	/* DIL */
 Token aa_func08(char *lexeme);	/* FPL */
 Token aa_func11(char *lexeme);	/* HIL */
 Token aa_func12(char *lexeme);	/* ER */
-Token aa_func13(char *lexeme);	/* ES */
+/* Token aa_func13(char *lexeme); */	/* ES */
 
 
 /* defining a new type: pointer to function (of one char * argument) returning Token */
@@ -125,7 +125,7 @@ PTR_AAF aa_table[NUMBER_OF_STATES] =
 	NULL,		/* State 10 */
 	aa_func11,	/* State 11 */
 	aa_func12,	/* State 12 */
-	aa_func13	/* State 13 */
+	aa_func12	/* State 13 */
 };
 
 /* Keyword lookup table (.AND. and .OR. are not keywords) */

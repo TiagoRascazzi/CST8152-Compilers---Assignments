@@ -20,28 +20,30 @@ void parser(Buffer * in_buf){
 
 void match(int pr_token_code, int pr_token_attribute) {
 
-	while (lookahead.code != SEOF_T) {
-		if (lookahead.code != pr_token_code)
-			syn_eh(pr_token_code); return;
+	if (lookahead.code != pr_token_code) {
+		syn_eh(pr_token_code);
+		return;
+	}
 
-		if (lookahead.code == KW_T
-			|| lookahead.code == LOG_OP_T
-			|| lookahead.code == ART_OP_T
-			|| lookahead.code == REL_OP_T) {
+	if (lookahead.code == KW_T
+		|| lookahead.code == LOG_OP_T
+		|| lookahead.code == ART_OP_T
+		|| lookahead.code == REL_OP_T) {
 
-			if (lookahead.attribute.get_int != pr_token_attribute)
-				syn_eh(pr_token_code); return;
+		if (lookahead.attribute.get_int != pr_token_attribute) {
+			syn_eh(pr_token_code); 
+			return;
+		}
+	}
 
-			if (lookahead.code != SEOF_T) {
-				lookahead = malar_next_token(sc_buf);
+	if (lookahead.code != SEOF_T) {
+		lookahead = malar_next_token(sc_buf);
 
-				if (lookahead.code == ERR_T) {
-					syn_printe();
-					lookahead = malar_next_token(sc_buf);
-					++synerrno;
-					return;
-				}
-			}
+		if (lookahead.code == ERR_T) {
+			syn_printe();
+			lookahead = malar_next_token(sc_buf);
+			++synerrno;
+			return;
 		}
 	}
 
@@ -228,11 +230,25 @@ void statement(void) {
 }
 
 void assignment_statement(void) {
-
+	assignment_expression();
+	match(EOS_T, NO_ATTR);
 }
 
 void assignment_expression(void) {
-
+	switch (lookahead.code) {
+	case AVID_T:
+		match(AVID_T, NO_ATTR);
+		match(ASS_OP_T, NO_ATTR);
+		arithmetic_expression();
+		break;
+	case SVID_T:
+		match(SVID_T, NO_ATTR);
+		match(ASS_OP_T, NO_ATTR);
+		string_expression();
+		break;
+	default: /*empty string – optional statements - epsilon*/
+		syn_printe(); //TODO not sure if need to print gen_incode
+	}
 }
 
 void selection_statement(void) {
@@ -281,31 +297,108 @@ void output_statement_argument(void) {
 }
 
 void arithmetic_expression(void) {
+	switch (lookahead.code) {
+	case ART_OP_T:
+		unary_arithmetic_expression(); break;
+	case LPR_T:
+	case AVID_T:
+	case FPL_T:
+	case INL_T:
+		additive_arithmetic_expression(); break;
 
+	default: /*empty string – optional statements - epsilon*/
+		syn_printe(); //TODO not sure if need to print gen_incode
+	}
 }
 
 void unary_arithmetic_expression(void) {
+	switch (lookahead.code) {
+	case ART_OP_T:
+		if (lookahead.attribute.arr_op == PLUS) {
+			match(ART_OP_T, PLUS);
+			primary_arithmetic_expression();
+			break;
+		}
+		else if (lookahead.attribute.arr_op == MINUS) {
+			match(ART_OP_T, MINUS);
+			primary_arithmetic_expression();
+			break;
+		}
 
+	default: /*empty string – optional statements - epsilon*/
+		syn_printe(); //TODO not sure if need to print gen_incode
+	}
 }
 
 void additive_arithmetic_expression(void) {
-
+	multiplicative_arithmetic_expression();
+	additive_arithmetic_expression_prime();
 }
 
 void additive_arithmetic_expression_prime(void) {
+	switch (lookahead.code) {
+	case ART_OP_T:
+		if (lookahead.attribute.arr_op == PLUS) {
+			match(ART_OP_T, PLUS);
+			multiplicative_arithmetic_expression();
+			additive_arithmetic_expression_prime();
+			break;
+		}
+		else if (lookahead.attribute.arr_op == MINUS) {
+			match(ART_OP_T, MINUS);
+			multiplicative_arithmetic_expression();
+			additive_arithmetic_expression_prime();
+			break;
+		}
 
+	default: /*empty string – optional statements - epsilon*/
+		gen_incode("PLATY: additive_arithmetic_expression_prime parsed");
+	}
 }
 
 void multiplicative_arithmetic_expression(void) {
-
+	primary_arithmetic_expression();
+	multiplicative_arithmetic_expression_prime();
 }
 
 void multiplicative_arithmetic_expression_prime(void) {
+	switch (lookahead.code) {
+	case ART_OP_T:
+		if (lookahead.attribute.arr_op == MULT) {
+			match(ART_OP_T, MULT);
+			primary_arithmetic_expression();
+			multiplicative_arithmetic_expression_prime();
+			break;
+		}
+		else if (lookahead.attribute.arr_op == DIV) {
+			match(ART_OP_T, DIV);
+			primary_arithmetic_expression();
+			multiplicative_arithmetic_expression_prime();
+			break;
+		}
 
+	default: /*empty string – optional statements - epsilon*/
+		gen_incode("PLATY: multiplicative_arithmetic_expression_prime parsed");
+	}
 }
 
 void primary_arithmetic_expression(void) {
+	switch (lookahead.code) {
+	case AVID_T:
+		match(AVID_T, NO_ATTR); break;
+	case FPL_T:
+		match(FPL_T, NO_ATTR); break;
+	case INL_T:
+		match(INL_T, NO_ATTR); break;
+	case LPR_T:
+		match(LPR_T, NO_ATTR);
+		arithmetic_expression();
+		match(RPR_T, NO_ATTR);
+		break;
 
+	default: /*empty string – optional statements - epsilon*/
+		gen_incode("PLATY: multiplicative_arithmetic_expression_prime parsed");
+	}
 }
 
 void string_expression(void) {

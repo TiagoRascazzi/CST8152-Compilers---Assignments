@@ -20,7 +20,7 @@ void syn_eh(int sync_token_code);
 void syn_printe();
 void gen_incode(char* str);
 
-/*void program(void);
+void program(void);
 void statements(void);
 void statements_prime(void);
 void opt_statements(void);
@@ -57,6 +57,6 @@ void arithmetic_relational_expression(void);
 void string_relational_expression(void);
 void primary_a_relational_expression(void);
 void primary_s_relational_expression(void);
-*/
+
 
 #endif

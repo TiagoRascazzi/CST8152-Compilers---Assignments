@@ -1,9 +1,9 @@
-Reading file ass3e.pls ....Please wait
+Reading file in.pls ....Please wait
 
 Printing input buffer parameters:
 
-The capacity of the buffer is:  152
-The current size of the buffer is:  152
+The capacity of the buffer is:  163
+The current size of the buffer is:  163
 
 Printing input buffer contents:
 
@@ -11,18 +11,18 @@ Printing input buffer contents:
 !!The law of computer programming:
 !!"If a program is useless, it will have to be well documented." 
 
-PLATYPUS{}ÿ
+PLATYPUS{
+	
+	a=0;
+	
+}ÿ
 
 Parsing the source file...
 
-PLATY: Syntax error:  Line:  5
-*****  Token code: 16 Attribute: PLATYPUS
-PLATY: Opt_statements parsed
+PLATY: multiplicative_arithmetic_expression_prime parsed
+PLATY: additive_arithmetic_expression_prime parsed
+PLATY: statements_prime parsed
 PLATY: Program parsed
-PLATY: Syntax error:  Line:  5
-*****  Token code: 15 Attribute: NA
 PLATY: Source file parsed
-
-Syntax errors: 2
 
 Collecting garbage...

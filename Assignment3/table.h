@@ -1,14 +1,14 @@
-/*
-* File name: table.h
-* Compiler: MS Visual Studio 2015, gcc
-* Author: Tiago Donchegay, 040867850
-*	Nicholas Richer, 040828783
-* Course: CST8152_010 Compilers
-* Assignment: 2
-* Date: March 23rd 2018
-* Professor: Svillen Ranev
-* Purpose: Sets up a transitional table to be used with our finite state machine
-*
+/* TT */
+/* Filename: table.h
+* Transition Table and function declarations necessary for the scanner implementation
+* as required for CST8152 - Assignment #2.
+* Version: 1.18.1
+* Date: 1 February 2018
+* Provided by: Svillen Ranev
+* The file is incomplete. You are to complete it.
+***************************************************
+* REPLACE THIS HEADER WITH YOUR HEADER
+***************************************************
 */
 
 #ifndef  TABLE_H_
@@ -104,7 +104,7 @@ Token aa_func05(char *lexeme);	/* DIL */
 Token aa_func08(char *lexeme);	/* FPL */
 Token aa_func11(char *lexeme);	/* HIL */
 Token aa_func12(char *lexeme);	/* ER */
-Token aa_func13(char *lexeme);	/* ES */
+/* Token aa_func13(char *lexeme); */	/* ES */
 
 
 /* defining a new type: pointer to function (of one char * argument) returning Token */
@@ -125,7 +125,7 @@ PTR_AAF aa_table[NUMBER_OF_STATES] =
 	NULL,		/* State 10 */
 	aa_func11,	/* State 11 */
 	aa_func12,	/* State 12 */
-	aa_func13	/* State 13 */
+	aa_func12	/* State 13 */
 };
 
 /* Keyword lookup table (.AND. and .OR. are not keywords) */

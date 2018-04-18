@@ -1,14 +1,13 @@
 /*
 * File name: scanner.c
 * Compiler: MS Visual Studio 2015, gcc
-* Author: Tiago Donchegay, 040867850
-*	Nicholas Richer, 040828783
+* Author: Tiago Donchegay, 040867850, Nicholas Richer,
 * Course: CST8152_010 Compilers
 * Assignment: 2
-* Date: March 23rd 2018
+* Date:
 * Professor: Svillen Ranev
-* Purpose: Drives almost all functionality of scanner, by 
-*	initiating and reading lexeme formatted strings to tokens.
+* Purpose:
+* Function list:
 *
 */
 
@@ -38,6 +37,8 @@
 #define DEBUG  /* for conditional processing */
 #undef  DEBUG
 
+#define IL_MAX 32767
+
 /* Global objects - variables */
 
 /* This buffer is used as a repository for string literals. It is defined in platy_st.c */
@@ -53,9 +54,9 @@ static int char_class(char c);					/* character class function */
 static int get_next_state(int, char, int *);	/* state machine function */
 static int iskeyword(char * kw_lexeme);			/*keywords lookup functuion */
 static long atolh(char * lexeme);				/* converts hexadecimal string to decimal value */
-static int isValidIL(char* lexeme);				/* Checks if Integer literal is valid */
-static int isValidFPL(char* lexeme);			/* Checks if Floating Point Literal is valid */
-static int isValidHIL(char* lexeme);			/* Checks if Hexidecimal Literal is valid */
+static int isValidIL(char* lexeme);				/* Integer Literal valid  */
+static int isValidFPL(char* lexeme);			/* Floating point literal valid  */
+static int isValidHIL(char* lexeme);			/* Hexadecimal Integer Literal Valid */
 
 /*Initializes scanner */
 int scanner_init(Buffer * sc_buf) {
@@ -95,15 +96,7 @@ Token malar_next_token(Buffer * sc_buf)
 	int i = 0;
 	Buffer* errBuf = NULL;
 
-
-	/*
-	if (sc_buf == NULL) {
-	 Generate a runtime error token
-	t.code = RTE_T;
-	strcpy(t.attribute.err_lex, "RUN TIME ERROR: ");
-	scerrnum = 100;
-	return t;
-	*/
+	
 
 
 	while (1) { /* endless loop broken by token returns */
@@ -118,7 +111,7 @@ Token malar_next_token(Buffer * sc_buf)
 		case '\f':
 		case '\r':
 			continue;					/* Ignore the whitespaces */
-		case '\n': ++line; continue;	/* Count the lines */
+		case '\n': ++line; continue;	/* Count the lines TODO FIX LINE COUNTING? SPEC VIOLATION*/
 		case SEOF1:
 		case SEOF2:
 			t.code = SEOF_T; /* no attribute */ return t;					/*Check end of file 							  */
@@ -185,7 +178,8 @@ Token malar_next_token(Buffer * sc_buf)
 					errBufEnd = b_getcoffset(sc_buf);
 
 					/* Generate a buffer to hold the invalid string */
-					errBuf = b_allocate(errBufEnd - errBufStart + 1, 0, 'f');
+					errBuf = b_allocate((short)(errBufEnd - errBufStart + 1), 0, 'f');
+					line++;
 
 					/* Check if the buffer is null */
 					if (errBuf == NULL) {
@@ -265,7 +259,7 @@ Token malar_next_token(Buffer * sc_buf)
 			state = get_next_state(state, b_getc(sc_buf), &accept);
 
 		/* retract if needed */
-		if (accept == ASWR || accept == ER)
+		if (accept == ASWR)
 			b_retract(sc_buf);
 		
 		/* set the lexend at the end of the lexeme */
@@ -570,7 +564,7 @@ int iskeyword(char * kw_lexeme) {
 */
 int isValidHIL(char* lexeme) {
 	long l = atolh(lexeme);
-	return l >= 0 && l <= USHRT_MAX - 1;
+	return l >= 0 && l <= IL_MAX;
 }
 
 /*
@@ -585,7 +579,7 @@ int isValidHIL(char* lexeme) {
 */
 int isValidIL(char* lexeme) {
 	long l = atol(lexeme);
-	return l >= 0 && l <= USHRT_MAX;
+	return l >= 0 && l <= IL_MAX;
 }
 
 /*

@@ -77,3 +77,6 @@ int b_rewind(Buffer * const pBD);
 char * b_location(Buffer * const pBD, short loc_offset);
 
 #endif
+
+
+

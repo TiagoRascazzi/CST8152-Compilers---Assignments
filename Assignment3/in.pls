@@ -3,7 +3,5 @@
 !!"If a program is useless, it will have to be well documented." 
 
 PLATYPUS{
-	
-	a=0;
-	
+	a=-0x1;
 }

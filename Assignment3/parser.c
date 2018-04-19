@@ -252,15 +252,47 @@ void assignment_expression(void) {
 }
 
 void selection_statement(void) {
-
+	match(KW_T, IF);
+	pre_condition();
+	match(LPR_T, NO_ATTR);
+	conditional_expression();
+	match(RPR_T, NO_ATTR);
+	match(KW_T, THEN);
+	match(LBR_T, NO_ATTR);
+	opt_statements();
+	match(RBR_T, NO_ATTR);
+	match(KW_T, ELSE);
+	match(LBR_T, NO_ATTR);
+	opt_statements();
+	match(RBR_T, NO_ATTR);
+	match(EOS_T, NO_ATTR);
 }
 
 void iteration_statement(void) {
-
+	match(KW_T, WHILE);
+	pre_condition();
+	match(LPR_T, NO_ATTR);
+	conditional_expression();
+	match(RPR_T, NO_ATTR);
+	match(KW_T, REPEAT);
+	match(LBR_T, NO_ATTR);
+	statements();
+	match(RBR_T, NO_ATTR);
+	match(EOS_T, NO_ATTR);
 }
 
 void pre_condition(void) {
+	switch (lookahead.code)
+	{
+	case KW_T:
+		if (lookahead.attribute.get_int == TRUE)
+			match(KW_T, TRUE);
+		else if (lookahead.attribute.get_int == FALSE)
+			match(KW_T, FALSE);
 
+	default:
+		syn_printe();
+	}
 }
 
 void input_statement(void) {
@@ -273,27 +305,74 @@ void input_statement(void) {
 }
 
 void variable_list(void) {
-
+	variable_identifier();
+	variable_list_prime();
 }
 
 void variable_list_prime(void) {
+	switch (lookahead.code)
+	{
+	case COM_T:
+		match(COM_T, NO_ATTR);
+		variable_identifier();
+		variable_list_prime();
+		break;
 
+	default:
+		gen_incode("PLATY: variable_list_prime parsed");
+	}
 }
 
 void opt_variable_list(void) {
+	switch (lookahead.code)
+	{
+	case AVID_T:
+	case SVID_T:
+		variable_list();
+		break;
 
+	default:
+		gen_incode("PLATY: opt_variable_list parsed");
+	}
 }
 
 void variable_identifier(void) {
+	switch (lookahead.code)
+	{
+	case AVID_T:
+		match(AVID_T, NO_ATTR);
+		break;
+	case SVID_T:
+		match(SVID_T, NO_ATTR);
+		break;
 
+	default:
+		syn_printe();
+	}
 }
 
 void output_statement(void) {
-
+	match(KW_T, WRITE);
+	match(LPR_T, NO_ATTR);
+	output_statement_argument();
+	match(RPR_T, NO_ATTR);
+	match(EOS_T, NO_ATTR);
 }
 
 void output_statement_argument(void) {
-
+	switch (lookahead.code)
+	{
+		case AVID_T:
+		case SVID_T:
+			opt_variable_list();
+			//TODO Check epsiolon??
+			break;
+		case STR_T:
+			match(STR_T, NO_ATTR);
+			break;
+	default:
+		gen_incode("PLATY: output_statement_argument parsed");
+	}
 }
 
 void arithmetic_expression(void) {
@@ -397,58 +476,170 @@ void primary_arithmetic_expression(void) {
 		break;
 
 	default: /*empty string – optional statements - epsilon*/
-		gen_incode("PLATY: multiplicative_arithmetic_expression_prime parsed");
+		syn_printe();
 	}
 }
 
 void string_expression(void) {
-
+	primary_string_expression(); 
+	string_expression_prime();
 }
 
 void string_expression_prime(void) {
+	switch (lookahead.code)
+	{
+	case SCC_OP_T:
+		match(SCC_OP_T, NO_ATTR);
+		primary_string_expression();
+		string_expression_prime();
+		break;
 
+	default:
+		gen_incode("PLATY: string_expression_prime parsed");
+	}
 }
 
 void primary_string_expression(void) {
-
+	switch (lookahead.code)
+	{
+	case SVID_T:
+		match(SVID_T, NO_ATTR);
+		break;
+	case STR_T:
+		match(STR_T, NO_ATTR);
+	default:
+		syn_printe();
+	}
 }
 
 void conditional_expression(void) {
-
+	logical_OR_expression();
 }
 
 void logical_OR_expression(void) {
-
+	logical_AND_expression();
+	logical_OR_expression_prime();
 }
 
 void logical_OR_expression_prime(void) {
+	switch (lookahead.code)
+	{
+	case LOG_OP_T:
+		match(LOG_OP_T, OR);
+		logical_AND_expression();
+		logical_OR_expression_prime();
 
+	default:
+		gen_incode("PLATY: logical_OR_expression_prime parsed");
+	}
 }
 
 void logical_AND_expression(void) {
-
+	relational_expression();
+	logical_AND_expression_prime();
 }
 
 void logical_AND_expression_prime(void) {
+	switch (lookahead.code)
+	{
+	case LOG_OP_T:
+		match(LOG_OP_T, AND);
+		relational_expression();
+		logical_AND_expression_prime();
 
+	default:
+		gen_incode("PLATY: logical_AND_expression_prime parsed");
+	}
 }
 
 void relational_expression(void) {
-
+	switch (lookahead.code)
+	{
+	case AVID_T:
+	case FPL_T:
+	case INL_T:
+		primary_a_relational_expression();
+		arithmetic_relational_expression();
+		break;
+	case STR_T:
+	case SVID_T:
+		primary_s_relational_expression();
+		string_relational_expression();
+		break;
+	default:
+		syn_printe();
+	}
 }
 
 void arithmetic_relational_expression(void) {
+	switch (lookahead.code)
+	{
+	case REL_OP_T:
+		if (lookahead.attribute.rel_op == EQ)
+			match(REL_OP_T, EQ);
+		else if (lookahead.attribute.rel_op == GT)
+			match(REL_OP_T, GT);
+		else if (lookahead.attribute.rel_op == LT)
+			match(REL_OP_T, LT);
+		else if (lookahead.attribute.rel_op == NE)
+			match(REL_OP_T, NE);
+		primary_a_relational_expression();
+		break;
 
+	default:
+		syn_printe();
+	}
 }
 
 void string_relational_expression(void) {
+	switch (lookahead.code)
+	{
+	case REL_OP_T:
+		if (lookahead.attribute.rel_op == EQ)
+			match(REL_OP_T, EQ);
+		else if (lookahead.attribute.rel_op == GT)
+			match(REL_OP_T, GT);
+		else if (lookahead.attribute.rel_op == LT)
+			match(REL_OP_T, LT);
+		else if (lookahead.attribute.rel_op == NE)
+			match(REL_OP_T, NE);
+		primary_s_relational_expression();
+		break;
 
+	default:
+		syn_printe();
+	}
 }
 
 void primary_a_relational_expression(void) {
+	switch (lookahead.code)
+	{
+	case AVID_T:
+		match(AVID_T, NO_ATTR);
+		break;
+	case FPL_T:
+		match(FPL_T, NO_ATTR);
+		break;
+	case INL_T:
+		match(INL_T, NO_ATTR);
+		break;
 
+	default:
+		syn_printe();
+	}
 }
 
 void primary_s_relational_expression(void) {
+	switch (lookahead.code)
+	{
+	case STR_T:
+		match(STR_T, NO_ATTR);
+		break;
+	case SVID_T:
+		match(SVID_T, NO_ATTR);
+		break;
 
+	default:
+		syn_printe();
+	}
 }

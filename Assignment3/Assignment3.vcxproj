@@ -177,6 +177,8 @@
     <None Include="ass3w3.pls" />
     <None Include="ass3w4.out" />
     <None Include="ass3w4.pls" />
+    <None Include="in.pls" />
+    <None Include="out" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

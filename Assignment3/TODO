@@ -1,0 +1,32 @@
+done
+	ass3e
+	ass3r
+	assw2
+
+assw1
+	line count
+
+assw3
+	missing 
+		PLATY: Primary a_relational expression parsed 
+			after
+				*****  Token code:  6 Attribute: begin
+
+assw4
+	line count
+	missing 
+		PLATY: Relational expression parsed 
+			after
+				*****  Token code: 13 Attribute: NA
+	missing 
+		PLATY: Primary string expression parsed 
+			after
+				PLATY: Selection statement parsed
+	missing 
+		PLATY: Primary string expression parsed
+			after
+				PLATY: Primary s_relational expression parsed
+
+
+
+

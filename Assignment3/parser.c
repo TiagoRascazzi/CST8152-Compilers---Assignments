@@ -2,6 +2,8 @@
 #include "token.h"
 #include "parser.h"
 
+//#define DEBUG
+
 extern int line;
 extern char * kw_table[];
 extern Buffer * str_LTBL;
@@ -143,6 +145,9 @@ void gen_incode(char* str) {
 }
 
 void program(void) {
+#ifdef DEBUG 
+		printf(">>> <program>\n"); 
+#endif
 	match(KW_T, PLATYPUS);
 	match(LBR_T, NO_ATTR);
 	opt_statements();
@@ -151,36 +156,49 @@ void program(void) {
 }
 
 void statements(void) {
+#ifdef DEBUG 
+	printf(">>> <statements>\n");
+#endif
 	statement();
 	statements_prime();
 }
 
 void statements_prime(void) {
-	/* FIRST set: { AVID_T, SVID_T, KW_T(IF, WHILE, READ, WRITE), epsilon} */
+#ifdef DEBUG 
+	printf(">>> <statements_prime>\n");
+#endif
 	switch (lookahead.code) {
 	case AVID_T:
-	case SVID_T: statement(); statements_prime();  break;
+	case SVID_T: 
+		statement(); 
+		statements_prime();  
+		break;
+
 	case KW_T:
-		/* check for IF, WHILE, READ, WRITE */
-		if (lookahead.attribute.get_int == IF
-			|| lookahead.attribute.get_int == WHILE
-			|| lookahead.attribute.get_int == READ
-			|| lookahead.attribute.get_int == WRITE) {
-			statement(); statements_prime();
+		if (lookahead.attribute.kwt_idx == IF
+			|| lookahead.attribute.kwt_idx == WHILE
+			|| lookahead.attribute.kwt_idx == READ
+			|| lookahead.attribute.kwt_idx == WRITE) {
+			statement();
+			statements_prime();
 			break;
 		}
 
-	default: ;/*empty string – optional statements - epsilon*/
-		//gen_incode("PLATY: statements_prime parsed");
-		//TODO not sure if need statements_prime
+	default: ; //TODO can remove all the empty default
 	}
 }
 
 void opt_statements() {
+#ifdef DEBUG 
+	printf(">>> <opt_statements>\n");
+#endif
 	/* FIRST set: {AVID_T,SVID_T,KW_T(but not … see above),e} */
 	switch (lookahead.code) {
 	case AVID_T:
-	case SVID_T: statements(); break;
+	case SVID_T: 
+		statements(); 
+		break;
+
 	case KW_T:
 		/* check for PLATYPUS, ELSE, THEN, REPEAT, TRUE, FALSE here
 		and in statements_p()*/
@@ -195,48 +213,56 @@ void opt_statements() {
 		break;
 		}*/
 
-		if (lookahead.attribute.get_int == IF
-			|| lookahead.attribute.get_int == WHILE
-			|| lookahead.attribute.get_int == READ
-			|| lookahead.attribute.get_int == WRITE) {
+		if (lookahead.attribute.kwt_idx == IF
+			|| lookahead.attribute.kwt_idx == WHILE
+			|| lookahead.attribute.kwt_idx == READ
+			|| lookahead.attribute.kwt_idx == WRITE) {
 			statements();
 			break;
 		}
 
-	default: /*empty string – optional statements*/
-		gen_incode("PLATY: Opt_statements parsed");
+	default: gen_incode("PLATY: Opt_statements parsed");
 	}
 }
 
 void statement(void) {
-	/* FIRST set: { AVID_T, SVID_T, KW_T(IF, WHILE, READ, WRITE) } */
+#ifdef DEBUG 
+	printf(">>> <statement>\n");
+#endif
 	switch (lookahead.code) {
 	case AVID_T:
-	case SVID_T: assignment_statement();  break;
+	case SVID_T: 
+		assignment_statement(); 
+		break;
+
 	case KW_T:
-		/* check for IF, WHILE, READ, WRITE */
-		if (lookahead.attribute.get_int == IF) {
+		if (lookahead.attribute.kwt_idx == IF) {
 			selection_statement();  break;
-		}else if (lookahead.attribute.get_int == WHILE) {
+		}else if (lookahead.attribute.kwt_idx == WHILE) {
 			iteration_statement();  break;
-		}else if (lookahead.attribute.get_int == READ) {
+		}else if (lookahead.attribute.kwt_idx == READ) {
 			input_statement();  break;
-		}else if (lookahead.attribute.get_int == WRITE) {
+		}else if (lookahead.attribute.kwt_idx == WRITE) {
 			output_statement();  break;
 		}
 
-	default: /*empty string – optional statements - epsilon*/
-		syn_printe(); //TODO not sure if need to print gen_incode
+	default: syn_printe();
 	}
 }
 
 void assignment_statement(void) {
+#ifdef DEBUG 
+	printf(">>> <assignment_statement>\n");
+#endif
 	assignment_expression();
 	match(EOS_T, NO_ATTR); 
 	gen_incode("PLATY: Assignment statement parsed");
 }
 
 void assignment_expression(void) {
+#ifdef DEBUG 
+	printf(">>> <assignment_expression>\n");
+#endif
 	switch (lookahead.code) {
 	case AVID_T:
 		match(AVID_T, NO_ATTR);
@@ -251,12 +277,15 @@ void assignment_expression(void) {
 		string_expression();
 		gen_incode("PLATY: Assignment expression (string) parsed");
 		break;
-	default: /*empty string – optional statements - epsilon*/
-		syn_printe(); //TODO not sure if need to print gen_incode
+
+	default: syn_printe();
 	}
 }
 
 void selection_statement(void) {
+#ifdef DEBUG 
+	printf(">>> <selection_statement>\n");
+#endif
 	match(KW_T, IF);
 	pre_condition();
 	match(LPR_T, NO_ATTR);
@@ -276,6 +305,9 @@ void selection_statement(void) {
 }
 
 void iteration_statement(void) {
+#ifdef DEBUG 
+	printf(">>> <iteration_statement>\n");
+#endif
 	match(KW_T, WHILE);
 	pre_condition();
 	match(LPR_T, NO_ATTR);
@@ -290,13 +322,17 @@ void iteration_statement(void) {
 }
 
 void pre_condition(void) {
+#ifdef DEBUG 
+	printf(">>> <pre_condition>\n");
+#endif
 	switch (lookahead.code)
 	{
 	case KW_T:
-		if (lookahead.attribute.get_int == TRUE)
+		if (lookahead.attribute.kwt_idx == TRUE)
 			match(KW_T, TRUE);
-		else if (lookahead.attribute.get_int == FALSE)
+		else if (lookahead.attribute.kwt_idx == FALSE)
 			match(KW_T, FALSE);
+		break;
 
 	default:
 		syn_printe();
@@ -304,6 +340,9 @@ void pre_condition(void) {
 }
 
 void input_statement(void) {
+#ifdef DEBUG 
+	printf(">>> <input_statement>\n");
+#endif
 	match(KW_T, READ);
 	match(LPR_T, NO_ATTR);
 	variable_list();
@@ -313,12 +352,19 @@ void input_statement(void) {
 }
 
 void variable_list(void) {
+#ifdef DEBUG 
+	printf(">>> <variable_list>\n");
+#endif
 	variable_identifier();
 	variable_list_prime();
 	gen_incode("PLATY: Variable list parsed");
 }
 
 void variable_list_prime(void) {
+#ifdef DEBUG 
+	printf(">>> <variable_list_prime>\n");
+#endif
+	//TODO maybe change to if
 	switch (lookahead.code)
 	{
 	case COM_T:
@@ -328,12 +374,14 @@ void variable_list_prime(void) {
 		break;
 
 	default: ;
-		//gen_incode("PLATY: variable_list_prime parsed");
-		//TODO check grammar if variable list prime is needed
 	}
 }
 
 void opt_variable_list(void) {
+#ifdef DEBUG 
+	printf(">>> <opt_variable_list>\n");
+#endif
+	//TODO maybe change to if
 	switch (lookahead.code)
 	{
 	case AVID_T:
@@ -341,27 +389,32 @@ void opt_variable_list(void) {
 		variable_list();
 		break;
 
-	default:
-		gen_incode("PLATY: opt_variable_list parsed");
+	default: ;
 	}
 }
 
 void variable_identifier(void) {
+#ifdef DEBUG 
+	printf(">>> <variable_identifier>\n");
+#endif
 	switch (lookahead.code)
 	{
 	case AVID_T:
 		match(AVID_T, NO_ATTR);
 		break;
+
 	case SVID_T:
 		match(SVID_T, NO_ATTR);
 		break;
 
-	default:
-		syn_printe();
+	default: syn_printe();
 	}
 }
 
 void output_statement(void) {
+#ifdef DEBUG 
+	printf(">>> <output_statement>\n");
+#endif
 	match(KW_T, WRITE);
 	match(LPR_T, NO_ATTR);
 	output_statement_argument();
@@ -371,29 +424,36 @@ void output_statement(void) {
 }
 
 void output_statement_argument(void) {
+#ifdef DEBUG 
+	printf(">>> <output_statement_argument>\n");
+#endif
 	switch (lookahead.code)
 	{
 		case AVID_T:
 		case SVID_T:
 			opt_variable_list();
-			//TODO Check epsiolon??
-			gen_incode("PLATY: Output list (1) parsed");
 			break;
+
 		case STR_T:
 			match(STR_T, NO_ATTR);
-			gen_incode("PLATY: Output list (2) parsed");
+			gen_incode("PLATY: Output list (string literal) parsed");
 			break;
-	default:
-		syn_printe();
+
+	default: gen_incode("PLATY: Output list (empty) parsed");
 	}
 }
 
 void arithmetic_expression(void) {
+#ifdef DEBUG 
+	printf(">>> <arithmetic_expression>\n");
+#endif
 	switch (lookahead.code) {
 	case ART_OP_T:
-		unary_arithmetic_expression(); 
+		if (lookahead.attribute.arr_op == PLUS || (lookahead.attribute.arr_op == MINUS))
+			unary_arithmetic_expression(); 
 		gen_incode("PLATY: Arithmetic expression parsed");
 		break;
+
 	case LPR_T:
 	case AVID_T:
 	case FPL_T:
@@ -402,104 +462,120 @@ void arithmetic_expression(void) {
 		gen_incode("PLATY: Arithmetic expression parsed");
 		break;
 
-	default: /*empty string – optional statements - epsilon*/
-		syn_printe(); //TODO not sure if need to print gen_incode
+	default: syn_printe();
 	}
 }
 
 void unary_arithmetic_expression(void) {
+#ifdef DEBUG 
+	printf(">>> <unary_arithmetic_expression>\n");
+#endif
 	switch (lookahead.code) {
 	case ART_OP_T:
 		if (lookahead.attribute.arr_op == PLUS) {
 			match(ART_OP_T, PLUS);
 			primary_arithmetic_expression();
 			gen_incode("PLATY: Unary arithmetic expression parsed");
-			break;
 		}
 		else if (lookahead.attribute.arr_op == MINUS) {
 			match(ART_OP_T, MINUS);
 			primary_arithmetic_expression();
 			gen_incode("PLATY: Unary arithmetic expression parsed");
-			break;
 		}
+		break;
 
-	default: /*empty string – optional statements - epsilon*/
-		syn_printe(); //TODO not sure if need to print gen_incode
+	default: syn_printe();
 	}
 }
 
 void additive_arithmetic_expression(void) {
+#ifdef DEBUG 
+	printf(">>> <additive_arithmetic_expression>\n");
+#endif
 	multiplicative_arithmetic_expression();
 	additive_arithmetic_expression_prime();
-	gen_incode("PLATY: Additive_arithmetic_expression parsed");
+	//gen_incode("PLATY: Additive arithmetic expression parsed");
 
 }
 
 void additive_arithmetic_expression_prime(void) {
+#ifdef DEBUG 
+	printf(">>> <additive_arithmetic_expression_prime>\n");
+#endif
 	switch (lookahead.code) {
 	case ART_OP_T:
 		if (lookahead.attribute.arr_op == PLUS) {
 			match(ART_OP_T, PLUS);
 			multiplicative_arithmetic_expression();
-			additive_arithmetic_expression_prime();
-			break;
+			additive_arithmetic_expression_prime(); 
+			gen_incode("PLATY: Additive arithmetic expression parsed");
 		}
 		else if (lookahead.attribute.arr_op == MINUS) {
 			match(ART_OP_T, MINUS);
 			multiplicative_arithmetic_expression();
 			additive_arithmetic_expression_prime();
-			break;
+			gen_incode("PLATY: Additive arithmetic expression parsed");
 		}
+		break;
 
-	default: ;/*empty string – optional statements - epsilon*/
-		//gen_incode("PLATY: Additive_arithmetic_expression_prime parsed");
-		//TODO not display prime
+	default: ;
 	}
 }
 
 void multiplicative_arithmetic_expression(void) {
+#ifdef DEBUG 
+	printf(">>> <multiplicative_arithmetic_expression>\n");
+#endif
 	primary_arithmetic_expression();
 	multiplicative_arithmetic_expression_prime();
-	gen_incode("PLATY: Multiplicative arithmetic expression parsed");
+	//gen_incode("PLATY: Multiplicative arithmetic expression parsed");
 
 }
 
 void multiplicative_arithmetic_expression_prime(void) {
+#ifdef DEBUG 
+	printf(">>> <multiplicative_arithmetic_expression_prime>\n");
+#endif
 	switch (lookahead.code) {
 	case ART_OP_T:
 		if (lookahead.attribute.arr_op == MULT) {
 			match(ART_OP_T, MULT);
 			primary_arithmetic_expression();
 			multiplicative_arithmetic_expression_prime();
-			break;
+			gen_incode("PLATY: Multiplicative arithmetic expression parsed");
 		}
 		else if (lookahead.attribute.arr_op == DIV) {
 			match(ART_OP_T, DIV);
 			primary_arithmetic_expression();
 			multiplicative_arithmetic_expression_prime();
-			break;
+			gen_incode("PLATY: Multiplicative arithmetic expression parsed");
 		}
+		break;
 
-	default: ;/*empty string – optional statements - epsilon*/
-		//gen_incode("PLATY: Multiplicative_arithmetic_expression_prime parsed");
-		//TODO not display prime
+	default: ;
 	}
 }
 
 void primary_arithmetic_expression(void) {
+#ifdef DEBUG 
+	printf(">>> <primary_arithmetic_expression>\n");
+#endif
 	switch (lookahead.code) {
 	case AVID_T:
 		match(AVID_T, NO_ATTR); 
 		gen_incode("PLATY: Primary arithmetic expression parsed");
 		break;
+
 	case FPL_T:
 		match(FPL_T, NO_ATTR);
 		gen_incode("PLATY: Primary arithmetic expression parsed");
 		break;
+
 	case INL_T:
 		match(INL_T, NO_ATTR);
 		gen_incode("PLATY: Primary arithmetic expression parsed");
 		break;
+
 	case LPR_T:
 		match(LPR_T, NO_ATTR);
 		arithmetic_expression();
@@ -507,17 +583,24 @@ void primary_arithmetic_expression(void) {
 		gen_incode("PLATY: Primary arithmetic expression parsed");
 		break;
 
-	default: /*empty string – optional statements - epsilon*/
-		syn_printe();
+	default: syn_printe();
 	}
 }
 
 void string_expression(void) {
+#ifdef DEBUG 
+	printf(">>> <string_expression>\n");
+#endif
 	primary_string_expression(); 
 	string_expression_prime();
+	gen_incode("PLATY: String expression parsed");
 }
 
 void string_expression_prime(void) {
+#ifdef DEBUG 
+	printf(">>> <string_expression_prime>\n");
+#endif
+	//TODO maybe change to if
 	switch (lookahead.code)
 	{
 	case SCC_OP_T:
@@ -526,70 +609,98 @@ void string_expression_prime(void) {
 		string_expression_prime();
 		break;
 
-	default:
-		gen_incode("PLATY: string_expression_prime parsed");
+	default: ;
 	}
 }
 
 void primary_string_expression(void) {
+#ifdef DEBUG 
+	printf(">>> <primary_string_expression>\n");
+#endif
 	switch (lookahead.code)
 	{
 	case SVID_T:
 		match(SVID_T, NO_ATTR);
+		gen_incode("PLATY: Primary string expression parsed");
 		break;
+
 	case STR_T:
 		match(STR_T, NO_ATTR);
-	default:
-		syn_printe();
+		gen_incode("PLATY: Primary string expression parsed");
+		break;
+
+	default: syn_printe();
 	}
 }
 
 void conditional_expression(void) {
+#ifdef DEBUG 
+	printf(">>> <conditional_expression>\n");
+#endif
 	logical_OR_expression();
 	gen_incode("PLATY: Conditional expression parsed");
 }
 
 void logical_OR_expression(void) {
+#ifdef DEBUG 
+	printf(">>> <logical_OR_expression>\n");
+#endif
 	logical_AND_expression();
 	logical_OR_expression_prime();
-	gen_incode("PLATY: Logical OR expression parsed");
+	//gen_incode("PLATY: Logical OR expression parsed");
 }
 
 void logical_OR_expression_prime(void) {
+#ifdef DEBUG 
+	printf(">>> <logical_OR_expression_prime>\n");
+#endif
 	switch (lookahead.code)
 	{
 	case LOG_OP_T:
-		match(LOG_OP_T, OR);
-		logical_AND_expression();
-		logical_OR_expression_prime();
+		if (lookahead.attribute.log_op == OR) {
+			match(LOG_OP_T, OR);
+			logical_AND_expression();
+			logical_OR_expression_prime();
+			gen_incode("PLATY: Logical OR expression parsed");
+		}
+		break;
 
 	default: ;
-		//gen_incode("PLATY: logical_OR_expression_prime parsed");
-		//TODO not display prime
 	}
 }
 
 void logical_AND_expression(void) {
+#ifdef DEBUG 
+	printf(">>> <logical_AND_expression>\n");
+#endif
 	relational_expression();
 	logical_AND_expression_prime();
-	gen_incode("PLATY: Logical AND expression parsed");
+	//gen_incode("PLATY: Logical AND expression parsed");
 }
 
 void logical_AND_expression_prime(void) {
+#ifdef DEBUG 
+	printf(">>> <logical_AND_expression_prime>\n");
+#endif
 	switch (lookahead.code)
 	{
 	case LOG_OP_T:
-		match(LOG_OP_T, AND);
-		relational_expression();
-		logical_AND_expression_prime();
+		if (lookahead.attribute.log_op == AND){
+			match(LOG_OP_T, AND);
+			relational_expression();
+			logical_AND_expression_prime();
+			gen_incode("PLATY: Logical AND expression parsed");
+		}
+		break;
 
 	default: ;
-		//gen_incode("PLATY: logical_AND_expression_prime parsed");
-		//TODO not display prime
 	}
 }
 
 void relational_expression(void) {
+#ifdef DEBUG 
+	printf(">>> <relational_expression>\n");
+#endif
 	switch (lookahead.code)
 	{
 	case AVID_T:
@@ -607,24 +718,30 @@ void relational_expression(void) {
 		gen_incode("PLATY: Relational expression parsed");
 		break;
 
-	default:
-		syn_printe();
+	default: syn_printe();
 	}
 }
 
 void arithmetic_relational_expression(void) {
+#ifdef DEBUG 
+	printf(">>> <arithmetic_relational_expression>\n");
+#endif
 	switch (lookahead.code)
 	{
 	case REL_OP_T:
-		if (lookahead.attribute.rel_op == EQ)
+		if (lookahead.attribute.rel_op == EQ) {
 			match(REL_OP_T, EQ);
-		else if (lookahead.attribute.rel_op == GT)
+			primary_a_relational_expression();
+		}else if (lookahead.attribute.rel_op == GT) {
 			match(REL_OP_T, GT);
-		else if (lookahead.attribute.rel_op == LT)
+			primary_a_relational_expression();
+		}else if (lookahead.attribute.rel_op == LT) {
 			match(REL_OP_T, LT);
-		else if (lookahead.attribute.rel_op == NE)
+			primary_a_relational_expression();
+		}else if (lookahead.attribute.rel_op == NE) {
 			match(REL_OP_T, NE);
-		primary_a_relational_expression();
+			primary_a_relational_expression();
+		}//TODO maybe call synprinte() in else
 		break;
 
 	default:
@@ -633,26 +750,35 @@ void arithmetic_relational_expression(void) {
 }
 
 void string_relational_expression(void) {
+#ifdef DEBUG 
+	printf(">>> <string_relational_expression>\n");
+#endif
 	switch (lookahead.code)
 	{
 	case REL_OP_T:
-		if (lookahead.attribute.rel_op == EQ)
+		if (lookahead.attribute.rel_op == EQ) {
 			match(REL_OP_T, EQ);
-		else if (lookahead.attribute.rel_op == GT)
+			primary_s_relational_expression();
+		}else if (lookahead.attribute.rel_op == GT) {
 			match(REL_OP_T, GT);
-		else if (lookahead.attribute.rel_op == LT)
+			primary_s_relational_expression();
+		}else if (lookahead.attribute.rel_op == LT) {
 			match(REL_OP_T, LT);
-		else if (lookahead.attribute.rel_op == NE)
+			primary_s_relational_expression();
+		}else if (lookahead.attribute.rel_op == NE) {
 			match(REL_OP_T, NE);
-		primary_s_relational_expression();
+			primary_s_relational_expression();
+		}//TODO maybe call synprinte() in else
 		break;
 
-	default:
-		syn_printe();
+	default: syn_printe();
 	}
 }
 
 void primary_a_relational_expression(void) {
+#ifdef DEBUG 
+	printf(">>> <primary_a_relational_expression>\n");
+#endif
 	switch (lookahead.code)
 	{
 	case AVID_T:
@@ -670,12 +796,14 @@ void primary_a_relational_expression(void) {
 		gen_incode("PLATY: Primary a_relational expression parsed");
 		break;
 
-	default:
-		syn_printe();
+	default: syn_printe();
 	}
 }
 
 void primary_s_relational_expression(void) {
+#ifdef DEBUG 
+	printf(">>> <primary_s_relational_expression>\n");
+#endif
 	switch (lookahead.code)
 	{
 	case STR_T:
@@ -688,7 +816,6 @@ void primary_s_relational_expression(void) {
 		gen_incode("PLATY: Primary s_relational expression parsed");
 		break;
 
-	default:
-		syn_printe();
+	default: syn_printe();
 	}
 }

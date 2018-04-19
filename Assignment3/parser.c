@@ -48,7 +48,6 @@ void match(int pr_token_code, int pr_token_attribute) {
 			return;
 		}
 	}
-
 }
 
 void syn_eh(int sync_token_code) {
@@ -56,11 +55,11 @@ void syn_eh(int sync_token_code) {
 	++synerrno;
 
 	while (lookahead.code != sync_token_code) { //TODO not sure if only the semicolon
-		lookahead = malar_next_token(sc_buf);
 
 		if (sync_token_code != SEOF_T && lookahead.code == SEOF_T) {
 			exit(synerrno);
 		}
+		lookahead = malar_next_token(sc_buf);
 	}
 
 	if (lookahead.code != SEOF_T)

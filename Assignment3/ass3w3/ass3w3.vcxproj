@@ -34,13 +34,11 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\ass3w1Generated.out" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{9B58F3B7-7C5E-47EA-90CF-E37A06AE6686}</ProjectGuid>
-    <RootNamespace>assw1</RootNamespace>
+    <ProjectGuid>{48FF0C10-0871-4A22-A1CD-052FBDEE4810}</ProjectGuid>
+    <RootNamespace>ass3w3</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>assw3</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -192,6 +190,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

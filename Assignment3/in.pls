@@ -1,8 +1,8 @@
-!!This program contains syntax errors
-!!Addition to Murphy's laws:
-!!"In nature, nothing is ever right. Therefore,
-!!if everything is going right ... something is wrong."
+!!This program contains a syntax error
+!!Forsyth's second corollary to Murphy's law:
+!!"Just when you see the light at the end of the tunnel, the roof caves."
 
 PLATYPUS{
-	WHILE TRUE(0 == 0) REPEAT { a = 1 };
+	 IF TRUE(if == "begin")THEN {} ELSE{REPEAT};
+
 }

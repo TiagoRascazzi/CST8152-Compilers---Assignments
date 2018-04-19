@@ -2,8 +2,6 @@
 #include "token.h"
 #include "parser.h"
 
-//#define DEBUG
-
 extern int line;
 extern char * kw_table[];
 extern Buffer * str_LTBL;
@@ -22,7 +20,12 @@ void parser(Buffer * in_buf){
 
 void match(int pr_token_code, int pr_token_attribute) {
 
-	if (lookahead.code != pr_token_code) {
+#ifdef MATCH_DEBUG
+	printf("In match function with t_code %s and attribute code %s\n", tokenCodeToString(pr_token_code),
+		tokenAttributeToString(lookahead));
+#endif
+
+	if (lookahead.code != pr_token_code){
 		syn_eh(pr_token_code);
 		return;
 	}
@@ -47,6 +50,75 @@ void match(int pr_token_code, int pr_token_attribute) {
 			++synerrno;
 			return;
 		}
+	}
+}
+
+//TODO REMOVE
+char* tokenCodeToString(int code) {
+	switch (code) {
+	case 0: return "ERR_T";
+	case 1: return "SEOF_T";
+	case 2: return "AVID_T";
+	case 3: return "SVID_T";
+	case 4: return "FPL_T";
+	case 5: return "INL_T";
+	case 6: return "STR_T";
+	case 7: return "SCC_OP_T";
+	case 8: return "ASS_OP_T";
+	case 9: return "ART_OP_T";
+	case 10: return "REL_OP_T";
+	case 11: return "LOG_OP_T";
+	case 12: return "LPR_T";
+	case 13: return "RPR_T";
+	case 14: return "LBR_T";
+	case 15: return "RBR_T";
+	case 16: return "KW_T";
+	case 17: return "COM_T";
+	case 18: return "EOS_T";
+	default: return "NA";
+	}
+}
+
+//TODO REMOVE
+char* tokenAttributeToString(Token lookahead) {
+	switch (lookahead.code) {
+	case KW_T:
+		switch (lookahead.attribute.kwt_idx) {
+		case 0: return "ELSE";
+		case 1: return "FALSE";
+		case 2: return "IF";
+		case 3: return "PLATYPUS";
+		case 4: return "READ";
+		case 5: return "REPEAT";
+		case 6: return "THEN";
+		case 7: return "TRUE";
+		case 8: return "WHILE";
+		case 9: return "WRITE";
+
+		}
+		break;
+	case ART_OP_T:
+		switch (lookahead.attribute.arr_op) {
+		case 0: return "PLUS";
+		case 1: return "MINUS";
+		case 2: return "MULT";
+		case 3: return "DIV";
+		}
+		break;
+	case LOG_OP_T:
+		switch (lookahead.attribute.log_op) {
+		case 0: return "AND";
+		case 1: return "OR";
+		}
+		break;
+	case REL_OP_T:
+		switch (lookahead.attribute.rel_op) {
+		case 0: return "EQ";
+		case 1: return "NE";
+		case 2: return "GT";
+		case 3: return "LT";
+		}
+	default: return "NO_ATTR";
 	}
 }
 
@@ -249,7 +321,7 @@ void statement(void) {
 	}
 }
 
-void assignment_statement(void) {
+void assignment_statement(void){
 #ifdef DEBUG 
 	printf(">>> <assignment_statement>\n");
 #endif
@@ -258,7 +330,7 @@ void assignment_statement(void) {
 	gen_incode("PLATY: Assignment statement parsed");
 }
 
-void assignment_expression(void) {
+void assignment_expression(void){
 #ifdef DEBUG 
 	printf(">>> <assignment_expression>\n");
 #endif
@@ -776,7 +848,7 @@ void string_relational_expression(void) {
 
 void primary_a_relational_expression(void) {
 #ifdef DEBUG 
-	printf(">>> <primary_a_relational_expression>\n");
+	printf(">>> <primary_a_relational_expression> DEBUG: %d\n", lookahead.code);
 #endif
 	switch (lookahead.code)
 	{
@@ -795,7 +867,9 @@ void primary_a_relational_expression(void) {
 		gen_incode("PLATY: Primary a_relational expression parsed");
 		break;
 
-	default: syn_printe();
+	default:
+		syn_printe();
+		gen_incode("PLATY: Primary a_relational expression parsed"); // TODO figure out why this fixes ass3w
 	}
 }
 

@@ -18,6 +18,9 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\ass3w1Generated.out" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9B58F3B7-7C5E-47EA-90CF-E37A06AE6686}</ProjectGuid>
     <RootNamespace>assw1</RootNamespace>
@@ -109,8 +112,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

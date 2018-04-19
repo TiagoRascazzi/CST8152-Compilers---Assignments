@@ -85,14 +85,14 @@
     <None Include="ass3w4.out">
       <Filter>Resource Files\outputFiles</Filter>
     </None>
-    <None Include="in.pls">
-      <Filter>Resource Files\inputFiles</Filter>
-    </None>
     <None Include="out">
       <Filter>Resource Files\outputFiles</Filter>
     </None>
     <None Include="TODO">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="in.pls">
+      <Filter>Resource Files\inputFiles</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-/*
+﻿/*
 * File name: parser.c
 * Compiler: MS Visual Studio 2015
 * Author: Tiago Donchegay, 040867850, Nicholas Richer,
@@ -8,6 +8,7 @@
 * Professor: Svillen Ranev
 * Purpose: -----TODO-----
 */
+
 #include "buffer.h"
 #include "token.h"
 #include "parser.h"
@@ -151,6 +152,14 @@ void gen_incode(char* str) {
 	printf("%s\n", str);
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<program> ->
+PLATYPUS { <opt_statements> }
+
+FIRST(<program> = { KW_T(PLATYPUS) })
+*****************************************************************************/
 void program(void) {
 #ifdef DEBUG 
 		printf(">>> <program>\n"); 
@@ -162,6 +171,14 @@ void program(void) {
 	gen_incode("PLATY: Program parsed");
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<statements> ->
+<statement> <statements_prime>
+
+FIRST(<statements> = {AVID, SVID, KW_T=(IF, READ, WHILE, WRITE, ϵ)})
+*****************************************************************************/
 void statements(void) {
 #ifdef DEBUG 
 	printf(">>> <statements>\n");
@@ -170,6 +187,14 @@ void statements(void) {
 	statements_prime();
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<statements_prime> -> 
+<statement> <statements prime> | ϵ
+
+FIRST(<statements_prime> = {AVID, SVID, KW_T=(IF, READ, WHILE, WRITE, ϵ)})
+*****************************************************************************/
 void statements_prime(void) {
 #ifdef DEBUG 
 	printf(">>> <statements_prime>\n");
@@ -195,11 +220,19 @@ void statements_prime(void) {
 	}
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<opt_statements> -> 
+<statements> | ϵ
+
+FIRST(<opt_statements> = {AVID, SVID, KW_T=(IF, READ, WHILE, WRITE, ϵ)})
+*****************************************************************************/
 void opt_statements() {
 #ifdef DEBUG 
 	printf(">>> <opt_statements>\n");
 #endif
-	/* FIRST set: {AVID_T,SVID_T,KW_T(but not � see above),e} */
+	/* FIRST set: {AVID_T,SVID_T,KW_T(but not … see above),e} */
 	switch (lookahead.code) {
 	case AVID_T:
 	case SVID_T: 
@@ -219,6 +252,18 @@ void opt_statements() {
 	}
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<statement> ->
+  <assignment_statement>
+| <selection_statement>
+| <iteration_statement>
+| <input_statement>
+| <output_statement>
+
+FIRST(<statements> = {AVID, SVID, KW_T=(IF, READ, WHILE, WRITE)})
+*****************************************************************************/
 void statement(void) {
 #ifdef DEBUG 
 	printf(">>> <statement>\n");
@@ -244,6 +289,14 @@ void statement(void) {
 	}
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<assignment_statement> ->
+<assignment_expression>;
+
+FIRST(<assignment_statement> = {AVID, SVID})
+*****************************************************************************/
 void assignment_statement(void){
 #ifdef DEBUG 
 	printf(">>> <assignment_statement>\n");
@@ -253,6 +306,15 @@ void assignment_statement(void){
 	gen_incode("PLATY: Assignment statement parsed");
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<assignment_expression> ->
+  AVID = <arithmetic_expression>
+| SVID = <string_expression>
+
+FIRST(<assignment_expression> = {AVID, SVID})
+*****************************************************************************/
 void assignment_expression(void){
 #ifdef DEBUG 
 	printf(">>> <assignment_expression>\n");
@@ -276,6 +338,15 @@ void assignment_expression(void){
 	}
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<selection_statement> ->
+IF <pre-condition> ( <conditional_expression> ) THEN { <opt_statements> }
+ELSE { <opt_statements> } ;
+
+FIRST(<selection_statement> = {KW_T = (IF)})
+*****************************************************************************/
 void selection_statement(void) {
 #ifdef DEBUG 
 	printf(">>> <selection_statement>\n");
@@ -298,6 +369,15 @@ void selection_statement(void) {
 
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<iteration_statement> ->
+WHILE <pre-condition> ( <conditional_expression> )
+REPEAT { <statements> };
+
+FIRST(<iteration_statement> = {KW_T = (WHILE)})
+*****************************************************************************/
 void iteration_statement(void) {
 #ifdef DEBUG 
 	printf(">>> <iteration_statement>\n");
@@ -315,6 +395,14 @@ void iteration_statement(void) {
 	gen_incode("PLATY: Iteration statement parsed");
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<pre-condition> ->
+TRUE | FALSE
+
+FIRST(<pre-condition> = {KW_T = (FALSE, TRUE)})
+*****************************************************************************/
 void pre_condition(void) {
 #ifdef DEBUG 
 	printf(">>> <pre_condition>\n");
@@ -333,6 +421,14 @@ void pre_condition(void) {
 	}
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<input_statement> ->
+READ ( <variable_list> );
+
+FIRST(<input_statement> = {KW_T = (READ)})
+*****************************************************************************/
 void input_statement(void) {
 #ifdef DEBUG 
 	printf(">>> <input_statement>\n");
@@ -345,6 +441,14 @@ void input_statement(void) {
 	gen_incode("PLATY: Input statement parsed");
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<variable_list> ->
+<variable_identifier> <variable_list_prime>
+
+FIRST(<variable_list> = {AVID_T, SVID_T})
+*****************************************************************************/
 void variable_list(void) {
 #ifdef DEBUG 
 	printf(">>> <variable_list>\n");
@@ -354,6 +458,14 @@ void variable_list(void) {
 	gen_incode("PLATY: Variable list parsed");
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<variable_list_prime> -> 
+, <variable_identifier> <variable_list_prime> | ϵ
+
+FIRST(<variable_list_prime> = { , , ϵ})
+*****************************************************************************/
 void variable_list_prime(void) {
 #ifdef DEBUG 
 	printf(">>> <variable_list_prime>\n");
@@ -371,6 +483,14 @@ void variable_list_prime(void) {
 	}
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<opt_variable_list> -> 
+<variable_list> | ϵ
+
+FIRST(<opt_variable_list> = { AVID_T, SVID_T , ϵ})
+*****************************************************************************/
 void opt_variable_list(void) {
 #ifdef DEBUG 
 	printf(">>> <opt_variable_list>\n");
@@ -386,6 +506,14 @@ void opt_variable_list(void) {
 	}
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<variable_identifier> ->
+AVID_T | SVID_T
+
+FIRST(<variable_identifier> = { AVID_T, SVID_T})
+*****************************************************************************/
 void variable_identifier(void) {
 #ifdef DEBUG 
 	printf(">>> <variable_identifier>\n");
@@ -404,6 +532,14 @@ void variable_identifier(void) {
 	}
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<output_statement> ->
+WRITE ( <output_statement_argument> );
+
+FIRST(<output_statement> = { KW_T = (WRITE)})
+*****************************************************************************/
 void output_statement(void) {
 #ifdef DEBUG 
 	printf(">>> <output_statement>\n");
@@ -416,6 +552,14 @@ void output_statement(void) {
 	gen_incode("PLATY: Output statement parsed");
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<output_statement_argument> ->
+<opt_variable_list> | STR_T
+
+FIRST(<output_statement_argument> = { AVID_T, STR_T, SVID_T, ϵ})
+*****************************************************************************/
 void output_statement_argument(void) {
 #ifdef DEBUG 
 	printf(">>> <output_statement_argument>\n");
@@ -436,6 +580,15 @@ void output_statement_argument(void) {
 	}
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<arithmetic_expression> - >
+  <unary_arithmetic_expression>
+| <additive_arithmetic_expression>
+
+FIRST(<arithmetic_expression> = { (, +, -, AVID_T, FPL_T, INL_T})
+*****************************************************************************/
 void arithmetic_expression(void) {
 #ifdef DEBUG 
 	printf(">>> <arithmetic_expression>\n");
@@ -459,6 +612,15 @@ void arithmetic_expression(void) {
 	}
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<unary_arithmetic_expression> ->
+  - <primary_arithmetic_expression>
+| + <primary_arithmetic_expression>
+
+FIRST(<unary_arithmetic_expression> = { +, - })
+*****************************************************************************/
 void unary_arithmetic_expression(void) {
 #ifdef DEBUG 
 	printf(">>> <unary_arithmetic_expression>\n");
@@ -481,6 +643,14 @@ void unary_arithmetic_expression(void) {
 	}
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<additive_arithmetic_expression> ->
+<multiplicative_arithmetic_expression> <additive_arithmetic_expression_prime>
+
+FIRST(<additive_arithmetic_expression> = { (, AVID_T, FPL_T, INL_T })
+*****************************************************************************/
 void additive_arithmetic_expression(void) {
 #ifdef DEBUG 
 	printf(">>> <additive_arithmetic_expression>\n");
@@ -490,6 +660,16 @@ void additive_arithmetic_expression(void) {
 
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<additive_arithmetic_expression_prime> ->
+  + <multiplicative_arithmetic_expression> <additive_arithmetic_expression_prime>
+| - <multiplicative_arithmetic_expression> <additive_arithmetic_expression_prime> 
+| ϵ
+
+FIRST(<additive_arithmetic_expression> = { +, - })
+*****************************************************************************/
 void additive_arithmetic_expression_prime(void) {
 #ifdef DEBUG 
 	printf(">>> <additive_arithmetic_expression_prime>\n");
@@ -514,6 +694,14 @@ void additive_arithmetic_expression_prime(void) {
 	}
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<multiplicative_arithmetic_expression> ->
+<primary_arithmetic_expression> <multiplicative_arithmetic_expression_prime>
+
+FIRST(<multiplicative_arithmetic_expression> = { (, AVID_T, FPL_T, INL_T })
+*****************************************************************************/
 void multiplicative_arithmetic_expression(void) {
 #ifdef DEBUG 
 	printf(">>> <multiplicative_arithmetic_expression>\n");
@@ -523,6 +711,16 @@ void multiplicative_arithmetic_expression(void) {
 
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<multiplicative_arithmetic_expression_prime> ->
+  * <primary_arithmetic_expression> multiplicative_arithmetic_expression_prime>
+| / <primary_arithmetic_expression> multiplicative_arithmetic_expression_prime> 
+| ϵ
+
+FIRST(<multiplicative_arithmetic_expression_prime> = { *, /, ϵ })
+*****************************************************************************/
 void multiplicative_arithmetic_expression_prime(void) {
 #ifdef DEBUG 
 	printf(">>> <multiplicative_arithmetic_expression_prime>\n");
@@ -547,6 +745,17 @@ void multiplicative_arithmetic_expression_prime(void) {
 	}
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<primary_arithmetic_expression> ->
+  AVID_T
+| FPL_T
+| INL_T
+| ( <arithmetic_expression> )
+
+FIRST(<primary_arithmetic_expression> = { (, AVID_T, FPL_T, INL_T })
+*****************************************************************************/
 void primary_arithmetic_expression(void) {
 #ifdef DEBUG 
 	printf(">>> <primary_arithmetic_expression>\n");
@@ -578,6 +787,14 @@ void primary_arithmetic_expression(void) {
 	}
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<string_expression> ->
+<primary_string_expression> <string_expression_prime>
+
+FIRST(<string_expression> = { STR_T, SVID_T })
+*****************************************************************************/
 void string_expression(void) {
 #ifdef DEBUG 
 	printf(">>> <string_expression>\n");
@@ -587,6 +804,14 @@ void string_expression(void) {
 	gen_incode("PLATY: String expression parsed");
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<string_expression_prime> -> 
+# <primary_string_expression> <string_expression_prime> | ϵ
+
+FIRST(<string_expression_prime> = { #, ϵ })
+*****************************************************************************/
 void string_expression_prime(void) {
 #ifdef DEBUG 
 	printf(">>> <string_expression_prime>\n");
@@ -603,6 +828,15 @@ void string_expression_prime(void) {
 	}
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<primary_string_expression> ->
+  SVID_T
+| STR_T
+
+FIRST(<primary_string_expression> = { STR_T, SVID_T })
+*****************************************************************************/
 void primary_string_expression(void) {
 #ifdef DEBUG 
 	printf(">>> <primary_string_expression>\n");
@@ -623,6 +857,14 @@ void primary_string_expression(void) {
 	gen_incode("PLATY: Primary string expression parsed");
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<conditional_expression> ->
+<logical_OR_expression>
+
+FIRST(<conditional_expression> = { AVID_T, FPL_T, INL_T, STR_T, SVID_T })
+*****************************************************************************/
 void conditional_expression(void) {
 #ifdef DEBUG 
 	printf(">>> <conditional_expression>\n");
@@ -631,6 +873,14 @@ void conditional_expression(void) {
 	gen_incode("PLATY: Conditional expression parsed");
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<logical_OR_expression> ->
+<logical_AND_expression> <logical_OR_expression_prime>
+
+FIRST(<logical_OR_expression> = { AVID_T, FPL_T, INL_T, STR_T, SVID_T })
+*****************************************************************************/
 void logical_OR_expression(void) {
 #ifdef DEBUG 
 	printf(">>> <logical_OR_expression>\n");
@@ -639,6 +889,15 @@ void logical_OR_expression(void) {
 	logical_OR_expression_prime();
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<logical_OR_expression_prime> -> 
+ .OR. <logical_AND_expression> <logical_OR_expression_prime> 
+| ϵ
+
+FIRST(<logical_OR_expression_prime> = { .OR. , ϵ })
+*****************************************************************************/
 void logical_OR_expression_prime(void) {
 #ifdef DEBUG 
 	printf(">>> <logical_OR_expression_prime>\n");
@@ -658,6 +917,14 @@ void logical_OR_expression_prime(void) {
 	}
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<logical_AND_expression> ->
+<relational_expression> <logical_AND_expression_prime>
+
+FIRST(<logical_AND_expression> = { AVID_T, FPL_T, INL_T, STR_T, SVID_T })
+*****************************************************************************/
 void logical_AND_expression(void) {
 #ifdef DEBUG 
 	printf(">>> <logical_AND_expression>\n");
@@ -666,6 +933,15 @@ void logical_AND_expression(void) {
 	logical_AND_expression_prime();
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<logical_AND_expression_prime> -> 
+ .AND. <relational_expression> <logical_AND_expression_prime> 
+| ϵ
+
+FIRST(<logical_AND_expression_prime> = { .AND., ϵ })
+*****************************************************************************/
 void logical_AND_expression_prime(void) {
 #ifdef DEBUG 
 	printf(">>> <logical_AND_expression_prime>\n");
@@ -685,6 +961,15 @@ void logical_AND_expression_prime(void) {
 	}
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<relational_expression> ->
+  <primary_a_relational_expression> <arithmetic_relational_expression>
+| <primary_s_relational_expression> <string_relational_expression>
+
+FIRST(<relational_expression> = { AVID_T, FPL_T, INL_T, STR_T, SVID_T })
+*****************************************************************************/
 void relational_expression(void) {
 #ifdef DEBUG 
 	printf(">>> <relational_expression>\n");
@@ -713,6 +998,17 @@ void relational_expression(void) {
 	gen_incode("PLATY: Relational expression parsed");
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<arithmetic_relational_expression> ->
+  == <primary_a_relational_expression>
+| <> <primary_a_relational_expression>
+| > <primary_a_relational_expression>
+| < <primary_a_relational_expression>
+
+FIRST(<arithmetic_relational_expression> = { <, <>, ==, > })
+*****************************************************************************/
 void arithmetic_relational_expression(void) {
 #ifdef DEBUG 
 	printf(">>> <arithmetic_relational_expression>\n");
@@ -740,6 +1036,17 @@ void arithmetic_relational_expression(void) {
 	}
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<string_relational_expression> ->
+  == <primary_s_relational_expression>
+| <> <primary_s_relational_expression>
+| > <primary_s_relational_expression>
+| < <primary_s_relational_expression>
+
+FIRST(<string_relational_expression> = { <, <>, ==, > })
+*****************************************************************************/
 void string_relational_expression(void){
 #ifdef DEBUG 
 	printf(">>> <string_relational_expression>\n");
@@ -766,6 +1073,16 @@ void string_relational_expression(void){
 	}
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<primary_a_relational_expression> ->
+  AVID_T
+| FPL_T
+| INL_T
+
+FIRST(<primary_a_relational_expression> = { AVID_T, FPL_T, INL_T })
+*****************************************************************************/
 void primary_a_relational_expression(void) {
 #ifdef DEBUG 
 	printf(">>> <primary_a_relational_expression>\n", lookahead.code);
@@ -786,6 +1103,14 @@ void primary_a_relational_expression(void) {
 	gen_incode("PLATY: Primary a_relational expression parsed");
 }
 
+/*****************************************************************************
+Author:
+-----------------------------------------------------------------------------
+<primary_s_relational_expression> ->
+<primary_string_expression>
+
+FIRST(<primary_s_relational_expression> = { STR_T, SVID_T })
+*****************************************************************************/
 void primary_s_relational_expression(void) {
 #ifdef DEBUG 
 	printf(">>> <primary_s_relational_expression>\n");

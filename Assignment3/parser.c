@@ -1,14 +1,12 @@
 /*
-* File name: scanner.c
-* Compiler: MS Visual Studio 2015, gcc
+* File name: parser.c
+* Compiler: MS Visual Studio 2015
 * Author: Tiago Donchegay, 040867850, Nicholas Richer,
 * Course: CST8152_010 Compilers
 * Assignment: 3
-* Date:
+* Date: April 20th 2018
 * Professor: Svillen Ranev
-* Purpose:
-* Function list:
-*
+* Purpose: -----TODO-----
 */
 #include "buffer.h"
 #include "token.h"

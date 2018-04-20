@@ -1,3 +1,13 @@
+/*
+* File name: parser.h
+* Compiler: MS Visual Studio 2015
+* Author: Tiago Donchegay, 040867850, Nicholas Richer, 040828783
+* Course: CST8152_010 Compilers
+* Assignment: 3
+* Date: April 20th 2018
+* Professor: Svillen Ranev
+*/
+
 #ifndef  PARSER_H
 #define  PARSER_H
 

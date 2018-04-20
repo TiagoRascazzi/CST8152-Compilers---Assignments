@@ -1,14 +1,11 @@
 /*
 * File name: scanner.c
 * Compiler: MS Visual Studio 2015
-* Author: Tiago Donchegay, 040867850, Nicholas Richer,
+* Author: Tiago Donchegay, 040867850, Nicholas Richer, 040828783
 * Course: CST8152_010 Compilers
-* Assignment: 2
-* Date:
+* Assignment: 3
+* Date: April 20th 2018
 * Professor: Svillen Ranev
-* Purpose:
-* Function list:
-*
 */
 
 /* The #define _CRT_SECURE_NO_WARNINGS should be used in MS Visual Studio projects

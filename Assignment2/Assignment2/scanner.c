@@ -173,13 +173,14 @@ Token malar_next_token(Buffer * sc_buf)
 			errBufStart = b_getcoffset(sc_buf);
 			/* loop until the next character is the closing quote */
 			while ((c = b_getc(sc_buf)) != '"') {
+
 				if (c == SEOF1 || c == SEOF2) {
 					/* if the end of the file is reached */
 					errBufEnd = b_getcoffset(sc_buf);
 
 					/* Generate a buffer to hold the invalid string */
 					errBuf = b_allocate((short)(errBufEnd - errBufStart + 1), 0, 'f');
-					line++;
+					//line++;
 
 					/* Check if the buffer is null */
 					if (errBuf == NULL) {
@@ -206,6 +207,9 @@ Token malar_next_token(Buffer * sc_buf)
 
 					return t;
 				}
+
+				if (c == '\n')
+					++line;
 			}
 
 			b_reset(sc_buf);

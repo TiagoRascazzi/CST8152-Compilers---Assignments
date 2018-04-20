@@ -1,9 +1,9 @@
-!!This is the greatest of all programs
-!!The law of computer programming:
-!!"If a program is useless, it will have to be well documented." 
+!!This program contains a syntax error
 
 PLATYPUS{
-	
-	a=-0;
-	
+WRITE("If there is a possibility of several things going wrong,
+         the one that will cause the most damage will be the first
+         one to go wrong. Murphy's law");
+ c=(-(d+e))*f-
+   ((d-e)*a)/f); !! Missing "(" or extra ")"
 }

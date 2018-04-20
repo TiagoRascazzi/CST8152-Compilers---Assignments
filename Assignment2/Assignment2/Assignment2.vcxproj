@@ -182,6 +182,7 @@
     <None Include="ass2r.pls" />
     <None Include="ass2w.pls" />
     <None Include="assTestFile.pls" />
+    <None Include="in.pls" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

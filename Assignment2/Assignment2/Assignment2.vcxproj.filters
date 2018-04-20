@@ -58,5 +58,8 @@
     <None Include="assTestFile.pls">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="in.pls">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

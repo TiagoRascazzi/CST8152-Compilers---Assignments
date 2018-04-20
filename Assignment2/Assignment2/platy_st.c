@@ -141,7 +141,8 @@ int main(int argc, char ** argv) {
 	printf("----------------------------------\n");
 	do {
 		t = malar_next_token(sc_buf);
-		print_token(t);
+		//print_token(t);
+		print_token_lines(t);
 	} while (t.code != SEOF_T);
 	/*print String Literal Table if not empty*/
 	if (b_limit(str_LTBL)) b_print(str_LTBL);
@@ -207,6 +208,82 @@ void print_token(Token t) {
 		break;
 	case  ERR_T:
 		printf("ERR_T\t\t%s\n", t.attribute.err_lex);
+		break;
+	case  SEOF_T:
+		printf("SEOF_T\n");
+		break;
+	case  AVID_T:
+		printf("AVID_T\t\t%s\n", t.attribute.vid_lex);
+		break;
+	case  SVID_T:
+		printf("SVID_T\t\t%s\n", t.attribute.vid_lex);
+		break;
+	case  FPL_T:
+		printf("FPL_T\t\t%f\n", t.attribute.flt_value);
+		break;
+	case  INL_T:
+		printf("INL_T\t\t%d\n", t.attribute.get_int);
+		break;
+	case  STR_T:
+		printf("STR_T\t\t%d\t ", (short)t.attribute.get_int);
+		printf("%s\n", b_location(str_LTBL, (short)t.attribute.get_int));
+		break;
+	case  SCC_OP_T:
+		printf("SCC_OP_T\n");
+		break;
+	case  ASS_OP_T:
+		printf("ASS_OP_T\n");
+		break;
+	case  ART_OP_T:
+		printf("ART_OP_T\t%d\n", t.attribute.get_int);
+		break;
+	case  REL_OP_T:
+		printf("REL_OP_T\t%d\n", t.attribute.get_int);
+		break;
+	case  LOG_OP_T:
+		printf("LOG_OP_T\t%d\n", t.attribute.get_int);
+		break;
+	case  LPR_T:
+		printf("LPR_T\n");
+		break;
+	case  RPR_T:
+		printf("RPR_T\n");
+		break;
+	case LBR_T:
+		printf("LBR_T\n");
+		break;
+	case RBR_T:
+		printf("RBR_T\n");
+		break;
+	case KW_T:
+		printf("KW_T\t\t%s\n", kw_table[t.attribute.get_int]);
+		break;
+	case COM_T:
+		printf("COM_T\n");
+		break;
+	case EOS_T:
+		printf("EOS_T\n");
+		break;
+
+	default:
+		printf("Scanner error: invalid token code: %d\n", t.code);
+	}
+}
+
+void print_token_lines(Token t) {
+	extern char * kw_table[]; /* link to keyword table in */
+	printf("Line %d ", line);
+	switch (t.code){
+	case  RTE_T:
+		printf("RTE_T\t\t%s", t.attribute.err_lex);
+		/*Call here run-time error handling component*/
+		if (scerrnum){
+			printf("%d", scerrnum);
+			exit(scerrnum);
+		}printf("\n");
+		break;
+	case  ERR_T:
+		printf("ERR_T\t\t%s Line %d\n", t.attribute.err_lex, line);
 		break;
 	case  SEOF_T:
 		printf("SEOF_T\n");

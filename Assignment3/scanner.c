@@ -1,6 +1,6 @@
 /*
 * File name: scanner.c
-* Compiler: MS Visual Studio 2015, gcc
+* Compiler: MS Visual Studio 2015
 * Author: Tiago Donchegay, 040867850, Nicholas Richer,
 * Course: CST8152_010 Compilers
 * Assignment: 2
@@ -168,18 +168,19 @@ Token malar_next_token(Buffer * sc_buf)
 
 		case '"': /* String literal */
 		{
-			b_mark(sc_buf, b_getcoffset(sc_buf)); 
+			b_mark(sc_buf, b_getcoffset(sc_buf));
 
 			errBufStart = b_getcoffset(sc_buf);
 			/* loop until the next character is the closing quote */
-			while ((c = b_getc(sc_buf)) != '"'){
-				if (c == SEOF1 || c == SEOF2){
+			while ((c = b_getc(sc_buf)) != '"') {
+
+				if (c == SEOF1 || c == SEOF2) {
 					/* if the end of the file is reached */
 					errBufEnd = b_getcoffset(sc_buf);
 
 					/* Generate a buffer to hold the invalid string */
 					errBuf = b_allocate((short)(errBufEnd - errBufStart + 1), 0, 'f');
-					++line;
+
 					/* Check if the buffer is null */
 					if (errBuf == NULL) {
 						/* Generate a runtime error token */
@@ -205,12 +206,16 @@ Token malar_next_token(Buffer * sc_buf)
 
 					return t;
 				}
+
+				if (c == '\n')
+					++line;
 			}
 
 			b_reset(sc_buf);
 			t.attribute.str_offset = b_limit(str_LTBL);
 			while ( ( c = b_getc(sc_buf) ) != '"') b_addc(str_LTBL, c);
 			b_addc(str_LTBL, '\0');
+
 			t.code = STR_T;
 			return t;
 		}
@@ -433,6 +438,8 @@ Token aa_func08(char *lexeme) {
 	if (isValidFPL(lexeme)){
 		/* Generate FPL token */
 		t.code = FPL_T;
+
+		/* Possible loss of data because of conversion from double(atof) to float(t.attribute.flt_value)*/
 		t.attribute.flt_value = atof(lexeme);
 	}else {
 		/* Generate error token */

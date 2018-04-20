@@ -84,10 +84,10 @@ PLATY: Syntax error:  Line: 12
 PLATY: Opt_statements parsed
 PLATY: Opt_statements parsed
 PLATY: Selection statement parsed
-PLATY: Syntax error:  Line: 14
+PLATY: Syntax error:  Line: 15
 *****  Token code:  0 Attribute: "Imagine all the ...
 PLATY: Output list (empty) parsed
-PLATY: Syntax error:  Line: 14
+PLATY: Syntax error:  Line: 15
 *****  Token code:  1 Attribute: NA
 
 Syntax errors: 9

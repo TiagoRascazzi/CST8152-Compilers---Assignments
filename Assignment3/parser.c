@@ -1,9 +1,18 @@
+/*
+* File name: scanner.c
+* Compiler: MS Visual Studio 2015, gcc
+* Author: Tiago Donchegay, 040867850, Nicholas Richer,
+* Course: CST8152_010 Compilers
+* Assignment: 3
+* Date:
+* Professor: Svillen Ranev
+* Purpose:
+* Function list:
+*
+*/
 #include "buffer.h"
 #include "token.h"
 #include "parser.h"
-
-//#define	DEBUG
-//#define MATCH_DEBUG
 
 extern int line;
 extern char * kw_table[];
@@ -22,12 +31,6 @@ void parser(Buffer * in_buf){
 }
 
 void match(int pr_token_code, int pr_token_attribute) {
-
-	//TODO GET RID OF THIS
-#ifdef MATCH_DEBUG
-	printf("In match function with t_code %s and attribute code %s\n", tokenCodeToString(pr_token_code),
-		tokenAttributeToString(lookahead));
-#endif
 
 	if (lookahead.code != pr_token_code){
 		syn_eh(pr_token_code);
@@ -57,80 +60,11 @@ void match(int pr_token_code, int pr_token_attribute) {
 	}
 }
 
-//TODO REMOVE
-char* tokenCodeToString(int code) {
-	switch (code) {
-	case 0: return "ERR_T";
-	case 1: return "SEOF_T";
-	case 2: return "AVID_T";
-	case 3: return "SVID_T";
-	case 4: return "FPL_T";
-	case 5: return "INL_T";
-	case 6: return "STR_T";
-	case 7: return "SCC_OP_T";
-	case 8: return "ASS_OP_T";
-	case 9: return "ART_OP_T";
-	case 10: return "REL_OP_T";
-	case 11: return "LOG_OP_T";
-	case 12: return "LPR_T";
-	case 13: return "RPR_T";
-	case 14: return "LBR_T";
-	case 15: return "RBR_T";
-	case 16: return "KW_T";
-	case 17: return "COM_T";
-	case 18: return "EOS_T";
-	default: return "NA";
-	}
-}
-
-//TODO REMOVE
-char* tokenAttributeToString(Token lookahead) {
-	switch (lookahead.code) {
-	case KW_T:
-		switch (lookahead.attribute.kwt_idx) {
-		case 0: return "ELSE";
-		case 1: return "FALSE";
-		case 2: return "IF";
-		case 3: return "PLATYPUS";
-		case 4: return "READ";
-		case 5: return "REPEAT";
-		case 6: return "THEN";
-		case 7: return "TRUE";
-		case 8: return "WHILE";
-		case 9: return "WRITE";
-
-		}
-		break;
-	case ART_OP_T:
-		switch (lookahead.attribute.arr_op) {
-		case 0: return "PLUS";
-		case 1: return "MINUS";
-		case 2: return "MULT";
-		case 3: return "DIV";
-		}
-		break;
-	case LOG_OP_T:
-		switch (lookahead.attribute.log_op) {
-		case 0: return "AND";
-		case 1: return "OR";
-		}
-		break;
-	case REL_OP_T:
-		switch (lookahead.attribute.rel_op) {
-		case 0: return "EQ";
-		case 1: return "NE";
-		case 2: return "GT";
-		case 3: return "LT";
-		}
-	default: return "NO_ATTR";
-	}
-}
-
 void syn_eh(int sync_token_code) {
 	syn_printe();
 	++synerrno;
 
-	while (lookahead.code != sync_token_code) { //TODO not sure if only the semicolon
+	while (lookahead.code != sync_token_code) {
 
 		if (sync_token_code != SEOF_T && lookahead.code == SEOF_T) {
 			exit(synerrno);
@@ -139,7 +73,7 @@ void syn_eh(int sync_token_code) {
 	}
 
 	if (lookahead.code != SEOF_T)
-		lookahead = malar_next_token(sc_buf); //TODO maybe check for ERR_T
+		lookahead = malar_next_token(sc_buf);
 
 }
 
@@ -259,7 +193,7 @@ void statements_prime(void) {
 			break;
 		}
 
-	default: ; //TODO can remove all the empty default
+	default: ;
 	}
 }
 
@@ -275,19 +209,6 @@ void opt_statements() {
 		break;
 
 	case KW_T:
-		/* check for PLATYPUS, ELSE, THEN, REPEAT, TRUE, FALSE here
-		and in statements_p()*/
-		//TODO not sure if inverted is better
-		/*if (lookahead.attribute.get_int != PLATYPUS
-		&& lookahead.attribute.get_int != ELSE
-		&& lookahead.attribute.get_int != THEN
-		&& lookahead.attribute.get_int != REPEAT
-		&& lookahead.attribute.get_int != TRUE
-		&& lookahead.attribute.get_int != FALSE) {
-		statements();
-		break;
-		}*/
-
 		if (lookahead.attribute.kwt_idx == IF
 			|| lookahead.attribute.kwt_idx == WHILE
 			|| lookahead.attribute.kwt_idx == READ
@@ -439,7 +360,6 @@ void variable_list_prime(void) {
 #ifdef DEBUG 
 	printf(">>> <variable_list_prime>\n");
 #endif
-	//TODO maybe change to if
 	switch (lookahead.code)
 	{
 	case COM_T:
@@ -448,7 +368,8 @@ void variable_list_prime(void) {
 		variable_list_prime();
 		break;
 
-	default: ;
+	default:
+		break;
 	}
 }
 
@@ -456,7 +377,6 @@ void opt_variable_list(void) {
 #ifdef DEBUG 
 	printf(">>> <opt_variable_list>\n");
 #endif
-	//TODO maybe change to if
 	switch (lookahead.code)
 	{
 	case AVID_T:
@@ -569,7 +489,6 @@ void additive_arithmetic_expression(void) {
 #endif
 	multiplicative_arithmetic_expression();
 	additive_arithmetic_expression_prime();
-	//gen_incode("PLATY: Additive arithmetic expression parsed");
 
 }
 
@@ -603,7 +522,6 @@ void multiplicative_arithmetic_expression(void) {
 #endif
 	primary_arithmetic_expression();
 	multiplicative_arithmetic_expression_prime();
-	//gen_incode("PLATY: Multiplicative arithmetic expression parsed");
 
 }
 
@@ -675,7 +593,6 @@ void string_expression_prime(void) {
 #ifdef DEBUG 
 	printf(">>> <string_expression_prime>\n");
 #endif
-	//TODO maybe change to if
 	switch (lookahead.code)
 	{
 	case SCC_OP_T:
@@ -722,7 +639,6 @@ void logical_OR_expression(void) {
 #endif
 	logical_AND_expression();
 	logical_OR_expression_prime();
-	//gen_incode("PLATY: Logical OR expression parsed");
 }
 
 void logical_OR_expression_prime(void) {
@@ -750,7 +666,6 @@ void logical_AND_expression(void) {
 #endif
 	relational_expression();
 	logical_AND_expression_prime();
-	//gen_incode("PLATY: Logical AND expression parsed");
 }
 
 void logical_AND_expression_prime(void) {
@@ -793,7 +708,6 @@ void relational_expression(void) {
 		break;
 
 	default:
-		//gen_incode("PLATY: Relational expression parsed");
 		syn_printe();
 
 	}
@@ -820,7 +734,7 @@ void arithmetic_relational_expression(void) {
 		}else if (lookahead.attribute.rel_op == NE) {
 			match(REL_OP_T, NE);
 			primary_a_relational_expression();
-		}//TODO maybe call synprinte() in else
+		}
 		break;
 
 	default:
@@ -847,7 +761,7 @@ void string_relational_expression(void){
 		}else if (lookahead.attribute.rel_op == NE) {
 			match(REL_OP_T, NE);
 			primary_s_relational_expression();
-		}//TODO maybe call synprinte() in else
+		}
 		break;
 
 	default: syn_printe();
@@ -856,7 +770,7 @@ void string_relational_expression(void){
 
 void primary_a_relational_expression(void) {
 #ifdef DEBUG 
-	printf(">>> <primary_a_relational_expression> DEBUG: %d\n", lookahead.code);
+	printf(">>> <primary_a_relational_expression>\n", lookahead.code);
 #endif
 	switch (lookahead.code)
 	{
@@ -869,7 +783,6 @@ void primary_a_relational_expression(void) {
 
 	default:
 		syn_printe();
-		//gen_incode("PLATY: Primary a_relational expression parsed"); // TODO figure out why this fixes ass3w
 	}
 
 	gen_incode("PLATY: Primary a_relational expression parsed");

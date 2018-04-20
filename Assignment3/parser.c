@@ -244,8 +244,6 @@ void statements_prime(void) {
 			statements_prime();
 			break;
 		}
-
-	default: ;
 	}
 }
 
@@ -379,7 +377,6 @@ void selection_statement(void) {
 	match(RBR_T, NO_ATTR);
 	match(EOS_T, NO_ATTR);
 	gen_incode("PLATY: Selection statement parsed");
-
 }
 
 /*
@@ -475,9 +472,6 @@ void variable_list_prime(void) {
 		variable_identifier();
 		variable_list_prime();
 		break;
-
-	default:
-		break;
 	}
 }
 
@@ -496,8 +490,6 @@ void opt_variable_list(void) {
 	case SVID_T:
 		variable_list();
 		break;
-
-	default: ;
 	}
 }
 
@@ -552,15 +544,15 @@ void output_statement(void) {
 void output_statement_argument(void) {
 	switch (lookahead.code)
 	{
-		case AVID_T:
-		case SVID_T:
-			opt_variable_list();
-			break;
+	case AVID_T:
+	case SVID_T:
+		opt_variable_list();
+		break;
 
-		case STR_T:
-			match(STR_T, NO_ATTR);
-			gen_incode("PLATY: Output list (string literal) parsed");
-			break;
+	case STR_T:
+		match(STR_T, NO_ATTR);
+		gen_incode("PLATY: Output list (string literal) parsed");
+		break;
 
 	default: gen_incode("PLATY: Output list (empty) parsed");
 	}
@@ -662,8 +654,6 @@ void additive_arithmetic_expression_prime(void) {
 			gen_incode("PLATY: Additive arithmetic expression parsed");
 		}
 		break;
-
-	default: ;
 	}
 }
 
@@ -678,7 +668,6 @@ void additive_arithmetic_expression_prime(void) {
 void multiplicative_arithmetic_expression(void) {
 	primary_arithmetic_expression();
 	multiplicative_arithmetic_expression_prime();
-
 }
 
 /*
@@ -707,8 +696,6 @@ void multiplicative_arithmetic_expression_prime(void) {
 			gen_incode("PLATY: Multiplicative arithmetic expression parsed");
 		}
 		break;
-
-	default: ;
 	}
 }
 
@@ -781,8 +768,6 @@ void string_expression_prime(void) {
 		primary_string_expression();
 		string_expression_prime();
 		break;
-
-	default: ;
 	}
 }
 
@@ -858,8 +843,6 @@ void logical_OR_expression_prime(void) {
 			gen_incode("PLATY: Logical OR expression parsed");
 		}
 		break;
-
-	default: ;
 	}
 }
 
@@ -896,8 +879,6 @@ void logical_AND_expression_prime(void) {
 			gen_incode("PLATY: Logical AND expression parsed");
 		}
 		break;
-
-	default: ;
 	}
 }
 
@@ -924,12 +905,9 @@ void relational_expression(void) {
 	case SVID_T:
 		primary_s_relational_expression();
 		string_relational_expression();
-		
 		break;
 
-	default:
-		syn_printe();
-
+	default: syn_printe();
 	}
 
 	gen_incode("PLATY: Relational expression parsed");
@@ -965,8 +943,7 @@ void arithmetic_relational_expression(void) {
 		}
 		break;
 
-	default:
-		syn_printe();
+	default: syn_printe();
 	}
 }
 
@@ -1024,8 +1001,7 @@ void primary_a_relational_expression(void) {
 	case INL_T:
 		match(INL_T, NO_ATTR); break;
 
-	default:
-		syn_printe();
+	default: syn_printe();
 	}
 
 	gen_incode("PLATY: Primary a_relational expression parsed");

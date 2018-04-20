@@ -108,7 +108,7 @@ Token malar_next_token(Buffer * sc_buf)
 		case '\f':
 		case '\r':
 			continue;					/* Ignore the whitespaces */
-		case '\n': ++line; continue;	/* Count the lines TODO FIX LINE COUNTING? SPEC VIOLATION*/
+		case '\n': ++line; continue;	/*TODO FIX LINE COUNTING? SPEC VIOLATION*/ /*Count the lines*/
 		case SEOF1:
 		case SEOF2:
 			t.code = SEOF_T; /* no attribute */ return t;					/*Check end of file 							  */

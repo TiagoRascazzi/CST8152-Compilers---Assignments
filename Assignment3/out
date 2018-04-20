@@ -33,6 +33,7 @@ PLATY: Syntax error:  Line:  7
 *****  Token code:  9 Attribute: 2
 PLATY: Syntax error:  Line:  8
 *****  Token code: 13 Attribute: NA
+PLATY: Relational expression parsed
 PLATY: Conditional expression parsed
 PLATY: Primary arithmetic expression parsed
 PLATY: Arithmetic expression parsed
@@ -44,7 +45,9 @@ PLATY: Syntax error:  Line:  8
 *****  Token code: 16 Attribute: ELSE
 PLATY: Opt_statements parsed
 PLATY: Selection statement parsed
+PLATY: Primary string expression parsed
 PLATY: Primary s_relational expression parsed
+PLATY: Primary string expression parsed
 PLATY: Primary s_relational expression parsed
 PLATY: Relational expression parsed
 PLATY: Conditional expression parsed
@@ -81,10 +84,10 @@ PLATY: Syntax error:  Line: 12
 PLATY: Opt_statements parsed
 PLATY: Opt_statements parsed
 PLATY: Selection statement parsed
-PLATY: Syntax error:  Line: 14
+PLATY: Syntax error:  Line: 15
 *****  Token code:  0 Attribute: "Imagine all the ...
 PLATY: Output list (empty) parsed
-PLATY: Syntax error:  Line: 14
+PLATY: Syntax error:  Line: 15
 *****  Token code:  1 Attribute: NA
 
 Syntax errors: 9

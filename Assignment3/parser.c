@@ -2,6 +2,9 @@
 #include "token.h"
 #include "parser.h"
 
+//#define	DEBUG
+//#define MATCH_DEBUG
+
 extern int line;
 extern char * kw_table[];
 extern Buffer * str_LTBL;
@@ -20,6 +23,7 @@ void parser(Buffer * in_buf){
 
 void match(int pr_token_code, int pr_token_attribute) {
 
+	//TODO GET RID OF THIS
 #ifdef MATCH_DEBUG
 	printf("In match function with t_code %s and attribute code %s\n", tokenCodeToString(pr_token_code),
 		tokenAttributeToString(lookahead));
@@ -692,16 +696,16 @@ void primary_string_expression(void) {
 	{
 	case SVID_T:
 		match(SVID_T, NO_ATTR);
-		gen_incode("PLATY: Primary string expression parsed");
 		break;
 
 	case STR_T:
 		match(STR_T, NO_ATTR);
-		gen_incode("PLATY: Primary string expression parsed");
 		break;
 
 	default: syn_printe();
 	}
+
+	gen_incode("PLATY: Primary string expression parsed");
 }
 
 void conditional_expression(void) {
@@ -779,18 +783,22 @@ void relational_expression(void) {
 	case INL_T:
 		primary_a_relational_expression();
 		arithmetic_relational_expression();
-		gen_incode("PLATY: Relational expression parsed");
 		break;
 
 	case STR_T:
 	case SVID_T:
 		primary_s_relational_expression();
 		string_relational_expression();
-		gen_incode("PLATY: Relational expression parsed");
+		
 		break;
 
-	default: syn_printe();
+	default:
+		//gen_incode("PLATY: Relational expression parsed");
+		syn_printe();
+
 	}
+
+	gen_incode("PLATY: Relational expression parsed");
 }
 
 void arithmetic_relational_expression(void) {
@@ -820,7 +828,7 @@ void arithmetic_relational_expression(void) {
 	}
 }
 
-void string_relational_expression(void) {
+void string_relational_expression(void){
 #ifdef DEBUG 
 	printf(">>> <string_relational_expression>\n");
 #endif
@@ -853,42 +861,24 @@ void primary_a_relational_expression(void) {
 	switch (lookahead.code)
 	{
 	case AVID_T:
-		match(AVID_T, NO_ATTR);
-		gen_incode("PLATY: Primary a_relational expression parsed");
-		break;
-
+		match(AVID_T, NO_ATTR); break;
 	case FPL_T:
-		match(FPL_T, NO_ATTR);
-		gen_incode("PLATY: Primary a_relational expression parsed");
-		break;
-
+		match(FPL_T, NO_ATTR); break;
 	case INL_T:
-		match(INL_T, NO_ATTR);
-		gen_incode("PLATY: Primary a_relational expression parsed");
-		break;
+		match(INL_T, NO_ATTR); break;
 
 	default:
 		syn_printe();
-		gen_incode("PLATY: Primary a_relational expression parsed"); // TODO figure out why this fixes ass3w
+		//gen_incode("PLATY: Primary a_relational expression parsed"); // TODO figure out why this fixes ass3w
 	}
+
+	gen_incode("PLATY: Primary a_relational expression parsed");
 }
 
 void primary_s_relational_expression(void) {
 #ifdef DEBUG 
 	printf(">>> <primary_s_relational_expression>\n");
 #endif
-	switch (lookahead.code)
-	{
-	case STR_T:
-		match(STR_T, NO_ATTR);
-		gen_incode("PLATY: Primary s_relational expression parsed");
-		break;
-
-	case SVID_T:
-		match(SVID_T, NO_ATTR);
-		gen_incode("PLATY: Primary s_relational expression parsed");
-		break;
-
-	default: syn_printe();
-	}
+	primary_string_expression();
+	gen_incode("PLATY: Primary s_relational expression parsed");
 }
